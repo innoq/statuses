@@ -35,6 +35,7 @@
           (assoc :next-id (inc (:next-id db)))
           (assoc-in [:conversations conv-id] (conj conv id))
           (assoc-in [:posts id :conversation] conv-id)
+          (assoc-in [:posts id :in-reply-to] reply-to)
           (assoc-in [:posts reply-to :conversation] conv-id)))
     db))
 

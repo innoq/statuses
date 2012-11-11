@@ -7,10 +7,11 @@
         [hiccup.page-helpers]))
 
 
-(defpartial update [{:keys [id text author time]}]
+(defpartial update [{:keys [id text author time in-reply-to]}]
    [:span.content text]
    [:span.author (link-to (str "/status/authors/" author) author)]
-   [:span.time (link-to (str "/status/updates/" id) time)])
+   [:span.time (link-to (str "/status/updates/" id) time)]
+   [:span.reply (link-to (str "/status/updates/" in-reply-to) in-reply-to)])
 
 (defn entry-form
   ([author]       (form-to [:post "/status"]
@@ -39,8 +40,11 @@
 (defpage "/status" []
   (list-page (core/get-latest @core/dummy-db 25)))
 
+
+(defn parse-num [s] (if (nil? s) nil (read-string s)))
+
 (defpage [:post "/status"] {:keys [author text reply-to]}
-  (swap! core/dummy-db core/add-update author text reply-to)
+  (swap! core/dummy-db core/add-update author text (parse-num reply-to))
   (redirect "/status"))
 
 (defpage "/status/updates/:id" {:keys [id]}
@@ -48,3 +52,6 @@
 
 (defpage "/status/authors/:author" {:keys [author]}
   (list-page (core/get-latest @core/dummy-db 25 author)))
+
+(defpage "/db-dump" []
+  (str @core/dummy-db))
