@@ -1,7 +1,15 @@
 (ns statuses.server
-  (:require [noir.server :as server]))
+  (:require [noir.server :as server])
+  (:gen-class))
 
-(server/load-views "src/statuses/views/")
+(defn logger [handler]
+  (fn [request]
+    (println "Received request: " request)
+    (handler request)))
+
+(server/add-middleware logger)
+
+(server/load-views-ns 'statuses.views)
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))

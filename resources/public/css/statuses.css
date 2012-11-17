@@ -1,0 +1,33 @@
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    padding-bottom: 10px;
+}
+
+.content {
+    font-size: 16px;
+}
+
+.meta {
+    font-size: 12px;
+}
+
+.author:before {
+    content: 'written by ';
+}
+
+.time:before {
+    content: ' on ';
+}
+
+.reply:before {
+    content: ' in reply to ';
+}
+
+.input {
+    width: 80;
+}

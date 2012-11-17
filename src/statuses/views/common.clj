@@ -1,6 +1,6 @@
 (ns statuses.views.common
   (:use [noir.core :only [defpartial]]
-        [hiccup.page-helpers :only [include-css include-js html5]]))
+        [hiccup.page :only [include-css include-js html5]]))
 
 (defpartial layout [& content]
             (html5
@@ -8,6 +8,7 @@
                [:title "innoQ Statuses"]
                (include-css "/css/bootstrap.css")
                (include-css "/css/bootstrap-responsive.css")
+               (include-css "/css/statuses.css")
                [:style "body { padding-top: 60px; }"]]
               [:body
                (list
