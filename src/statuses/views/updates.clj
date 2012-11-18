@@ -1,63 +1,84 @@
 (ns statuses.views.updates
   (:require [statuses.views.common :as common]
-            [statuses.backend.core :as core])
-  (:use [noir.core :only [defpage defpartial]]
+            [statuses.backend.core :as core]
+            [clj-time.format :as format]
+            [clj-time.local :as local])
+  (:use [statuses.backend.persistence :only [db]]
+        [noir.core :only [defpage defpartial render]]
         [noir.response :only [redirect]]
         [noir.request :only [ring-request]]
         [hiccup.element]
         [hiccup.form]
         [hiccup.page]))
 
+(defn user []
+  (or (get-in (ring-request) [:headers "remote_user"]) "guest"))
 
+(defn nav-links []
+  (let [elems [ "/statuses/updates"  "Everything"
+                (str "/statuses/mentions/" (user)) "Mentions" ]]
+    (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
+
+(defn format-time [time]
+  (let [rfc822 (local/format-local-time time :rfc822)
+        human  (format/unparse (format/formatter "yyyy-MM-dd HH:mm") time)]
+    [:time {:datetime rfc822} human]))
 
 (defpartial update [{:keys [id text author time in-reply-to]}]
   [:div.content text]
   [:div.meta
-   [:span.author (link-to (str "/status/authors/" author) author)]
-   [:span.time (link-to (str "/status/updates/" id) time)]
-   (if in-reply-to [:span.reply (link-to (str "/status/updates/" in-reply-to) in-reply-to)])])
+   [:span.author (link-to (str "/statuses/authors/" author) author)]
+   [:span.time (link-to (str "/statuses/updates/" id) (format-time time))]
+   (if in-reply-to
+     [:span.reply (link-to (str "/statuses/updates/" in-reply-to) in-reply-to)])])
 
-(defn user []
-  (or (get-in ring-request [:headers "remote-user"]) "guest"))
+(defn entry-form [& [reply]]
+  (form-to [:post "/statuses/updates"]
+           (text-field {:class "input-xxlarge" :autofocus "autofocus" } "text")
+           (if reply
+             (list (hidden-field "reply-to" reply)
+                   (submit-button "Reply"))
+             (submit-button "Send update"))))
 
-(defn entry-form
-  ([author]       (form-to [:post "/status"]
-                           (text-field "text")
-                           (submit-button "Send update")))
-  ([author reply] (form-to [:post "/status"]
-                           (text-field "text")
-                           (hidden-field "reply-to" reply)
-                           (submit-button "Reply"))))
-
-
-(defpartial list-page [items]
+(defpartial list-page [items next]
   (common/layout
-   (entry-form (user))
-   [:ul.updates (map (fn [item] [:li.post (update item)]) items)]))
+   (list [:div (entry-form)]
+         [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
+         (link-to next "Next"))
+   (nav-links)))
 
 (defpartial update-page [item]
   (common/layout
-   [:div.update (update item)]
-   (entry-form (user) (:id item))))
+   (list [:div.update (update item)]
+         (entry-form (:id item)))
+   (nav-links)))
+
 
 (defpage "/" []
-  (redirect "/status"))
+  (redirect "/statuses/updates"))
 
-(defpage "/status" []
-  (list-page (core/get-latest @core/dummy-db 25)))
+(defpage "/statuses" []
+  (redirect "/statuses/updates"))
 
+(defn parse-num [s default]
+  (if (nil? s) default (read-string s)))
 
-(defn parse-num [s] (if (nil? s) nil (read-string s)))
+(defpage "/statuses/authors/:author" {:keys [author lmt ofst]}
+  (let [limit (parse-num lmt 25)
+        offset (parse-num ofst 0)
+        next (str (:uri (ring-request)) "?limit=" limit "&offset=" (+ limit offset))]
+        (list-page (core/get-latest @db
+                                    limit offset
+                                    author)
+                   next)))
 
-(defpage [:post "/status"] {:keys [text reply-to]}
-  (swap! core/dummy-db core/add-update (user) text (parse-num reply-to))
-  (redirect "/status"))
+(defpage updates-page "/statuses/updates" {:as req}
+  (render "/statuses/authors/:author" req))
 
-(defpage "/status/updates/:id" {:keys [id]}
-  (update-page (core/get-update @core/dummy-db (Integer/parseInt id))))
+(defpage "/statuses/updates/:id" {:keys [id]}
+  (update-page (core/get-update @db (Integer/parseInt id))))
 
-(defpage "/status/authors/:author" {:keys [author]}
-  (list-page (core/get-latest @core/dummy-db 25 author)))
+(defpage [:post "/statuses/updates"] {:keys [text reply-to]}
+  (swap! db core/add-update (user) text (parse-num reply-to nil))
+  (redirect "/statuses"))
 
-(defpage "/db-dump" []
-  (str @core/dummy-db))

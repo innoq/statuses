@@ -10,20 +10,23 @@
    :conversations {} ;; conversations, each as an ordered vector, keyed by id
    })
 
+
 (defn get-update
   "returns update with id"
   [db id]
   (get-in db [:posts id]))
 
-(defn- posts
-  "Returns a seq of all status updates in order"
-  [db]
-  (map #(get (:posts db) %) (:timeline db)))
 
 (defn get-latest
-  "Retrieve the latest n status updates, optionally restricted to author, ordered by time"
-  ([db n] (take n (posts db)))
-  ([db n author] (take n (filter #(= author (:author %)) (posts db)))))
+  "Retrieve the latest n status updates, starting with offset,
+   optionally restricted to author, ordered by time"
+  ([db n offset & [author & rest]]
+     (println "get-latest " n " " offset " " author)
+     (let [posts (map #(get (:posts db) %) (:timeline db))
+           pred  (if author
+                   (fn [e] (= author (:author e)))
+                   (fn [e] true))]
+       (take n (drop offset (filter pred posts))))))
 
 (defn- add-conversation
   "Returns db with conversation added. Safe to call with reply-to = nil."
@@ -68,7 +71,7 @@
     :posts (dissoc (:posts db) id)
     :timeline (remove #(= id %) (:timeline db))))
 
-(defn- add-testdata [db n]
+(defn add-testdata [db n]
   "Create a DB with a set of n test updates"
   (letfn [
     (random [col] (nth col (rand-int (count col))))
@@ -84,7 +87,4 @@
     (reduce (fn [db [author text]] (add-update db author text))
             db
             (repeatedly n #(list (author) (text))))))
-
-;; A bit of test data
-(def dummy-db (atom (add-testdata (empty-db) 100)))
 

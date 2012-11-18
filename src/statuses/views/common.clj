@@ -1,14 +1,16 @@
 (ns statuses.views.common
   (:use [noir.core :only [defpartial]]
-        [hiccup.page :only [include-css include-js html5]]))
+        [hiccup.page :only [include-css include-js html5]]
+        [hiccup.element :only [link-to]]))
 
-(defpartial layout [& content]
+
+(defn layout [content navigation]
             (html5
               [:head
                [:title "innoQ Statuses"]
-               (include-css "/css/bootstrap.css")
-               (include-css "/css/bootstrap-responsive.css")
-               (include-css "/css/statuses.css")
+               (include-css "/statuses/css/bootstrap.css")
+               (include-css "/statuses/css/bootstrap-responsive.css")
+               (include-css "/statuses/css/statuses.css")
                [:style "body { padding-top: 60px; }"]]
               [:body
                (list
@@ -21,9 +23,13 @@
                    [:div.nav-collapse
                     [:ul.nav
                      [:li.active
-                      [:a {"href" "/status"} "Status"]]
+                      [:a {"href" "/statuses"} "Statuses"]]
                      [:li
                       [:a {"href" "https://internal.innoq.com/blogging/"} "PPP"]]]]]]]
-                [:div.container content]
-                (include-js "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js")
-                (include-js "/js/bootstrap.min.js"))]))
+                [:div.container
+                 [:div.row
+                  [:div.span10 content]
+                  [:div.span2
+                   [:div.well {:style "padding:10px 0px 10px 0px;"}
+                    [:ul {:class "nav nav-list"}
+                     navigation ]]]]])]))

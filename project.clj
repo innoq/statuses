@@ -4,6 +4,7 @@
                            [org.clojure/clojure "1.4.0"]
                            [noir "1.3.0-beta10"]
                            [clj-time "0.4.4"]
+                           [org.clojure/data.json "0.2.0"]
                           ]
             :main statuses.server)
 
