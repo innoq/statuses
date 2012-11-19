@@ -107,9 +107,19 @@
 (defpage "/statuses/updates/:id" {:keys [id]}
   (update-page (core/get-update @db (Integer/parseInt id))))
 
+(def max-length 140)
+
+(defpage "/statuses/too-long/:length" {:keys [length]}
+  (common/layout
+   (str "Sorry, the maximum lenght is " max-length " but you tried " length " characters")
+   (nav-links)))
+
 (defpage [:post "/statuses/updates"] {:keys [text reply-to]}
-  (swap! db core/add-update (user) text (parse-num reply-to nil))
-  (redirect "/statuses"))
+  (let [length (.length text)]
+    (if (<= length max-length)
+      (do (swap! db core/add-update (user) text (parse-num reply-to nil))
+          (redirect "/statuses"))
+      (redirect (str "/statuses/too-long/" length)))))
 
 (defpage "/statuses/info" []
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
