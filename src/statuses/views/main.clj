@@ -45,13 +45,19 @@
    (if in-reply-to
      [:span.reply (link-to (str "/statuses/updates/" in-reply-to) in-reply-to)])])
 
-(defn entry-form [& [reply]]
+
+(defn entry-form []
   (form-to [:post "/statuses/updates"]
            (text-field {:class "input-xxlarge" :autofocus "autofocus" } "text")
-           (if reply
-             (list (hidden-field "reply-to" reply)
-                   (submit-button "Reply"))
-             (submit-button "Send update"))))
+           (submit-button "Send update")))
+
+(defn reply-form [id author]
+  (form-to [:post "/statuses/updates"]
+           (text-field {:class "input-xxlarge"
+                        :autofocus "autofocus"
+                        :value (str "@" author) } "text")
+           (hidden-field "reply-to" id)
+           (submit-button "Reply")))
 
 (defpartial list-page [items next]
   (common/layout
@@ -63,7 +69,7 @@
 (defpartial update-page [item]
   (common/layout
    (list [:div.update (update item)]
-         (entry-form (:id item)))
+         (reply-form (:id item) (:author item)))
    (nav-links)))
 
 
