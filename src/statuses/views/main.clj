@@ -16,7 +16,7 @@
 
 (defn nav-links []
   (let [elems [ "/statuses/updates"  "Everything"
-                (str "/statuses/search?q=" (user)) "Mentions"
+                (str "/statuses/search?q=@" (user)) "Mentions"
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
@@ -25,11 +25,15 @@
         human  (format/unparse (format/formatter "yyyy-MM-dd HH:mm") time)]
     [:time {:datetime rfc822} human]))
 
+(def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
+
 (defn linkify [text]
   (let [handle  (fn [[_ m]] (str "@<a href='/statuses/search?q=@" m "'>" m "</a>"))
-        hashtag (fn [[_ m]] (str "#<a href='/statuses/search?q=%23" m "'>" m "</a>"))]
+        hashtag (fn [[_ m]] (str "#<a href='/statuses/search?q=%23" m "'>" m "</a>"))
+        anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
     (-> text
         (clojure.string/replace #"@(\w*)" handle)
+        (clojure.string/replace uri anchor)
         (clojure.string/replace #"#(\w*)" hashtag))))
 
 
