@@ -7,7 +7,7 @@ if system('lein jar')
   f.puts "java -classpath #{mainjar}:#{Dir['./lib/*'].join(':')} statuses.server"
   f.close
   puts "Synchronizing with remote dir."
-  `rsync --exclude data --delete -avz run.sh #{mainjar} lib internal2.innoq.com:/home/statuses`
+  `rsync --exclude data --delete -avz run.sh #{mainjar} resources lib internal2.innoq.com:/home/statuses`
   puts "Done."
 end
 
