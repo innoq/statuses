@@ -5,7 +5,7 @@
             [clj-time.local :as local])
   (:use [statuses.backend.persistence :only [db get-save-time]]
         [noir.core :only [defpage defpartial render]]
-        [noir.response :only [redirect]]
+        [noir.response :only [redirect set-headers]]
         [noir.request :only [ring-request]]
         [hiccup.element]
         [hiccup.form]
@@ -59,12 +59,16 @@
            (hidden-field "reply-to" id)
            (submit-button "Reply")))
 
-(defpartial list-page [items next]
-  (common/layout
-   (list [:div (entry-form)]
-         [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
-         (link-to next "Next"))
-   (nav-links)))
+(defn make-etag [item]
+  (str (:time item)))
+
+(defn list-page [items next]
+  (set-headers {"etag" (make-etag (first items))}
+   (common/layout
+     (list [:div (entry-form)]
+           [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
+           (link-to next "Next"))
+     (nav-links))))
 
 (defpartial update-page [item]
   (common/layout
@@ -95,7 +99,13 @@
 
 (defpage "/statuses/authors/:author" {:keys [author] :as req}
   (let [[query limit offset next] (parse-args req)]
-    (list-page (core/get-latest @db limit offset author) next)))
+    (let [current-etag (make-etag (first (core/get-latest @db 1 offset author)))
+          last-etag (get-in (ring-request) [:headers "if-none-match"])]
+      (println "Current ETag:" current-etag "Last ETag: " last-etag)
+      (if (not= current-etag last-etag)
+        (list-page (core/get-latest @db limit offset author) next)
+        (redirect (:uri (ring-request)) :not-modified)))))
+
 
 (defpage "/statuses/search" {:as req}
   (let [[query limit offset next] (parse-args req)]
