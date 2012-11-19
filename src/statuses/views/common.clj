@@ -23,7 +23,7 @@
                    [:div.nav-collapse
                     [:ul.nav
                      [:li.active
-                      [:a {"href" "/statuses"} "Statuses"]]
+                      [:a {"href" "/statuses/updates"} "Statuses"]]
                      [:li
                       [:a {"href" "https://internal.innoq.com/blogging/"} "PPP"]]]]]]]
                 [:div.container
