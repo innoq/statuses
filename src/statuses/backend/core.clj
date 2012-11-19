@@ -17,16 +17,29 @@
   (get-in db [:posts id]))
 
 
+(defn get-filtered-by
+  "Retrieve the latest n status updates, starting with offset,
+   restricted by pred, ordered by time"
+  ([db n offset pred]
+     (let [posts (map #(get (:posts db) %) (:timeline db))]
+           (take n (drop offset (filter pred posts))))))
+
 (defn get-latest
   "Retrieve the latest n status updates, starting with offset,
    optionally restricted to author, ordered by time"
   ([db n offset & [author & rest]]
-     (println "get-latest " n " " offset " " author)
-     (let [posts (map #(get (:posts db) %) (:timeline db))
-           pred  (if author
+     (let [pred  (if author
                    (fn [e] (= author (:author e)))
                    (fn [e] true))]
-       (take n (drop offset (filter pred posts))))))
+       (get-filtered-by db n offset pred))))
+
+(defn get-latest-with-text
+  "Retrieve the latest n mentions for author, starting with offset,
+   ordered by time"
+  ([db n offset search]
+     (let [pred (fn [{:keys [text]}]
+                  (not= (.indexOf text search) -1))]
+       (get-filtered-by db n offset pred))))
 
 (defn- add-conversation
   "Returns db with conversation added. Safe to call with reply-to = nil."
@@ -63,6 +76,11 @@
   "Returns a list of posts participating in conversation with id."
   [db id]
   (get-in db [:conversations id]))
+
+(defn get-count
+  "Returns the number of posts in db."
+  [db]
+  (count (:posts db)))
 
 (defn remove-update
   "Returns db with the update with id removed"

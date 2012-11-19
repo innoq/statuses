@@ -1,4 +1,4 @@
-(ns statuses.views.updates
+(ns statuses.views.main
   (:require [statuses.views.common :as common]
             [statuses.backend.core :as core]
             [clj-time.format :as format]
@@ -16,7 +16,8 @@
 
 (defn nav-links []
   (let [elems [ "/statuses/updates"  "Everything"
-                (str "/statuses/mentions/" (user)) "Mentions" ]]
+                (str "/statuses/search?q=" (user)) "Mentions"
+                "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
 (defn format-time [time]
@@ -24,8 +25,16 @@
         human  (format/unparse (format/formatter "yyyy-MM-dd HH:mm") time)]
     [:time {:datetime rfc822} human]))
 
+(defn linkify [text]
+  (let [handle  (fn [[_ m]] (str "@<a href='/statuses/search?q=@" m "'>" m "</a>"))
+        hashtag (fn [[_ m]] (str "#<a href='/statuses/search?q=%23" m "'>" m "</a>"))]
+    (-> text
+        (clojure.string/replace #"@(\w*)" handle)
+        (clojure.string/replace #"#(\w*)" hashtag))))
+
+
 (defpartial update [{:keys [id text author time in-reply-to]}]
-  [:div.content text]
+  [:div.content (linkify text)]
   [:div.meta
    [:span.author (link-to (str "/statuses/authors/" author) author)]
    [:span.time (link-to (str "/statuses/updates/" id) (format-time time))]
@@ -63,14 +72,24 @@
 (defn parse-num [s default]
   (if (nil? s) default (read-string s)))
 
-(defpage "/statuses/authors/:author" {:keys [author lmt ofst]}
-  (let [limit (parse-num lmt 25)
-        offset (parse-num ofst 0)
-        next (str (:uri (ring-request)) "?limit=" limit "&offset=" (+ limit offset))]
-        (list-page (core/get-latest @db
-                                    limit offset
-                                    author)
-                   next)))
+(defn parse-args [{:keys [q limit offset]}]
+  (let [lmt (parse-num limit 25)
+        off (parse-num offset 0)
+        q-string (if q (str "&q=" q))
+        next (str (:uri (ring-request))
+                  "?limit=" lmt
+                  "&offset=" (+ lmt off)
+                  q-string
+                  )]
+    [q lmt off next]))
+
+(defpage "/statuses/authors/:author" {:keys [author] :as req}
+  (let [[query limit offset next] (parse-args req)]
+    (list-page (core/get-latest @db limit offset author) next)))
+
+(defpage "/statuses/search" {:as req}
+  (let [[query limit offset next] (parse-args req)]
+    (list-page (core/get-latest-with-text @db limit offset (str query)) next)))
 
 (defpage updates-page "/statuses/updates" {:as req}
   (render "/statuses/authors/:author" req))
@@ -81,4 +100,9 @@
 (defpage [:post "/statuses/updates"] {:keys [text reply-to]}
   (swap! db core/add-update (user) text (parse-num reply-to nil))
   (redirect "/statuses"))
+
+(defpage "/statuses/info" []
+  (common/layout
+   [:p "Server running, " (core/get-count @db) " entries"]
+   (nav-links)))
 
