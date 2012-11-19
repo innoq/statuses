@@ -2,6 +2,7 @@
   (:require [statuses.backend.core :as core]
             [clojure.data.json :as json]
             [clj-time.format :as format]
+            [clj-time.core :as time]
             [clj-time.local :as local])
   (:use [clojure.java.io :only [reader writer]])
   (:import java.util.concurrent.TimeUnit
@@ -22,7 +23,10 @@
   "Writes out db to path"
   [db path]
   (with-open [file (writer path)]
-    (json/write db file :value-fn time-to-json)))
+    (json/write db file :value-fn time-to-json)
+    (assoc db :time (time/now))))
+
+(defn get-save-time [db] (:time db))
 
 (defn- keywordify [n]
   (let [parsed (read-string n)]
@@ -47,7 +51,7 @@
   [path interval]
   (let [persist-db (fn []
                      (println "Saving db to" path)
-                     (write-db @db path))]
+                     (swap! db write-db path))]
     (try
       (reset! db (read-db path))
       (catch java.io.IOException ioe

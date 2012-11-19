@@ -3,7 +3,7 @@
             [statuses.backend.core :as core]
             [clj-time.format :as format]
             [clj-time.local :as local])
-  (:use [statuses.backend.persistence :only [db]]
+  (:use [statuses.backend.persistence :only [db get-save-time]]
         [noir.core :only [defpage defpartial render]]
         [noir.response :only [redirect]]
         [noir.request :only [ring-request]]
@@ -112,7 +112,10 @@
   (redirect "/statuses"))
 
 (defpage "/statuses/info" []
-  (common/layout
-   [:p "Server running, " (core/get-count @db) " entries"]
-   (nav-links)))
+  (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
+        (common/layout
+         [:table.table
+          (item "# of entries" (core/get-count @db))
+          (item "Last save at" (get-save-time @db))]
+          (nav-links))))
 
