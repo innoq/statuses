@@ -67,10 +67,9 @@
            (assoc :timeline (cons id (:timeline db)))
            (assoc :next-id (inc id)))))
   ([db author text reply-to]
-     (let [id (:next-id db)
-           other (:author (get-update db reply-to))]
+     (let [id (:next-id db)]
        (-> db
-           (add-update author (str "@" other " " text))
+           (add-update author text)
            (add-conversation id reply-to)))))
 
 (defn get-conversation
