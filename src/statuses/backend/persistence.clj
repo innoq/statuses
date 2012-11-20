@@ -9,21 +9,11 @@
            java.util.concurrent.Executors))
 
 
-(defn- time-to-json [key value]
-  (if (= :time key)
-    (local/format-local-time value :rfc822)
-    value))
-
-(defn- json-to-time [key value]
-  (if (= :time key)
-    (format/parse value)
-    value))
-
 (defn write-db
   "Writes out db to path"
   [db path]
   (with-open [file (writer path)]
-    (json/write db file :value-fn time-to-json)
+    (json/write db file :value-fn core/time-to-json)
     (assoc db :time (time/now))))
 
 (defn get-save-time [db] (:time db))
@@ -39,7 +29,7 @@
   [path]
   (with-open [file (reader path)]
     (json/read file
-               :value-fn json-to-time
+               :value-fn core/json-to-time
                :key-fn keywordify)))
 
 (defonce db (atom nil))

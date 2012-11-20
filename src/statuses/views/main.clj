@@ -91,27 +91,40 @@
 (defn parse-args [{:keys [q limit offset]}]
   (let [lmt (parse-num limit 25)
         off (parse-num offset 0)
+        req (ring-request)
         q-string (if q (str "&q=" q))
-        next (str (:uri (ring-request))
-                  "?limit=" lmt
-                  "&offset=" (+ lmt off)
-                  q-string
-                  )]
+        next (str
+              (name (:scheme req))
+              "://"
+              (get-in req [:headers "host"])
+              (:uri req)
+              "?limit=" lmt
+              "&offset=" (+ lmt off)
+              q-string)]
     [q lmt off next]))
 
-(defpage "/statuses/authors/:author" {:keys [author] :as req}
+(defpage "/statuses/authors/:author" {:keys [author json] :as req}
   (let [[query limit offset next] (parse-args req)]
+    (println "Next: " next)
     (let [current-etag (make-etag (first (core/get-latest @db 1 offset author)))
           last-etag (get-in (ring-request) [:headers "if-none-match"])]
-      (println "Current ETag:" current-etag "Last ETag: " last-etag)
       (if (not= current-etag last-etag)
-        (list-page (core/get-latest @db limit offset author) next)
+        (let [items (core/get-latest @db limit offset author)]
+          (if json
+            (set-headers {"etag" (make-etag (first items))
+                          "content-type" "application/json"}
+                         (core/as-json {:items items, :next next}))
+            (list-page items next)))
         (redirect (:uri (ring-request)) :not-modified)))))
 
 
 (defpage "/statuses/search" {:as req}
   (let [[query limit offset next] (parse-args req)]
     (list-page (core/get-latest-with-text @db limit offset (str query)) next)))
+
+(defpage updates-page-json "/statuses/updates.json" {:as req}
+  (println "Received JSON request")
+  (render "/statuses/authors/:author" (assoc req :json true)))
 
 (defpage updates-page "/statuses/updates" {:as req}
   (render "/statuses/authors/:author" req))

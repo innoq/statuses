@@ -1,5 +1,21 @@
 (ns statuses.backend.core
-  (:require [clj-time.core :as time]))
+  (:require [clj-time.core :as time]
+            [clojure.data.json :as json]
+            [clj-time.local :as local]
+            [clj-time.format :as format]))
+
+(defn time-to-json [key value]
+  (if (= :time key)
+    (local/format-local-time value :rfc822)
+    value))
+
+(defn json-to-time [key value]
+  (if (= :time key)
+    (format/parse value)
+    value))
+
+(defn as-json [content]
+  (json/write-str content :value-fn time-to-json))
 
 
 (defn empty-db []

@@ -8,12 +8,10 @@
 
 (defn logger [handler]
   (fn [request]
-    (println (get-in request [:headers "remote_user"])
-             (:request-method request)
-             (:uri request))
+    (println request)
     (handler request)))
 
-(server/add-middleware logger)
+;(server/add-middleware logger)
 (server/load-views-ns 'statuses.views)
 
 
