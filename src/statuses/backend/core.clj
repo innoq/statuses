@@ -1,8 +1,6 @@
 (ns statuses.backend.core
-  (:require [clj-time.core :as time]
-            [clojure.data.json :as json]
-            [clj-time.local :as local]
-            [clj-time.format :as format]))
+  (:require [clojure.data.json :as json]
+            [clj-time.local :as local]))
 
 (defn empty-db []
   ;; creates an empty in-memory DB for usage with the functions in this namespace
@@ -63,7 +61,7 @@
      (let [id (:next-id db)]
        (-> db
            (assoc-in [:posts id] {:id id
-                                  :time (time/now)
+                                  :time (local/local-now)
                                   :author author
                                   :text text})
            (assoc :timeline (cons id (:timeline db)))

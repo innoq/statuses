@@ -22,9 +22,13 @@
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
+
+
+
 (defn format-time [time]
   (let [rfc822 (local/format-local-time time :rfc822)
-        human  (format/unparse (format/formatter "yyyy-MM-dd HH:mm") time)]
+        human  (str (local/format-local-time time :date) " "
+                    (local/format-local-time time :hour-minute-second))]
     [:time {:datetime rfc822} human]))
 
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
