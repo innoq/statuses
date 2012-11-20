@@ -9,7 +9,8 @@
         [noir.request :only [ring-request]]
         [hiccup.element]
         [hiccup.form]
-        [hiccup.page]))
+        [hiccup.page]
+        [hiccup.util]))
 
 (defn user []
   (or (get-in (ring-request) [:headers "remote_user"]) "guest"))
@@ -32,6 +33,7 @@
         hashtag (fn [[_ m]] (str "#<a href='/statuses/search?q=%23" m "'>" m "</a>"))
         anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
     (-> text
+        escape-html
         (clojure.string/replace #"@(\w*)" handle)
         (clojure.string/replace uri anchor)
         (clojure.string/replace #"#(\w*)" hashtag))))
