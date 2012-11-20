@@ -5,7 +5,7 @@
             [clj-time.local :as local])
   (:use [statuses.backend.persistence :only [db get-save-time]]
         [noir.core :only [defpage defpartial render]]
-        [noir.response :only [redirect set-headers]]
+        [noir.response :only [redirect set-headers content-type]]
         [noir.request :only [ring-request]]
         [hiccup.element]
         [hiccup.form]
@@ -98,13 +98,14 @@
     [q lmt off next]))
 
 (defpage "/statuses/authors/:author" {:keys [author] :as req}
-  (let [[query limit offset next] (parse-args req)]
-    (let [current-etag (make-etag (first (core/get-latest @db 1 offset author)))
-          last-etag (get-in (ring-request) [:headers "if-none-match"])]
-      (println "Current ETag:" current-etag "Last ETag: " last-etag)
-      (if (not= current-etag last-etag)
-        (list-page (core/get-latest @db limit offset author) next)
-        (redirect (:uri (ring-request)) :not-modified)))))
+  (content-type "text/html;charset=utf-8"
+    (let [[query limit offset next] (parse-args req)]
+      (let [current-etag (make-etag (first (core/get-latest @db 1 offset author)))
+            last-etag (get-in (ring-request) [:headers "if-none-match"])]
+        (println "Current ETag:" current-etag "Last ETag: " last-etag)
+        (if (not= current-etag last-etag)
+          (list-page (core/get-latest @db limit offset author) next)
+          (redirect (:uri (ring-request)) :not-modified))))))
 
 
 (defpage "/statuses/search" {:as req}
