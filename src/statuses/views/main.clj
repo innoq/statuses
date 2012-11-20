@@ -1,13 +1,14 @@
 (ns statuses.views.main
   (:require [statuses.views.common :as common]
+            [statuses.views.atom :as atom]
             [statuses.backend.core :as core]
             [statuses.backend.json :as json]
-            [clj-time.format :as format]
-            [clj-time.local :as local])
+            [statuses.backend.time :as time])
   (:use [statuses.backend.persistence :only [db get-save-time]]
         [noir.core :only [defpage defpartial render]]
-        [noir.response :only [redirect set-headers]]
+        [noir.response :only [redirect set-headers content-type xml]]
         [noir.request :only [ring-request]]
+        [hiccup.core :only [html]]
         [hiccup.element]
         [hiccup.form]
         [hiccup.page]
@@ -22,15 +23,6 @@
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
-
-
-
-(defn format-time [time]
-  (let [rfc822 (local/format-local-time time :rfc822)
-        human  (str (local/format-local-time time :date) " "
-                    (local/format-local-time time :hour-minute-second))]
-    [:time {:datetime rfc822} human]))
-
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
 
 (defn linkify [text]
@@ -43,6 +35,8 @@
         (clojure.string/replace uri anchor)
         (clojure.string/replace #"#(\w*)" hashtag))))
 
+(defn format-time [time]
+    [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
 (defpartial update [{:keys [id text author time in-reply-to]}]
   [:div.content (linkify text)]
@@ -66,16 +60,12 @@
            (hidden-field "reply-to" id)
            (submit-button "Reply")))
 
-(defn make-etag [item]
-  (str (:time item)))
-
 (defn list-page [items next]
-  (set-headers {"etag" (make-etag (first items)) "content-type" "text/html;charset=utf-8"}
-   (common/layout
-     (list [:div (entry-form)]
-           [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
-           (link-to next "Next"))
-     (nav-links))))
+  (common/layout
+   (list [:div (entry-form)]
+         [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
+         (link-to next "Next"))
+   (nav-links)))
 
 (defpartial update-page [item]
   (common/layout
@@ -93,33 +83,45 @@
 (defn parse-num [s default]
   (if (nil? s) default (read-string s)))
 
+(defn base-uri []
+  (let [req (ring-request)]
+    (str
+     (name (:scheme req))
+     "://"
+     (get-in req [:headers "host"]))))
+
 (defn parse-args [{:keys [q limit offset]}]
   (let [lmt (parse-num limit 25)
         off (parse-num offset 0)
         req (ring-request)
         q-string (if q (str "&q=" q))
-        next (str
-              (name (:scheme req))
-              "://"
-              (get-in req [:headers "host"])
-              (:uri req)
-              "?limit=" lmt
-              "&offset=" (+ lmt off)
-              q-string)]
+        next (str (base-uri) (:uri req) "?limit=" lmt "&offset=" (+ lmt off) q-string)]
     [q lmt off next]))
 
-(defpage "/statuses/authors/:author" {:keys [author json] :as req}
+(defmacro with-etag
+  "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
+  [etag & body]
+  `(let [last-etag# (get-in (ring-request) [:headers "if-none-match"])
+         etag-str# (str ~etag)]
+      (if (= etag-str# last-etag#)
+        (redirect (:uri (ring-request)) :not-modified)
+        (set-headers {"etag" etag-str#}
+                     ~@body))))
+
+(defpage "/statuses/authors/:author" {:keys [author format] :as req}
   (let [[query limit offset next] (parse-args req)]
-    (let [current-etag (make-etag (first (core/get-latest @db 1 offset author)))
-          last-etag (get-in (ring-request) [:headers "if-none-match"])]
-      (if (not= current-etag last-etag)
-        (let [items (core/get-latest @db limit offset author)]
-          (if json
-            (set-headers {"etag" (make-etag (first items))
-                          "content-type" "application/json"}
-                         (json/as-json {:items items, :next next}))
-            (list-page items next)))
-        (redirect (:uri (ring-request)) :not-modified)))))
+    (with-etag (:time (first (core/get-latest @db 1 offset author)))
+      (let [items (core/get-latest @db limit offset author)]
+        (cond
+         (= format :json) (content-type
+                           "application/json"
+                           (json/as-json {:items items, :next next}))
+         (= format :atom)  (content-type
+                            "application/atom+xml;charset=utf-8"
+                            (html (atom/feed items (base-uri) (:uri (ring-request)))))
+         :else            (content-type
+                           "text/html;charset=utf-8"
+                           (list-page items next)))))))
 
 
 (defpage "/statuses/search" {:as req}
@@ -128,7 +130,12 @@
 
 (defpage updates-page-json "/statuses/updates.json" {:as req}
   (println "Received JSON request")
-  (render "/statuses/authors/:author" (assoc req :json true)))
+  (render "/statuses/authors/:author" (assoc req :format :json)))
+
+(defpage updates-page-atom "/statuses/updates.atom" {:as req}
+  (println "Received Atom request")
+  (render "/statuses/authors/:author" (assoc req :format :atom)))
+
 
 (defpage updates-page "/statuses/updates" {:as req}
   (render "/statuses/authors/:author" req))
