@@ -1,9 +1,6 @@
 (ns statuses.server
   (:require [statuses.backend.persistence :as persistence]
-            [noir.server :as server]
-            [noir.options :as options]
-            [clojure.string :as string]
-            [hiccup.util :as hiccup])
+            [noir.server :as server])
   (:gen-class))
 
 (defn logger [handler]

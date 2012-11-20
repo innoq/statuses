@@ -1,6 +1,6 @@
 (ns statuses.backend.persistence
   (:require [statuses.backend.core :as core]
-            [clojure.data.json :as json]
+            [statuses.backend.json :as json]
             [clj-time.format :as format]
             [clj-time.core :as time]
             [clj-time.local :as local])
@@ -9,28 +9,10 @@
            java.util.concurrent.Executors))
 
 
-(defn write-db
-  "Writes out db to path"
-  [db path]
-  (with-open [file (writer path)]
-    (json/write db file :value-fn core/time-to-json)
-    (assoc db :time (time/now))))
-
-(defn get-save-time [db] (:time db))
-
-(defn- keywordify [n]
-  (let [parsed (read-string n)]
-    (if (number? parsed)
-      parsed
-      (keyword parsed))))
-
-(defn read-db
-  "Reads db from path"
-  [path]
-  (with-open [file (reader path)]
-    (json/read file
-               :value-fn core/json-to-time
-               :key-fn keywordify)))
+(defn get-save-time
+  "Return the timestamp of the last time the DB was saved"
+  [db]
+  (:time db))
 
 (defonce db (atom nil))
 (defonce timer (. Executors newScheduledThreadPool 1))
@@ -41,9 +23,10 @@
   [path interval]
   (let [persist-db (fn []
                      (println "Saving db to" path)
-                     (swap! db write-db path))]
+                     (swap! db assoc :time (time/now))
+                     (swap! db json/write-db path))]
     (try
-      (reset! db (read-db path))
+      (reset! db (json/read-db path))
       (catch java.io.IOException ioe
         (println "*Warning* Database " path " not found, using test data")
         (reset! db (core/add-testdata (core/empty-db) 50))))

@@ -1,6 +1,7 @@
 (ns statuses.views.main
   (:require [statuses.views.common :as common]
             [statuses.backend.core :as core]
+            [statuses.backend.json :as json]
             [clj-time.format :as format]
             [clj-time.local :as local])
   (:use [statuses.backend.persistence :only [db get-save-time]]
@@ -105,7 +106,6 @@
 
 (defpage "/statuses/authors/:author" {:keys [author json] :as req}
   (let [[query limit offset next] (parse-args req)]
-    (println "Next: " next)
     (let [current-etag (make-etag (first (core/get-latest @db 1 offset author)))
           last-etag (get-in (ring-request) [:headers "if-none-match"])]
       (if (not= current-etag last-etag)
@@ -113,7 +113,7 @@
           (if json
             (set-headers {"etag" (make-etag (first items))
                           "content-type" "application/json"}
-                         (core/as-json {:items items, :next next}))
+                         (json/as-json {:items items, :next next}))
             (list-page items next)))
         (redirect (:uri (ring-request)) :not-modified)))))
 

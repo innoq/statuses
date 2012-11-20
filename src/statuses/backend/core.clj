@@ -4,20 +4,6 @@
             [clj-time.local :as local]
             [clj-time.format :as format]))
 
-(defn time-to-json [key value]
-  (if (= :time key)
-    (local/format-local-time value :rfc822)
-    value))
-
-(defn json-to-time [key value]
-  (if (= :time key)
-    (format/parse value)
-    value))
-
-(defn as-json [content]
-  (json/write-str content :value-fn time-to-json))
-
-
 (defn empty-db []
   ;; creates an empty in-memory DB for usage with the functions in this namespace
   {:next-id 0        ;; the next id that will be used for values with identity
