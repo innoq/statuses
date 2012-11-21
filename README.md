@@ -25,7 +25,7 @@ fiddling around with stuff.
 
 _Statuses_ uses
 
-* <a href='http://webnoir.org">Noir</a> (this might actually change as
+* <a href='http://webnoir.org'>Noir</a> (this might actually change as
   it doesn't add too much value for us here
 * Hiccup for HTML and XML templating
 * clj-time for time-related stuff
