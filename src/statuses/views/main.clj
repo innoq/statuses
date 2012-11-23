@@ -152,6 +152,7 @@
           (nav-links request))))
 
 (defn new-update [{:keys [form-params] :as request}]
+  (println "New update, request:" request)
   (let [{:strs [text reply-to]} form-params
         length (.length text)]
     (if (<= length max-length)
@@ -171,7 +172,6 @@
   (GET  "/statuses/updates.atom"       [:as r]        feed)
   (GET  "/"                            []             (resp/redirect "/statuses/updates"))
   (GET  "/statuses"                    []             (resp/redirect "/statuses/updates"))
-  (route/files "/")
   (route/not-found "Not Found"))
 
 
