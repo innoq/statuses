@@ -6,15 +6,17 @@
         [ring.adapter.jetty :only [run-jetty]])
   (:gen-class))
 
-(defn app
-  []
+(def app
   (-> main/app-routes
       (wrap-params)
       (wrap-file "public")
       (wrap-file-info)
       (wrap-stacktrace)))
 
-(persistence/init-db! "data/db.json" 1)
-
 (defn -main [& m]
-  (run-jetty (app) {:port 8080 :join? false}))
+  (let [mode (keyword (or (first m) :dev))
+        port (Integer. (get (System/getenv) "PORT" "8080"))
+        hdl  (wrap-reload app)]
+    (persistence/init-db! "data/db.json" 1)
+    (println "Starting server on port" port "in mode" mode)
+    (run-jetty hdl {:port port :join? false})))

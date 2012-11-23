@@ -152,7 +152,6 @@
           (nav-links request))))
 
 (defn new-update [{:keys [form-params] :as request}]
-  (println "New update, request:" request)
   (let [{:strs [text reply-to]} form-params
         length (.length text)]
     (if (<= length max-length)
