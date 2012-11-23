@@ -10,7 +10,7 @@
    (into [:feed {:xmlns "http://www.w3.org/2005/Atom"}
           [:title "innoQ Status updates"]
           [:id "some-id"]
-          [:published (time/time-to-rfc3339 update-ts)]
+          [:updated (time/time-to-rfc3339 update-ts)]
           [:link {:rel "self" :href (str base-uri feed-uri) :type "application/atom+xml"}]
           [:author
            [:name "innoQ"]
@@ -22,4 +22,5 @@
                  [:summary (util/escape-html text)]
                  [:id id]
                  [:published (time/time-to-rfc3339 time)]
+                 [:updated (time/time-to-rfc3339 time)]
                  [:link {:href (str base-uri "/statuses/updates/" id) }]]) items))))
