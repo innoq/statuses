@@ -87,7 +87,7 @@
    (get-in request [:headers "host"])))
 
 (defn parse-args [request]
-  (let [{:keys [q limit offset]} (:params request)]
+  (let [{:strs [q limit offset]} (:params request)]
     (let [lmt (parse-num limit 25)
           off (parse-num offset 0)
           q-string (if q (str "&q=" q))
@@ -107,7 +107,7 @@
   [type body]
   (assoc-in {:body body} [:headers "content-type"] type))
 
-(defn items-page [author format request]
+(defn items-page [format author request]
   (let [[query limit offset next] (parse-args request)]
     (with-etag request (:time (first (core/get-latest @db 1 offset author)))
       (let [items (core/get-latest @db limit offset author)]
@@ -117,7 +117,7 @@
                            (json/as-json {:items items, :next next}))
          (= format :atom)  (content-type
                             "application/atom+xml;charset=utf-8"
-                            (html (atom/feed items (base-uri) (:uri request))))
+                            (html (atom/feed items (base-uri request) (:uri request))))
          :else            (content-type
                            "text/html;charset=utf-8"
                            (list-page items next request)))))))
