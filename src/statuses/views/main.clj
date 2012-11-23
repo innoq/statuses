@@ -1,25 +1,29 @@
 (ns statuses.views.main
-  (:require [statuses.views.common :as common]
+  (:require [statuses.backend.persistence :as persistence]
+            [clojure.pprint :as pp]
+            [compojure.handler :as handler]
+            [compojure.route :as route]
+            [ring.util.response :as resp]
+            [statuses.views.common :as common]
             [statuses.views.atom :as atom]
             [statuses.backend.core :as core]
             [statuses.backend.json :as json]
             [statuses.backend.time :as time])
   (:use [statuses.backend.persistence :only [db get-save-time]]
-        [noir.core :only [defpage defpartial render]]
-        [noir.response :only [redirect set-headers content-type xml]]
-        [noir.request :only [ring-request]]
+        [compojure.core]
+        [compojure.response]
         [hiccup.core :only [html]]
         [hiccup.element]
         [hiccup.form]
         [hiccup.page]
         [hiccup.util]))
 
-(defn user []
-  (or (get-in (ring-request) [:headers "remote_user"]) "guest"))
+(defn user [request]
+  (or (get-in request [:headers "remote_user"]) "guest"))
 
-(defn nav-links []
+(defn nav-links [request]
   (let [elems [ "/statuses/updates"  "Everything"
-                (str "/statuses/search?q=@" (user)) "Mentions"
+                (str "/statuses/search?q=@" (user request)) "Mentions"
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
@@ -38,13 +42,13 @@
 (defn format-time [time]
     [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
-(defpartial update [{:keys [id text author time in-reply-to]}]
-  [:div.content (linkify text)]
-  [:div.meta
-   [:span.author (link-to (str "/statuses/authors/" author) author)]
-   [:span.time (link-to (str "/statuses/updates/" id) (format-time time))]
-   (if in-reply-to
-     [:span.reply (link-to (str "/statuses/updates/" in-reply-to) in-reply-to)])])
+(defn update [{:keys [id text author time in-reply-to]}]
+  (list [:div.content (linkify text)]
+        [:div.meta
+         [:span.author (link-to (str "/statuses/authors/" author) author)]
+         [:span.time (link-to (str "/statuses/updates/" id) (format-time time))]
+         (if in-reply-to
+           [:span.reply (link-to (str "/statuses/updates/" in-reply-to) in-reply-to)])]))
 
 
 (defn entry-form []
@@ -60,57 +64,52 @@
            (hidden-field "reply-to" id)
            (submit-button "Reply")))
 
-(defn list-page [items next]
+(defn list-page [items next request]
   (common/layout
    (list [:div (entry-form)]
          [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
          (link-to next "Next"))
-   (nav-links)))
+   (nav-links request)))
 
-(defpartial update-page [item]
+(defn update-page [item request]
   (common/layout
    (list [:div.update (update item)]
          (reply-form (:id item) (:author item)))
-   (nav-links)))
-
-
-(defpage "/" []
-  (redirect "/statuses/updates"))
-
-(defpage "/statuses" []
-  (redirect "/statuses/updates"))
+   (nav-links request)))
 
 (defn parse-num [s default]
   (if (nil? s) default (read-string s)))
 
-(defn base-uri []
-  (let [req (ring-request)]
-    (str
-     (name (:scheme req))
-     "://"
-     (get-in req [:headers "host"]))))
+(defn base-uri [request]
+  (str
+   (name (:scheme request))
+   "://"
+   (get-in request [:headers "host"])))
 
-(defn parse-args [{:keys [q limit offset]}]
-  (let [lmt (parse-num limit 25)
-        off (parse-num offset 0)
-        req (ring-request)
-        q-string (if q (str "&q=" q))
-        next (str (base-uri) (:uri req) "?limit=" lmt "&offset=" (+ lmt off) q-string)]
-    [q lmt off next]))
+(defn parse-args [request]
+  (let [{:keys [q limit offset]} (:params request)]
+    (let [lmt (parse-num limit 25)
+          off (parse-num offset 0)
+          q-string (if q (str "&q=" q))
+          next (str (base-uri request) (:uri request) "?limit=" lmt "&offset=" (+ lmt off) q-string)]
+      [q lmt off next])))
 
 (defmacro with-etag
   "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
-  [etag & body]
-  `(let [last-etag# (get-in (ring-request) [:headers "if-none-match"])
+  [request etag & body]
+  `(let [last-etag# (get-in ~request [:headers "if-none-match"])
          etag-str# (str ~etag)]
       (if (= etag-str# last-etag#)
-        (redirect (:uri (ring-request)) :not-modified)
-        (set-headers {"etag" etag-str#}
-                     ~@body))))
+        {:location (:uri ~request), :status 304, :body ""}
+        (assoc-in ~@body [:headers "etag"] etag-str#))))
 
-(defpage "/statuses/authors/:author" {:keys [author format] :as req}
-  (let [[query limit offset next] (parse-args req)]
-    (with-etag (:time (first (core/get-latest @db 1 offset author)))
+(defn content-type
+  [type body]
+  (assoc-in {:body body} [:headers "content-type"] type))
+
+(defn items-page [author format request]
+  (let [[query limit offset next] (parse-args request)]
+    (with-etag request (:time (first (core/get-latest @db 1 offset author)))
       (let [items (core/get-latest @db limit offset author)]
         (cond
          (= format :json) (content-type
@@ -118,50 +117,61 @@
                            (json/as-json {:items items, :next next}))
          (= format :atom)  (content-type
                             "application/atom+xml;charset=utf-8"
-                            (html (atom/feed items (base-uri) (:uri (ring-request)))))
+                            (html (atom/feed items (base-uri) (:uri request))))
          :else            (content-type
                            "text/html;charset=utf-8"
-                           (list-page items next)))))))
+                           (list-page items next request)))))))
 
+(defn search [request]
+  (let [[query limit offset next] (parse-args request)]
+    (list-page (core/get-latest-with-text @db limit offset (str query)) next request)))
 
-(defpage "/statuses/search" {:as req}
-  (let [[query limit offset next] (parse-args req)]
-    (list-page (core/get-latest-with-text @db limit offset (str query)) next)))
+(defn json [request]
+  (items-page :json nil request))
 
-(defpage updates-page-json "/statuses/updates.json" {:as req}
-  (println "Received JSON request")
-  (render "/statuses/authors/:author" (assoc req :format :json)))
+(defn feed [request]
+  (items-page :atom nil request))
 
-(defpage updates-page-atom "/statuses/updates.atom" {:as req}
-  (println "Received Atom request")
-  (render "/statuses/authors/:author" (assoc req :format :atom)))
-
-
-(defpage updates-page "/statuses/updates" {:as req}
-  (render "/statuses/authors/:author" req))
-
-(defpage "/statuses/updates/:id" {:keys [id]}
-  (update-page (core/get-update @db (Integer/parseInt id))))
+(defn page [id request]
+  (update-page (core/get-update @db (Integer/parseInt id)) request))
 
 (def max-length 140)
 
-(defpage "/statuses/too-long/:length" {:keys [length]}
+(defn too-long [length request]
   (common/layout
    (str "Sorry, the maximum lenght is " max-length " but you tried " length " characters")
-   (nav-links)))
+   (nav-links request)))
 
-(defpage [:post "/statuses/updates"] {:keys [text reply-to]}
-  (let [length (.length text)]
-    (if (<= length max-length)
-      (do (swap! db core/add-update (user) text (parse-num reply-to nil))
-          (redirect "/statuses"))
-      (redirect (str "/statuses/too-long/" length)))))
-
-(defpage "/statuses/info" []
+(defn info [request]
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
         (common/layout
          [:table.table
           (item "# of entries" (core/get-count @db))
-          (item "Last save at" (get-save-time @db))]
-          (nav-links))))
+          (item "Last save at" (get-save-time @db))
+          (item "Request" [:pre (with-out-str (pp/pprint request))])]
+          (nav-links request))))
+
+(defn new-update [{:keys [form-params] :as request}]
+  (let [{:strs [text reply-to]} form-params
+        length (.length text)]
+    (if (<= length max-length)
+      (do (swap! db core/add-update (user request) text (parse-num reply-to nil))
+          (resp/redirect "/statuses"))
+      (resp/redirect (str "/statuses/too-long/" length)))))
+
+(defroutes app-routes
+  (GET  "/statuses/updates"            [:as r]        (items-page nil nil r))
+  (POST "/statuses/updates"            [:as r]        (new-update r))
+  (GET  "/statuses/authors/:author"    [author :as r] (items-page format author r))
+  (GET  "/statuses/info"               []             info)
+  (GET  "/statuses/too-long/:length"   [length :as r] (too-long length r))
+  (GET  "/statuses/updates/:id"        [id :as r]     (page id r))
+  (GET  "/statuses/search"             [:as r]        search)
+  (GET  "/statuses/updates.json"       [:as r]        json)
+  (GET  "/statuses/updates.atom"       [:as r]        feed)
+  (GET  "/"                            []             (resp/redirect "/statuses/updates"))
+  (GET  "/statuses"                    []             (resp/redirect "/statuses/updates"))
+  (route/not-found "Not Found"))
+
+
 

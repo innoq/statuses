@@ -1,22 +1,22 @@
 (ns statuses.server
-  (:require [statuses.backend.persistence :as persistence]
-            [noir.server :as server])
+  (:require [statuses.views.main :as main]
+            [statuses.backend.persistence :as persistence])
+  (:use [compojure.core]
+        [ring.middleware file file-info stacktrace reload params]
+        [ring.adapter.jetty :only [run-jetty]])
   (:gen-class))
 
-(defn logger [handler]
-  (fn [request]
-    (println request)
-    (handler request)))
-
-;(server/add-middleware logger)
-(server/load-views-ns 'statuses.views)
-
+(def app
+  (-> main/app-routes
+      (wrap-params)
+      (wrap-file "public")
+      (wrap-file-info)
+      (wrap-stacktrace)))
 
 (defn -main [& m]
-  (persistence/init-db! "data/db.json" 1)
   (let [mode (keyword (or (first m) :dev))
-        port (Integer. (get (System/getenv) "PORT" "8080"))]
-    (println "Starting server in" mode "mode")
-    (server/start port {:mode mode
-                        :ns 'statuses})))
-
+        port (Integer. (get (System/getenv) "PORT" "8080"))
+        hdl  (wrap-reload app)]
+    (persistence/init-db! "data/db.json" 1)
+    (println "Starting server on port" port "in mode" mode)
+    (run-jetty hdl {:port port :join? false})))
