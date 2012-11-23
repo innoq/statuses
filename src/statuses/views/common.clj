@@ -1,6 +1,5 @@
 (ns statuses.views.common
-  (:use [noir.core :only [defpartial]]
-        [hiccup.page :only [include-css include-js html5]]
+  (:use [hiccup.page :only [include-css include-js html5]]
         [hiccup.element :only [link-to]]))
 
 

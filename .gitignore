@@ -4,3 +4,4 @@ pom.xml
 /classes/
 /data/db.json
 .lein-deps-sum
+/target/
