@@ -8,7 +8,7 @@ if system('lein uberjar')
   f.puts "java -jar #{mainjar} prod"
   f.close
   puts "Synchronizing with remote dir."
-  `rsync --exclude data --delete -avz run.sh target/#{mainjar} resources internal2.innoq.com:/home/statuses`
+  `rsync --exclude data --delete -avz run.sh target/#{mainjar} public internal2.innoq.com:/home/statuses`
   puts "Done."
 end
 
