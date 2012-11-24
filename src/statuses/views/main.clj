@@ -38,14 +38,17 @@
 (defn format-time [time]
     [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
-(defn update [{:keys [id text author time in-reply-to]}]
+(defn update [{:keys [id text author time in-reply-to conversation]}]
   (list [:img.avatar {:src (avatar-uri author) :alt author}]
         [:div.content (linkify text)]
         [:div.meta
          [:span.author (link-to (str base "?author=" author) author)]
          [:span.time (link-to (str base "/" id) (format-time time))]
          (if in-reply-to
-           [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)])]))
+           (list
+            [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)]
+            [:span.conversation (link-to (str "/statuses/conversations/" conversation)
+                                         conversation)]))]))
 
 
 (defn entry-form []
@@ -65,7 +68,7 @@
   (common/layout
    (list [:div (entry-form)]
          [:div [:ul.updates (map (fn [item] [:li.post (update item)]) items)]]
-         (link-to next "Next"))
+         (if next (link-to next "Next")))
    (nav-links request)))
 
 (defn update-page [item request]

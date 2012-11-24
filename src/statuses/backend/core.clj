@@ -66,9 +66,9 @@
            (add-conversation id reply-to)))))
 
 (defn get-conversation
-  "Returns a list of posts participating in conversation with id."
+  "Returns posts participating in conversation with id."
   [db id]
-  (get-in db [:conversations id]))
+  (map #(get (:posts db) %) (get-in db [:conversations id])))
 
 (defn get-count
   "Returns the number of posts in db."
