@@ -25,8 +25,7 @@ fiddling around with stuff.
 
 _Statuses_ uses
 
-* <a href='http://webnoir.org'>Noir</a> (this might actually change as
-  it doesn't add too much value for us here
+* Compojure for URI routing
 * Hiccup for HTML and XML templating
 * clj-time for time-related stuff
 * clojure.data.json for JSON support
