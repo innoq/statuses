@@ -32,4 +32,6 @@
                   [:div.span2
                    [:div.well {:style "padding:10px 0px 10px 0px;"}
                     [:ul {:class "nav nav-list"}
-                     navigation ]]]]])]))
+                     navigation ]]]]])
+                (include-js "/statuses/js/jquery.js")
+                (include-js "/statuses/js/statuses.js")]))

@@ -20,6 +20,7 @@ li {
 .content {
     overflow: hidden; /* block formatting context, independent from avatar */
     font-size: 16px;
+    cursor: pointer;
 }
 
 .meta {
