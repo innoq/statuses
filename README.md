@@ -43,7 +43,7 @@ its usability as a self-contained example), the most significant
 design decision within _Statuses_ is that no database is
 used. Instead, all of the status updates are kept in memory and are
 persisted every minute. This works suprisingly well in terms of code
-simplicity, but will obviosly scale only within limits. But if you
+simplicity, but will obviously scale only within limits. But if you
 assume 15k are needed for every 100 status updates, even a million of
 them would fit in 150MB of JSON (and probably something similar in
 memory, haven't checked yet).
