@@ -1,5 +1,5 @@
 (ns statuses.server
-  (:require [statuses.views.main :as main]
+  (:require [statuses.routing :as main]
             [statuses.backend.persistence :as persistence])
   (:use [compojure.core]
         [ring.middleware file file-info stacktrace reload params]
