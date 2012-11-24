@@ -20,26 +20,20 @@
 (defn get-filtered-by
   "Retrieve the latest n status updates, starting with offset,
    restricted by pred, ordered by time"
-  ([db n offset pred]
+  ([db limit offset pred]
      (let [posts (map #(get (:posts db) %) (:timeline db))]
-           (take n (drop offset (filter pred posts))))))
+           (take limit (drop offset (filter pred posts))))))
 
 (defn get-latest
   "Retrieve the latest n status updates, starting with offset,
-   optionally restricted to author, ordered by time"
-  ([db n offset & [author & rest]]
-     (let [pred  (if author
-                   (fn [e] (= author (:author e)))
-                   (fn [e] true))]
-       (get-filtered-by db n offset pred))))
-
-(defn get-latest-with-text
-  "Retrieve the latest n mentions for author, starting with offset,
-   ordered by time"
-  ([db n offset search]
-     (let [pred (fn [{:keys [text]}]
-                  (not= (.indexOf text search) -1))]
-       (get-filtered-by db n offset pred))))
+   optionally restricted to author, containing quert, ordered by time"
+  [db limit offset author query]
+  (println "get-latest" limit offset author query)
+  (get-filtered-by db limit offset
+                   (fn [item]
+                     (and
+                      (or (nil? author) (= author (:author item)))
+                      (or (nil? query) (not= (.indexOf (:text item) query) -1))))))
 
 (defn- add-conversation
   "Returns db with conversation added. Safe to call with reply-to = nil."

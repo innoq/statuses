@@ -18,6 +18,8 @@
         [hiccup.page]
         [hiccup.util]))
 
+(def base "/statuses/updates")
+
 (defn user [request]
   (or (get-in request [:headers "remote_user"]) "guest"))
 
@@ -25,8 +27,8 @@
   (str "https://testldap.innoq.com/liqid2/users/" username "/avatar/32x32")) ; TODO: configurable
 
 (defn nav-links [request]
-  (let [elems [ "/statuses/updates"  "Everything"
-                (str "/statuses/updates?q=@" (user request)) "Mentions"
+  (let [elems [ base  "Everything"
+                (str base "?query=@" (user request)) "Mentions"
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
@@ -34,7 +36,7 @@
 
 (defn linkify [text]
   (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
-        hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?q=%23" m "'>" m "</a>"))
+        hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
         anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
     (-> text
         escape-html
@@ -49,19 +51,19 @@
   (list [:img.avatar {:src (avatar-uri author) :alt author}]
         [:div.content (linkify text)]
         [:div.meta
-         [:span.author (link-to (str "/statuses/updates?author=" author) author)]
-         [:span.time (link-to (str "/statuses/updates/" id) (format-time time))]
+         [:span.author (link-to (str base "?author=" author) author)]
+         [:span.time (link-to (str base "/" id) (format-time time))]
          (if in-reply-to
-           [:span.reply (link-to (str "/statuses/updates/" in-reply-to) in-reply-to)])]))
+           [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)])]))
 
 
 (defn entry-form []
-  (form-to [:post "/statuses/updates"]
+  (form-to [:post base]
            (text-field {:class "input-xxlarge" :autofocus "autofocus" } "text")
            (submit-button "Send update")))
 
 (defn reply-form [id author]
-  (form-to [:post "/statuses/updates"]
+  (form-to [:post base]
            (text-field {:class "input-xxlarge"
                         :autofocus "autofocus"
                         :value (str "@" author) } "text")
@@ -121,13 +123,12 @@
           (resp/redirect "/statuses"))
       (resp/redirect (str "/statuses/too-long/" length)))))
 
-(defn next-uri [q limit offset format author request]
-  (str (base-uri request) 
-       (:uri request)
-       "?limit=" limit "&offset=" (+ limit offset)
-       (if q (str "&q=" q))
-       (if author (str "&author=" author))
-       (if format (str "&format=" format))))
+(defn build-query-string
+  [m]
+  (clojure.string/join "&" (map (fn [[key val]] (str (name key) "=" val)) m)))
+
+(defn next-uri [params request]
+  (str (base-uri request) (:uri request) "?" (build-query-string params)))
 
 (defmacro with-etag
   "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
@@ -138,10 +139,11 @@
         {:location (:uri ~request), :status 304, :body ""}
         (assoc-in ~@body [:headers "etag"] etag-str#))))
 
-(defn updates-page [q limit offset format author request]
-  (let [next (next-uri q limit offset format author request)]
-    (with-etag request (:time (first (core/get-latest @db 1 offset author)))
-      (let [items (core/get-latest @db limit offset author)]
+(defn updates-page [params request]
+  (let [next (next-uri params request)
+        {:keys [limit offset author query format]} params]
+    (with-etag request (:time (first (core/get-latest @db 1 offset author query)))
+      (let [items (core/get-latest @db limit offset author query)]
         (cond
          (= format "json") (content-type
                             "application/json"
@@ -165,17 +167,16 @@
           defaults))
 
 (defn handle-list-view [request]
-  (let [{:strs [q limit offset author format]} (:params request)]
-    (updates-page q (parse-num limit 25) (parse-num offset 0) format author request)))
+  (updates-page (transform-params (:params request) {:limit 25 :offset 0}) request))
 
 
 (defroutes app-routes
-  (POST "/statuses/updates"              []             new-update)
-  (GET  "/statuses/updates"              []             handle-list-view)
-  (GET  "/statuses/updates/:id"          [id :as r]     (page id r))
+  (POST base                             []             new-update)
+  (GET  base                             []             handle-list-view)
+  (GET  (str base "/:id")                [id :as r]     (page id r))
   (GET  "/statuses/info"                 []             info)
   (GET  "/statuses/too-long/:length"     [length :as r] (too-long length r))
-  (GET  "/"                              []             (resp/redirect "/statuses/updates"))
-  (GET  "/statuses"                      []             (resp/redirect "/statuses/updates"))
+  (GET  "/"                              []             (resp/redirect base))
+  (GET  "/statuses"                      []             (resp/redirect base))
   (route/not-found "Not Found"))
 
