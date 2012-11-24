@@ -10,7 +10,10 @@
                (include-css "/statuses/css/bootstrap.css")
                (include-css "/statuses/css/bootstrap-responsive.css")
                (include-css "/statuses/css/statuses.css")
-               [:link {:href "/statuses/updates.atom" :rel "alternate" :title "innoQ Statuses Feed" :type "application/atom+xml"}]
+               [:link {:href "/statuses/updates?format=atom"
+                       :rel "alternate"
+                       :title "innoQ Statuses Feed"
+                       :type "application/atom+xml"}]
                [:style "body { padding-top: 60px; }"]]
               [:body
                (list
