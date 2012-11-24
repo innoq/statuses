@@ -9,7 +9,7 @@
   (let [update-ts (:time (first items))]
    (into [:feed {:xmlns "http://www.w3.org/2005/Atom"}
           [:title "innoQ Status updates"]
-          [:id "some-id"]
+          [:id feed-uri]
           [:updated (time/time-to-rfc3339 update-ts)]
           [:link {:rel "self" :href (str base-uri feed-uri) :type "application/atom+xml"}]
           [:author

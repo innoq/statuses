@@ -28,7 +28,6 @@
   "Retrieve the latest n status updates, starting with offset,
    optionally restricted to author, containing quert, ordered by time"
   [db limit offset author query]
-  (println "get-latest" limit offset author query)
   (get-filtered-by db limit offset
                    (fn [item]
                      (and

@@ -22,7 +22,6 @@
   "Initializes database from path, saving it every interval minutes"
   [path interval]
   (let [persist-db (fn []
-                     (println "Saving db to" path)
                      (swap! db assoc :time (time/now))
                      (swap! db json/write-db path))]
     (try
