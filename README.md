@@ -84,6 +84,6 @@ across the following namespaces and matching files:
   status updates
 
 
- ## Author information and license
+## Author information and license
 
 Copyright 2012 innoQ Deutschland GmbH. Published under the Apache 2.0 license.
