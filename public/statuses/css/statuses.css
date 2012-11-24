@@ -11,8 +11,16 @@ li {
     padding-bottom: 10px;
 }
 
+.avatar {
+    clear: left;
+    float: left;
+    margin-right: 0.5em;
+}
+
 .content {
+    overflow: hidden; /* block formatting context, independent from avatar */
     font-size: 16px;
+    cursor: pointer;
 }
 
 .meta {

@@ -21,6 +21,9 @@
 (defn user [request]
   (or (get-in request [:headers "remote_user"]) "guest"))
 
+(defn avatar-uri [username]
+  (str "https://testldap.innoq.com/liqid2/users/" username "/avatar/32x32")) ; TODO: configurable
+
 (defn nav-links [request]
   (let [elems [ "/statuses/updates"  "Everything"
                 (str "/statuses/updates?q=@" (user request)) "Mentions"
@@ -43,7 +46,8 @@
     [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
 (defn update [{:keys [id text author time in-reply-to]}]
-  (list [:div.content (linkify text)]
+  (list [:img.avatar {:src (avatar-uri author) :alt author}]
+        [:div.content (linkify text)]
         [:div.meta
          [:span.author (link-to (str "/statuses/updates?author=" author) author)]
          [:span.time (link-to (str "/statuses/updates/" id) (format-time time))]
