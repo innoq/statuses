@@ -5,7 +5,7 @@
   (:use [hiccup.core :only [html]]
         [hiccup.element :only [link-to]]
         [hiccup.form :only [form-to text-field hidden-field submit-button]]
-        [hiccup.util :only [escape-html]]))
+        ))
 
 (def base "/statuses/updates")
 
@@ -23,24 +23,12 @@
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
 
-(def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
-
-(defn linkify [text]
-  (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
-        hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
-        anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
-    (-> text
-        escape-html
-        (clojure.string/replace #"@(\w*)" handle)
-        (clojure.string/replace uri anchor)
-        (clojure.string/replace #"#(\w*)" hashtag))))
-
 (defn format-time [time]
     [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
 (defn update [{:keys [id text author time in-reply-to conversation]}]
   (list [:img.avatar {:src (avatar-uri author) :alt author}]
-        [:div.content (linkify text)]
+        [:div.content (common/linkify text)]
         [:div.meta
          [:span.author (link-to (str base "?author=" author) author)]
          [:span.time (link-to (str base "/" id) (format-time time))]

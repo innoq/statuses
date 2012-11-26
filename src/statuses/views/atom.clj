@@ -1,6 +1,7 @@
 (ns statuses.views.atom
   (:require [statuses.backend.time :as time]
-            [hiccup.util :as util]))
+            [hiccup.util :as util]
+            [statuses.views.common :as common]))
 
 
 
@@ -19,7 +20,7 @@
                 [{:keys [id author text time]}]
                 [:entry
                  [:title (str "Posted by @" author)]
-                 [:summary (util/escape-html text)]
+                 [:content {:type (str "html")} (util/escape-html (common/linkify text))]
                  [:id id]
                  [:published (time/time-to-rfc3339 time)]
                  [:updated (time/time-to-rfc3339 time)]
