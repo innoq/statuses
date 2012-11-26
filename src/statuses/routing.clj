@@ -89,6 +89,9 @@
 (defn page [id request]
   (update-page (core/get-update @db (Integer/parseInt id)) request))
 
+(defn conversation [id request]
+  (list-page (core/get-conversation @db (Integer/parseInt id)) nil request))
+
 (defn info [request]
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
         (common/layout
@@ -108,6 +111,7 @@
   (POST base                             []             new-update)
   (GET  base                             []             handle-list-view)
   (GET  (str base "/:id")                [id :as r]     (page id r))
+  (GET  "/statuses/conversations/:id"    [id :as r]     (conversation id r))
   (GET  "/statuses/info"                 []             info)
   (GET  "/statuses/too-long/:length"     [length :as r] (too-long length r))
   (GET  "/"                              []             (resp/redirect base))
