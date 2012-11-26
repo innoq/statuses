@@ -18,7 +18,7 @@
 (defn nav-links [request]
   (let [elems [ base  "Everything"
                 (str base "?query=@" (user request)) "Mentions"
-                (str base "?format=atom&author=@" (user request)) "Feed for everything"
+                (str base "?format=atom") "Feed for everything"
                 (str base "?format=atom&query=@" (user request)) "Feed for mentions"
                 "/statuses/info" "Server info" ]]
     (map (fn [[url text]] [:li (link-to url text)]) (partition 2 elems))))
