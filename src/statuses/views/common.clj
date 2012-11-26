@@ -1,6 +1,8 @@
 (ns statuses.views.common
   (:use [hiccup.page :only [include-css include-js html5]]
-        [hiccup.element :only [link-to]]))
+        [hiccup.element :only [link-to]]
+        [hiccup.util :only [escape-html]]
+        ))
 
 
 (defn layout [content navigation]
@@ -38,3 +40,15 @@
                      navigation ]]]]])
                 (include-js "/statuses/js/jquery.js")
                 (include-js "/statuses/js/statuses.js")]))
+
+(def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
+
+(defn linkify [text]
+  (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
+        hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
+        anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
+    (-> text
+        escape-html
+        (clojure.string/replace #"@(\w*)" handle)
+        (clojure.string/replace uri anchor)
+        (clojure.string/replace #"#(\w*)" hashtag))))

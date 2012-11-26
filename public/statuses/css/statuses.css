@@ -39,6 +39,13 @@ li {
     content: ' in reply to ';
 }
 
+.conversation:before {
+    content: ' (conversation ';
+}
+
+.conversation:after {
+    content: ')';
+}
 .input {
     width: 80;
 }
