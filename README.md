@@ -42,7 +42,7 @@ Given its very limited initial requirements at @innoQ (and to support
 its usability as a self-contained example), the most significant
 design decision within _Statuses_ is that no database is
 used. Instead, all of the status updates are kept in memory and are
-persisted every minute. This works suprisingly well in terms of code
+persisted every minute. This works surprisingly well in terms of code
 simplicity, but will obviously scale only within limits. But if you
 assume 15k are needed for every 100 status updates, even a million of
 them would fit in 150MB of JSON (and probably something similar in
@@ -57,7 +57,7 @@ is persisted immediately (essentially a transaction log). The full
 state could thus be restored from the events stored, adding yet
 another buzzword and turning this an event-sourcing model. But seeing
 how far one can get without actually using a "real" database is part
-of the experiement.
+of the experiment.
 
 So there are currently no plans to change the db model, even though
 refactoring the persistence into a Clojure `protocol` might be
@@ -65,7 +65,7 @@ reasonable to allow others to implement different backends.
 
 ### Modules
 
-Currenly, the structure of the whole program is still very simplistic
+Currently, the structure of the whole program is still very simplistic
 and should probably be refactored soon. At the moment, code is split
 across the following namespaces and matching files:
 
