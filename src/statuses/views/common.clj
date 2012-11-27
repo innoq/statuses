@@ -49,6 +49,6 @@
         anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
     (-> text
         escape-html
-        (clojure.string/replace #"@(\w*)" handle)
+        (clojure.string/replace #"@(\w+)" handle)
         (clojure.string/replace uri anchor)
-        (clojure.string/replace #"#(\w*)" hashtag))))
+        (clojure.string/replace #"#(\w+)" hashtag))))
