@@ -47,7 +47,7 @@
         (assoc-in ~@body [:headers "etag"] etag-str#))))
 
 (defn updates-page [params request]
-  (let [next (next-uri params request)
+  (let [next (next-uri (update-in params [:offset] #(+ 25 %)) request)
         {:keys [limit offset author query format]} params]
     (with-etag request (:time (first (core/get-latest @db 1 offset author query)))
       (let [items (core/get-latest @db limit offset author query)]
