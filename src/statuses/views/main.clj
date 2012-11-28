@@ -40,17 +40,17 @@
 
 
 (defn entry-form []
-  (form-to [:post base]
+  (form-to {:class "form-inline" } [:post base]
            (text-field {:class "input-xxlarge" :autofocus "autofocus" } "text")
-           (submit-button "Send update")))
+           (submit-button {:class "btn" } "Send update")))
 
 (defn reply-form [id author]
   (form-to [:post base]
            (text-field {:class "input-xxlarge"
                         :autofocus "autofocus"
-                        :value (str "@" author) } "text")
+                        :value (str "@" author " ") } "text")
            (hidden-field "reply-to" id)
-           (submit-button "Reply")))
+           (submit-button {:class "btn" } "Reply")))
 
 (defn list-page [items next request]
   (common/layout
