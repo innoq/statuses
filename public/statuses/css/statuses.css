@@ -16,6 +16,7 @@ li {
     float: left;
     margin-right: 0.5em;
     width: 32px;
+    max-height: 32px;
 }
 
 .content {
