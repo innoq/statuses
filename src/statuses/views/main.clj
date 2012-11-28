@@ -48,7 +48,7 @@
   (form-to [:post base]
            (text-field {:class "input-xxlarge"
                         :autofocus "autofocus"
-                        :value (str "@" author) } "text")
+                        :value (str "@" author " ") } "text")
            (hidden-field "reply-to" id)
            (submit-button {:class "btn" } "Reply")))
 
