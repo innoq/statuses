@@ -1,6 +1,11 @@
 body {
     margin: 30px;
 }
+body,
+.content { /* required to override Bootstrap defaults */
+    line-height: 1.33em;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
