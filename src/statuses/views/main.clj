@@ -5,6 +5,7 @@
   (:use [hiccup.core :only [html]]
         [hiccup.element :only [link-to]]
         [hiccup.form :only [form-to text-field hidden-field submit-button]]
+        [statuses.configuration :only [config]]
         ))
 
 (def base "/statuses/updates")
@@ -13,7 +14,7 @@
   (or (get-in request [:headers "remote_user"]) "guest"))
 
 (defn avatar-uri [username]
-  (str "https://testldap.innoq.com/liqid2/users/" username "/avatar/32x32")) ; TODO: configurable
+  (clojure.string/replace (config :avatar-url) #"\$username" username))
 
 (defn nav-links [request]
   (let [elems [ base  "Everything"
