@@ -6,7 +6,7 @@
   ;; creates an empty in-memory DB for usage with the functions in this namespace
   {:next-id 0        ;; the next id that will be used for values with identity
    :posts {}         ;; the actual status updates, keyed by id
-   :timeline []      ;; ids of status updates in order of posting
+   :timeline ()      ;; ids of status updates in order of posting
    :conversations {} ;; conversations, each as an ordered vector, keyed by id
    })
 
