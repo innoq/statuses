@@ -15,10 +15,10 @@
   (:time db))
 
 (defonce db (atom nil))
-(defonce timer (. Executors newScheduledThreadPool 1))
 
 
-(defn init-db!
+
+(defn init!
   "Initializes database from path, saving it every interval minutes"
   [path interval]
   (let [persist-db (fn []
@@ -30,7 +30,7 @@
         (println "*Warning* Database " path " not found, using test data")
         (reset! db (core/add-testdata (core/empty-db) 50))))
     (.. Runtime getRuntime (addShutdownHook (Thread. persist-db)))
-    (. timer (scheduleAtFixedRate persist-db
+    (. (Executors/newScheduledThreadPool 1) (scheduleAtFixedRate persist-db
                                   (long interval)
                                   (long interval)
                                   (. TimeUnit MINUTES)))))

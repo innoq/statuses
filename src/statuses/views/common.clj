@@ -2,6 +2,7 @@
   (:use [hiccup.page :only [include-css include-js html5]]
         [hiccup.element :only [link-to]]
         [hiccup.util :only [escape-html]]
+        [statuses.configuration :only [config]]
         ))
 
 
@@ -14,7 +15,7 @@
                (include-css "/statuses/css/statuses.css")
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
-                       :title "innoQ Statuses Feed"
+                       :title (config :title)
                        :type "application/atom+xml"}]
                [:style "body { padding-top: 60px; }"]]
               [:body
