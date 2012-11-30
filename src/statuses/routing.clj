@@ -62,8 +62,6 @@
                             "text/html;charset=utf-8"
                             (list-page items next request)))))))
 
-
-
 (defn new-update [{:keys [form-params] :as request}]
   (let [{:strs [text reply-to]} form-params
         length (.length text)]
