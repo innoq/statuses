@@ -14,7 +14,7 @@
   (or (get-in request [:headers "remote_user"]) "guest"))
 
 (defn avatar-uri [username]
-  (clojure.string/replace (config :avatar-url) #"\$username" username))
+  (clojure.string/replace (config :avatar-url) "{username}" username))
 
 (defn nav-links [request]
   (let [elems [ base  "Everything"
