@@ -17,24 +17,23 @@
 
 
 (defn nav-links [request]
-  (def res (list))
-  (def link-map (array-map
-	"Statuses" (list
-		{:url base :title "Everything" :icon "icon-th-list"},
-		{:url (str base "?query=@" (user request)) :title "Mentions" :icon "icon-user"}),
-	"Feeds" (list
-		{:url (str base "?format=atom") :title "Feed for everything" :icon "icon-fire"},
-		{:url (str base "?format=atom&query=@" (user request)) :title "Feed for mentions" :icon "icon-fire"}),
-	"Support" (list
-		{:url "/statuses/info" :title "Server info" :icon "icon-info-sign"},
-		{:url "https://github.com/innoq/statuses/issues" :title "Report issue" :icon "icon-question-sign"})
-	))
-  (doseq [[k v] (map vector (keys link-map) (vals link-map))]
-    (def res (conj (list [:li.nav-header k]) res))
-	(doseq [x v]
-		(def icon (x :icon))
-      (def res (conj (list [:li (link-to (x :url) (list (if(x :icon)[:i {:class (x :icon)}]) (x :title)))]) res))))
-  res)
+  (let [links ["Statuses" [{:url base :title "Everything"
+                               :icon "icon-th-list"},
+                              {:url (str base "?query=@" (user request)) :title "Mentions"
+                               :icon "icon-user"}],
+                  "Feeds"    [{:url (str base "?format=atom") :title "Feed for everything"
+                               :icon "icon-fire"},
+                              {:url (str base "?format=atom&query=@" (user request)) :title "Feed for mentions"
+                               :icon "icon-fire"}],
+                  "Support"  [{:url "/statuses/info" :title "Server info"
+                               :icon "icon-info-sign"},
+                              {:url "https://github.com/innoq/statuses/issues" :title "Report issue"
+                               :icon "icon-question-sign"}]]]
+
+    (map (fn [[header elements]]
+           [:li.nav-header header
+            (map (fn [{:keys [url title icon]}] [:li (link-to url [:i {:class icon}] title)]) elements)])
+         (partition 2 links))))
 
 (defn format-time [time]
     [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
