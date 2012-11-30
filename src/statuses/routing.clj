@@ -35,7 +35,9 @@
   (clojure.string/join "&" (map (fn [[key val]] (str (name key) "=" val)) m)))
 
 (defn next-uri [params request]
-  (str (base-uri request) (:uri request) "?" (build-query-string params)))
+  (if (< (:offset params) (core/get-count @db))
+  (str (base-uri request) (:uri request) "?" (build-query-string params))
+  nil))
 
 (defmacro with-etag
   "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
@@ -61,8 +63,6 @@
          :else             (content-type
                             "text/html;charset=utf-8"
                             (list-page items next request)))))))
-
-
 
 (defn new-update [{:keys [form-params] :as request}]
   (let [{:strs [text reply-to]} form-params
