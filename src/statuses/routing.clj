@@ -36,8 +36,8 @@
 
 (defn next-uri [params request]
   (if (< (:offset params) (core/get-count @db))
-  (str (base-uri request) (:uri request) "?" (build-query-string params))
-  nil))
+    (str (base-uri request) (:uri request) "?" (build-query-string params))
+    nil))
 
 (defmacro with-etag
   "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
