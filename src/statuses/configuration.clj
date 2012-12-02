@@ -10,8 +10,14 @@
 (def config-holder (atom default-config))
 
 (defn init! [path]
-  (println "Initializing configuration from" path)
-  (reset! config-holder (merge default-config (read-string (slurp path)))))
+  (if path
+    (try
+      (println "Initializing configuration from" path ":")
+      (swap! config-holder #(merge % (read-string (slurp path))))
+      (catch java.io.FileNotFoundException e
+        (println "Configuration not found, exiting.")
+        (System/exit -1)))
+    (println "Using default configuration.")))
 
 (defn config
   ([] @config-holder)
