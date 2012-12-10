@@ -12,6 +12,7 @@
                [:title "innoQ Statuses"]
                (include-css "/statuses/css/bootstrap.css")
                (include-css "/statuses/css/bootstrap-responsive.css")
+               (include-css "/statuses/css/jquery-charCount.css")
                (include-css "/statuses/css/statuses.css")
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
@@ -40,6 +41,7 @@
                     [:ul {:class "nav nav-list"}
                      navigation ]]]]])
                 (include-js "/statuses/js/jquery.js")
+                (include-js "/statuses/js/jquery-charCount.min.js")
                 (include-js "/statuses/js/statuses.js")]))
 
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")

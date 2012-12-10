@@ -1,0 +1,17 @@
+/* CSS for the jQuery charCount plugin by Tom Coote (tomcoote.co.uk) */
+
+.charCountBox {
+	position: absolute;
+	border: 1px solid #DDD;
+	color: #888;
+	background: #FFF;
+	padding: 2px;
+	text-align: center;
+	font-size: 80%;
+	cursor: help;
+
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+.limitReached { border: 1px solid #FF0000; }
