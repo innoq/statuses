@@ -10,8 +10,9 @@
             (html5
               [:head
                [:title "innoQ Statuses"]
-               (include-css "/statuses/css/bootstrap.css")
-               (include-css "/statuses/css/bootstrap-responsive.css")
+               (include-css "/statuses/lib/bootstrap.css")
+               (include-css "/statuses/lib/bootstrap-responsive.css")
+               (include-css "/statuses/lib/jquery-charCount.css")
                (include-css "/statuses/css/statuses.css")
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
@@ -39,7 +40,8 @@
                    [:div.well {:style "padding:10px 0px 10px 0px;"}
                     [:ul {:class "nav nav-list"}
                      navigation ]]]]])
-                (include-js "/statuses/js/jquery.js")
+                (include-js "/statuses/lib/jquery.js")
+                (include-js "/statuses/lib/jquery-charCount.min.js")
                 (include-js "/statuses/js/statuses.js")]))
 
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")

@@ -5,6 +5,8 @@
 
 "use strict";
 
+charCountInit();
+
 // quick reply
 $(".updates").on("click", ".post .content", function(ev) {
     var post = $(this).closest(".post");
@@ -13,8 +15,12 @@ $(".updates").on("click", ".post .content", function(ev) {
     } else {
         var postURI = $(".meta .time a", post).attr("href"); // XXX: bad selector (due to awkward markup?)
         $('<div class="new-reply" />').appendTo(post).
-                load(postURI + " .update + form"); // XXX: bad selector? -- XXX: introduces duplicate IDs
+                load(postURI + " .update + form", charCountInit); // XXX: bad selector? -- XXX: introduces duplicate IDs
     }
 });
+
+function charCountInit() {
+	$("input[name=text]").charCount(140);
+}
 
 }(jQuery));
