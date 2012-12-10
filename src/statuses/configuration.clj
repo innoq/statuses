@@ -13,7 +13,7 @@
   (if path
     (try
       (println "Initializing configuration from" path ":")
-      (swap! config-holder #(merge % (read-string (slurp path))))
+      (swap! config-holder merge (read-string (slurp path)))
       (catch java.io.FileNotFoundException e
         (println "Configuration not found, exiting.")
         (System/exit -1)))
