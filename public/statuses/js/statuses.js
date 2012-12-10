@@ -5,6 +5,9 @@
 
 "use strict";
 
+// character count
+$("input[name=text]").charCount(140);
+
 // quick reply
 $(".updates").on("click", ".post .content", function(ev) {
     var post = $(this).closest(".post");
