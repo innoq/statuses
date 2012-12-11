@@ -5,7 +5,8 @@
    :database-path "data/db.json"
    :save-interval 1
    :http-port     8080
-   :run-mode      :dev})
+   :run-mode      :dev
+   :avatar-url    "http://assets.github.com/images/gravatars/gravatar-user-420.png"})
 
 (def config-holder (atom default-config))
 
