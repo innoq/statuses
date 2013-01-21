@@ -54,4 +54,4 @@
         escape-html
         (clojure.string/replace #"@(\w+)" handle)
         (clojure.string/replace uri anchor)
-        (clojure.string/replace #"#(\w+)" hashtag))))
+        (clojure.string/replace #"(?:^|(?<=\s))#(\w+)" hashtag))))
