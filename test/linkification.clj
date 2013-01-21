@@ -49,4 +49,4 @@
       "#<a href='/statuses/updates?query=%23hashtag'>hashtag</a> lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a>")
   (dcompare
       (linkify "lipsum http://example.org#anchor-name #hashtag")
-      "lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a> #<a href='/statuses/updates?query=%23hashtag'>hashtag</a>"))
+      "lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a> #<a href='/statuses/updates?query=%23hashtag'>hashtag</a>")
