@@ -2,19 +2,6 @@
   (:use clojure.test
         [statuses.views.common :only [linkify]]))
 
-
-(defn dcompare [actual expected]
-  (cond (not= actual expected)
-    (str ; XXX: unecessary hack
-        (println actual)
-        (println "        ^")
-        (println "        |")
-        (println "---- actual vs. expected ----")
-        (println "                    |")
-        (println "                    v")
-        (println expected)))
-  (is (= actual expected)))
-
 (deftest linkify-basic []
   (is (= (linkify "lorem ipsum") "lorem ipsum")))
 
@@ -41,12 +28,12 @@
       "lipsum #<a href='/statuses/updates?query=%23hashtag'>hashtag</a>")))
 
 (deftest linkify-uris-with-fragment-identifier []
-  (dcompare
+  (is (=
       (linkify "lorem http://example.org#anchor ipsum")
-      "lorem <a href='http://example.org#anchor'>http://example.org#anchor</a> ipsum"))
-  (dcompare
+      "lorem <a href='http://example.org#anchor'>http://example.org#anchor</a> ipsum")))
+  (is (=
       (linkify "#hashtag lipsum http://example.org#anchor-name")
-      "#<a href='/statuses/updates?query=%23hashtag'>hashtag</a> lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a>")
-  (dcompare
+      "#<a href='/statuses/updates?query=%23hashtag'>hashtag</a> lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a>"))
+  (is (=
       (linkify "lipsum http://example.org#anchor-name #hashtag")
-      "lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a> #<a href='/statuses/updates?query=%23hashtag'>hashtag</a>")
+      "lipsum <a href='http://example.org#anchor-name'>http://example.org#anchor-name</a> #<a href='/statuses/updates?query=%23hashtag'>hashtag</a>"))
