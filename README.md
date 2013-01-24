@@ -14,9 +14,10 @@ fiddling around with stuff.
 * Grab Leiningen (we've just upgraded to the Leiningen 2 preview and
   suggest you use this) and install according to its instructions
 * Clone this repository
-* Use `lein run` to start the app
-* Access it at <a  href='http://localhost:8080'>http://localhost:8080</a>. Some sample
-  data is auto-generated if the "database" is not found
+* Use `lein run` to start the application, then access it at
+  [http://localhost:8080](http://localhost:8080) - some sample data is
+  auto-generated if the "database" is not found
+* Use `lein test` to run the test suite
 * If you want to created a deployable artifact, use `lein uberjar` to
   create a stand-alone .jar file that you can run with `java -jar
   <name>`
