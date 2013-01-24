@@ -12,7 +12,7 @@ ul {
     margin: 0;
 }
 
-li {
+li.post {
     padding-bottom: 10px;
 }
 
