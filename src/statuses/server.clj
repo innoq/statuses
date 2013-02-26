@@ -22,4 +22,4 @@
   (println "Starting server on port"  "in mode" (config :run-mode))
   (run-jetty
    (if (= (config :run-mode) :dev) (wrap-reload app) app)
-   {:port (config :http-port) :join? false}))
+   {:port (config :http-port) :join? false :host (config :host)}))
