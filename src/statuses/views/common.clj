@@ -32,7 +32,7 @@
                      [:li.active
                       [:a {"href" "/statuses/updates"} "Statuses"]]
                      [:li
-                      [:a {"href" "https://internal.innoq.com/blogging/"} "PPP"]]]]]]]
+                      [:a {"href" "/blogging/"} "PPP"]]]]]]]
                 [:div.container
                  [:div.row
                   [:div.span10 content]
