@@ -20,7 +20,7 @@ li.post {
     clear: left;
     float: left;
     margin-right: 0.5em;
-    width: auto;
+    max-width: 32px;
     max-height: 32px;
 }
 
