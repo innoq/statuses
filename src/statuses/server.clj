@@ -19,7 +19,9 @@
   (cfg/init! (or (first m) "config.clj"))
   (println "Configuration: " (config))
   (persistence/init! (config :database-path) (config :save-interval))
-  (println "Starting server on port"  "in mode" (config :run-mode))
+  (println "Starting server on host"  (config :host)
+           "port" (config :http-port)
+           "in mode" (config :run-mode))
   (run-jetty
    (if (= (config :run-mode) :dev) (wrap-reload app) app)
    {:port (config :http-port) :join? false :host (config :host)}))
