@@ -116,5 +116,7 @@
   (GET  "/statuses/too-long/:length"     [length :as r] (too-long length r))
   (GET  "/"                              []             (resp/redirect base))
   (GET  "/statuses"                      []             (resp/redirect base))
+  (GET  "/statuses/"                     []             (resp/redirect base))
+
   (route/not-found "Not Found"))
 

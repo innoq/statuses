@@ -11,9 +11,9 @@
               [:head
                [:title "innoQ Statuses"]
                (include-css "/statuses/lib/bootstrap.css")
-               (include-css "/statuses/lib/bootstrap-responsive.css")
                (include-css "/statuses/lib/jquery-charCount.css")
                (include-css "/statuses/css/statuses.css")
+               (include-css "/statuses/lib/bootstrap-responsive.css")
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
                        :title (config :title)
@@ -31,6 +31,8 @@
                     [:ul.nav
                      [:li.active
                       [:a {"href" "/statuses/updates"} "Statuses"]]
+                     [:li  
+                     [:a  {"href" "/dashboard/"} "Dashboard"]]
                      [:li
                       [:a {"href" "/blogging/"} "PPP"]]]]]]]
                 [:div.container
