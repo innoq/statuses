@@ -1,5 +1,5 @@
 body {
-    margin: 0px;
+    margin: 30px;
 }
 body,
 .content { /* required to override Bootstrap defaults */
@@ -20,7 +20,7 @@ li.post {
     clear: left;
     float: left;
     margin-right: 0.5em;
-    max-width: 32px;
+    width: auto;
     max-height: 32px;
 }
 
