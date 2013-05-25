@@ -29,6 +29,8 @@
                   [:a.brand "innoQ"]
                    [:div.nav-collapse
                     [:ul.nav
+                     [:li  
+                      [:a  {"href" "/dashboard/"} "Dashboard"]]
                      [:li.active
                       [:a {"href" "/statuses/updates"} "Statuses"]]
                      [:li
