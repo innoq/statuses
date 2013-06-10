@@ -23,6 +23,8 @@
                  [:title (str "Posted by @" author)]
                  [:content {:type (str "html")} (util/escape-html (common/linkify text))]
                  [:id (str "tag:innoq.com,2012:statuses/" id)]
+                 [:author
+                   [:name author]]
                  [:published (time/time-to-rfc3339 time)]
                  [:updated (time/time-to-rfc3339 time)]
                  [:link {:href (str base-uri "/statuses/updates/" id) }]]) items))))
