@@ -1,6 +1,7 @@
 (ns statuses.views.atom
   (:require [statuses.backend.time :as time]
             [hiccup.util :as util]
+            [hiccup.element :as element]
             [statuses.views.common :as common]))
 
 
@@ -21,10 +22,9 @@
                 [{:keys [id author text time]}]
                 [:entry
                  [:title (str "Posted by @" author)]
+                 [:author [:name author] [:uri (element/link-to (str base-uri "?author=" author) author)]]
                  [:content {:type (str "html")} (util/escape-html (common/linkify text))]
                  [:id (str "tag:innoq.com,2012:statuses/" id)]
-                 [:author
-                   [:name author]]
                  [:published (time/time-to-rfc3339 time)]
                  [:updated (time/time-to-rfc3339 time)]
                  [:link {:href (str base-uri "/statuses/updates/" id) }]]) items))))
