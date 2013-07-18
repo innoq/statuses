@@ -20,7 +20,7 @@
 
 (defn base-uri [request]
   (str
-   (name (:scheme request))
+   (name (or (get-in request [:headers "x-forwarded-proto"]) (:scheme request)))
    "://"
    (get-in request [:headers "host"])))
 
@@ -98,6 +98,7 @@
          [:table.table
           (item "# of entries" (core/get-count @db))
           (item "Last save at" (get-save-time @db))
+          (item "Base URI" (base-uri request))
           (item "Request" [:pre (with-out-str (pp/pprint request))])]
           (nav-links request))))
 
