@@ -1,8 +1,10 @@
 body {
     margin: 30px;
 }
+
 body,
-.content { /* required to override Bootstrap defaults */
+.content {
+    /* required to override Bootstrap defaults */
     line-height: 1.33em;
 }
 
@@ -42,6 +44,15 @@ li.post {
     content: ' on ';
 }
 
+.delete form {
+    display: inline;
+    padding-left: 10px;
+}
+
+.icon-label-holder {
+    font-size: 0;
+}
+
 .reply:before {
     content: ' in reply to ';
 }
@@ -53,6 +64,7 @@ li.post {
 .conversation:after {
     content: ')';
 }
+
 .input {
     width: 80;
 }
