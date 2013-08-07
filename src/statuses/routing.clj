@@ -9,7 +9,7 @@
             [statuses.backend.json :as json]
             [statuses.backend.time :as time])
   (:use [statuses.backend.persistence :only [db get-save-time]]
-        [compojure.core :only [defroutes GET POST]]
+        [compojure.core :only [defroutes GET POST DELETE]]
         [hiccup.core :only [html]]
         [statuses.views.main]))
 
@@ -86,6 +86,15 @@
 (defn handle-list-view [request]
   (updates-page (transform-params (:params request) {:limit 25 :offset 0}) request))
 
+(defn delete-entry
+  "Deletes an entry if the current user is the author of the entry"
+  [id request]
+  (if (= (user request) (:author (core/get-update @db (Integer/parseInt id))))
+    (do (swap! db core/remove-update (Integer/parseInt id))
+      (resp/redirect "/statuses"))
+    (resp/response (str "Delete failed as you are not " :author )))
+  )
+
 (defn page [id request]
   (update-page (core/get-update @db (Integer/parseInt id)) request))
 
@@ -109,6 +118,7 @@
 
 
 (defroutes app-routes
+  (DELETE (str base "/:id")              [id :as r]     (delete-entry id r))
   (POST base                             []             new-update)
   (GET  base                             []             handle-list-view)
   (GET  (str base "/:id")                [id :as r]     (page id r))

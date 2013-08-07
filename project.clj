@@ -1,5 +1,6 @@
 (defproject statuses "0.1.0-SNAPSHOT"
             :description "Statuses app for innoQ"
+            :namespaces [statuses]
             :dependencies [
                            [org.clojure/clojure "1.4.0"]
                            [compojure "1.1.3"]
