@@ -22,6 +22,18 @@ fiddling around with stuff.
   create a stand-alone .jar file that you can run with `java -jar
   <name>`
 
+
+If you want to run the application from clojure REPL e.g. in IntelliJ IDEA, you can go like this:
+
+* open a clojure console/ REPL prompt in the "statuses" root folder
+* you should see `user=>`
+* type `(load-file "src/statuses/server.clj")` <ENTER>
+* type `(ns statuses.server)` <ENTER>
+* type `(-main nil)` <ENTER>
+
+This should start the server.
+
+
 ## Dependencies
 
 _Statuses_ uses
