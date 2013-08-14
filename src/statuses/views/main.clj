@@ -44,7 +44,7 @@
     (html [:button {:type "submit" :class "btn btn-mini"} (html [:i.icon-trash.icon-label-holder "Delete"])])
     ))
 
-(defn update [request {:keys [id text author time in-reply-to conversation]}]
+(defn update [request {:keys [id text author time in-reply-to conversation last-in-conv?]}]
   (list [:img.avatar {:src (avatar-uri author) :alt author}]
     [:div.content (common/linkify text)]
     [:div.meta [:span.author (link-to (str base "?author=" author) author)]
@@ -56,7 +56,9 @@
      (if conversation
        (list
          [:span.conversation (link-to (str "/statuses/conversations/" conversation)
-                               conversation)])
+                               conversation)]
+         (if (and last-in-conv? (= (user request) author))
+           (list [:span.delete (delete-form id)])))
        (if (= (user request) author)
          (list
            [:span.delete (delete-form id)])))
