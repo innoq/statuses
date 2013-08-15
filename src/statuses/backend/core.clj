@@ -26,7 +26,7 @@
 
 (defn last-in-conv?
   [db {:keys [id conversation]}]
-  (= (last (get-in db [:conversations conversation])) id))
+  (= (peek (get-in db [:conversations conversation])) id))
 
 (defn label-updates
   "Assocs a keyword with the result of a predicate for each update"
