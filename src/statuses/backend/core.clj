@@ -84,23 +84,29 @@
   [db]
   (count (:posts db)))
 
-(defn remove-from-conv
-  "Returns db with the update removed from a conversation"
-  [db id conv-id]
-  (let [conversation (get-in db [:conversations conv-id])
-        new-conversation (pop conversation)]
-    (if (seq new-conversation)
-      (assoc-in db [:conversations conv-id] new-conversation)
-      (assoc db :conversations (dissoc (:conversations db) conv-id)))))
-
 (defn remove-update
   "Returns db with the update with id removed"
   [db id]
-  (-> (if-let [conversation-id (get-in db [:posts id :conversation])]
-        (remove-from-conv db id conversation-id)
-        db)
-    (assoc :posts (dissoc (:posts db) id))
-    (assoc :timeline (remove #(= id %) (:timeline db)))))
+  (letfn [(rm-single [db id]
+            (-> db
+              (assoc :posts (dissoc (:posts db) id))
+              (assoc :timeline (remove #(= id %) (:timeline db)))))
+          (update-conv [db id conv-id]
+            (let [conv (get-in db [:conversations conv-id])
+                  new-conv (pop conv)
+                  conv-remains? (seq (pop new-conv))]
+              (if conv-remains?
+                (assoc-in db [:conversations conv-id] new-conv)
+                (let [last-status (peek new-conv)]
+                  (-> db
+                    (update-in [:conversations] dissoc conv-id)
+                    (update-in [:posts last-status] dissoc :conversation))))))]
+    (if-let [conv-id (get-in db [:posts id :conversation])]
+      (-> db
+        (update-conv id conv-id)
+        (rm-single id))
+      (-> db
+        (rm-single id)))))
 
 (defn add-testdata [db n]
   "Create a DB with a set of n test updates"
