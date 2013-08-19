@@ -24,6 +24,12 @@ li.post {
     margin-right: 0.5em;
     max-width: 32px;
     max-height: 32px;
+    overflow: hidden;
+}
+
+.content, 
+.meta { 
+    margin-left: 40px;
 }
 
 .content {
