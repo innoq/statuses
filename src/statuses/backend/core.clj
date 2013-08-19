@@ -24,6 +24,19 @@
      (let [posts (map #(get (:posts db) %) (:timeline db))]
            (take limit (drop offset (filter pred posts))))))
 
+(defn no-replies?
+  [db {:keys [id]}]
+  (not-any? #(= id (:in-reply-to (val %))) (get-in db [:posts])))
+
+(defn can-delete?
+  [db user {author :author :as post}]
+  (and (= user author) (no-replies? db post)))
+
+(defn label-updates
+  "Assocs a keyword with the result of a predicate for each update"
+  [kw pred items]
+  (map #(assoc % kw (pred %)) items))
+
 (defn get-latest
   "Retrieve the latest n status updates, starting with offset,
    optionally restricted to author, containing quert, ordered by time"
@@ -78,9 +91,26 @@
 (defn remove-update
   "Returns db with the update with id removed"
   [db id]
-  (assoc db
-    :posts (dissoc (:posts db) id)
-    :timeline (remove #(= id %) (:timeline db))))
+  (letfn [(rm-single [db id]
+            (-> db
+              (assoc :posts (dissoc (:posts db) id))
+              (assoc :timeline (remove #(= id %) (:timeline db)))))
+          (update-conv [db id conv-id]
+            (let [conv (get-in db [:conversations conv-id])
+                  new-conv (pop conv)
+                  conv-remains? (seq (pop new-conv))]
+              (if conv-remains?
+                (assoc-in db [:conversations conv-id] new-conv)
+                (let [last-status (peek new-conv)]
+                  (-> db
+                    (update-in [:conversations] dissoc conv-id)
+                    (update-in [:posts last-status] dissoc :conversation))))))]
+    (if-let [conv-id (get-in db [:posts id :conversation])]
+      (-> db
+        (update-conv id conv-id)
+        (rm-single id))
+      (-> db
+        (rm-single id)))))
 
 (defn add-testdata [db n]
   "Create a DB with a set of n test updates"
