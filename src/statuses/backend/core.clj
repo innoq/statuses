@@ -24,9 +24,13 @@
      (let [posts (map #(get (:posts db) %) (:timeline db))]
            (take limit (drop offset (filter pred posts))))))
 
-(defn last-in-conv?
-  [db {:keys [id conversation]}]
-  (= (peek (get-in db [:conversations conversation])) id))
+(defn no-replies?
+  [db {:keys [id]}]
+  (not-any? #(= id (:in-reply-to (val %))) (get-in db [:posts])))
+
+(defn can-delete?
+  [db user {author :author :as post}]
+  (and (= user author) (no-replies? db post)))
 
 (defn label-updates
   "Assocs a keyword with the result of a predicate for each update"

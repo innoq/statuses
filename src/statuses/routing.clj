@@ -54,8 +54,8 @@
     (with-etag request (:time (first (core/get-latest @db 1 offset author query)))
       (let [items (->> (core/get-latest @db limit offset author query)
                     (core/label-updates
-                      :last-in-conv?
-                      (partial core/last-in-conv? @db)))]
+                      :can-delete?
+                      (partial core/can-delete? @db (user request))))]
         (cond
          (= format "json") (content-type
                             "application/json"
