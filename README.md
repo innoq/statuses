@@ -18,7 +18,7 @@ fiddling around with stuff.
   [http://localhost:8080](http://localhost:8080) - some sample data is
   auto-generated if the "database" is not found
 * Use `lein test` to run the test suite
-* If you want to created a deployable artifact, use `lein uberjar` to
+* If you want to create a deployable artifact, use `lein uberjar` to
   create a stand-alone .jar file that you can run with `java -jar
   <name>`
 
