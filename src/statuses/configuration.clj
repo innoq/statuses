@@ -10,6 +10,10 @@
 
 (def config-holder (atom default-config))
 
+(defn config
+  ([] @config-holder)
+  ([key] (get @config-holder key)))
+
 (defn init! [path]
   (if path
     (try
@@ -18,8 +22,11 @@
       (catch java.io.FileNotFoundException e
         (println "Configuration not found, exiting.")
         (System/exit -1)))
-    (println "Using default configuration.")))
+    (println "Using default configuration."))
+  (try
+    (println "Initializing commit revision from" path ":")
+    (swap! config-holder merge {:version (slurp "headrev.txt")})
+    (println "Version is" (config :version))
+    (catch java.io.FileNotFoundException e
+      (println "Version not found, continuing anyway"))))
 
-(defn config
-  ([] @config-holder)
-  ([key] (get @config-holder key)))

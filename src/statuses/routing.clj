@@ -11,6 +11,7 @@
   (:use [statuses.backend.persistence :only [db get-save-time]]
         [compojure.core :only [defroutes GET POST DELETE]]
         [hiccup.core :only [html]]
+        [statuses.configuration :only [config]]
         [statuses.views.main]))
 
 
@@ -108,6 +109,7 @@
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
         (common/layout
          [:table.table
+          (item "Version" (config :version))
           (item "# of entries" (core/get-count @db))
           (item "Last save at" (get-save-time @db))
           (item "Base URI" (base-uri request))

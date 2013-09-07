@@ -8,8 +8,14 @@ if system('lein uberjar')
   f.chmod(0744)
   f.puts "java -jar #{mainjar} $*"
   f.close
+  puts "Creating log file"
+  log = `git log -1 --pretty="%H"`
+  f = File.new('./headrev.txt', 'w+')
+  f.chmod(0744)
+  f.puts "#{log}"
+  f.close
   puts "Synchronizing with remote dir."
-  `rsync --exclude data --delete -avz run.sh target/#{mainjar} public statuses@internal2.innoq.com:/home/statuses`
+  `rsync --exclude data --delete -avz run.sh target/#{mainjar} headrev.txt public statuses@internal2.innoq.com:/home/statuses`
   puts "Done."
 end
 
