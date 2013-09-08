@@ -113,7 +113,7 @@
           (item "# of entries" (core/get-count @db))
           (item "Last save at" (get-save-time @db))
           (item "Base URI" (base-uri request))
-          (item "Request" [:pre (with-out-str (pp/pprint request))])]
+          (if (= (config :run-mode) :dev) (item "Request" [:pre (with-out-str (pp/pprint request))]))]
           (nav-links request))))
 
 (defn too-long [length request]
