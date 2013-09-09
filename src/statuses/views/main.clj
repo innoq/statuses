@@ -21,6 +21,8 @@
   (let [links ["Statuses" [{:url base :title "Everything"
                             :icon "icon-th-list"},
                            {:url (str base "?query=@" (user request)) :title "Mentions"
+                            :icon "icon-user"},
+                           {:url (str base "?author=" (user request)) :title "My posts"
                             :icon "icon-user"}],
                   "Feeds"    [{:url (str base "?format=atom") :title "Feed for everything"
                          :icon "icon-fire"},
