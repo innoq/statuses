@@ -43,16 +43,16 @@
 
 (defn delete-form [id]
   (form-to [:delete (str base "/" id)]
-    (html [:button {:type "submit" :class "btn btn-mini"} (html [:i.icon-trash.icon-label-holder "Delete"])])
+    (html [:button {:type "submit" :class "btn btn-mini"} (html [:span.glyphicon.glyphicon-trash {"title" "Delete"} ])])
     ))
 
 (defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list 
     [:div.avatar 
      (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
-    [:div.content (common/linkify text)]
+    [:div.post-content (common/linkify text)]
     [:div.meta [:span.author (link-to (str base "?author=" author) author)]
-     [:span.time (link-to (str base "/" id) (format-time time))]
+     [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
      (if in-reply-to
        (list
          [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)]))
@@ -68,12 +68,12 @@
 
 (defn entry-form []
   (form-to {:class "form-inline" } [:post base]
-           (text-field {:class "input-xxlarge" :autofocus "autofocus" } "text")
+           (text-field {:class "input" :autofocus "autofocus" } "text")
            (submit-button {:class "btn" } "Send update")))
 
 (defn reply-form [id author]
   (form-to [:post base]
-    (text-field {:class "input-xxlarge"
+    (text-field {:class "input"
                  :autofocus "autofocus"
                         :value (str "@" author " ") } "text")
     (hidden-field "reply-to" id)
