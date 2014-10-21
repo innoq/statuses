@@ -6,6 +6,7 @@
    :save-interval 1
    :http-port     8080
    :run-mode      :dev
+   :profile-url-prefix   "https://intern.innoq.com/liqid/users/"
    :avatar-url    "http://assets.github.com/images/gravatars/gravatar-user-420.png"})
 
 (def config-holder (atom default-config))

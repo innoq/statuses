@@ -47,7 +47,9 @@
     ))
 
 (defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
-  (list [:img.avatar {:src (avatar-uri author) :alt author}]
+  (list 
+    [:div.avatar 
+     (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
     [:div.content (common/linkify text)]
     [:div.meta [:span.author (link-to (str base "?author=" author) author)]
      [:span.time (link-to (str base "/" id) (format-time time))]
