@@ -16,7 +16,14 @@ $(".updates").on("click", ".post-content", function(ev) {
         var postURI = $("a.permalink", post).attr("href");
         $('<div class="new-reply" />').appendTo(post)
             .load(postURI + " .update + form", function( response, status, xhr ) {
-                    $(".new-reply input[name=text]", post).charCount(140);
+                    var input = $(".new-reply input[name=text]", post);
+                    input.charCount(140);
+                    input.focus(function() {
+                        var val = this.value;
+                        this.value = '';
+                        this.value = val;
+                    });
+                    input.focus();
             }); // XXX: bad selector? -- XXX: introduces duplicate IDs
     }
 });
