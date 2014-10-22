@@ -2,7 +2,7 @@
  :database-path "data/db.json"
  :save-interval 2
  :http-port     8080
- :host          "192.168.242.104"
+ :host          "localhost"
  :run-mode      :prod
  ; {username} is replaced with the username
  ;:avatar-url   "https://.../users/{username}/avatar/32x32"}
