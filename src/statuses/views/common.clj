@@ -21,25 +21,6 @@
                [:style "body {  }"]]
               [:body
                (list
-                [:div.navbar.navbar-default.navbar-static-top {"data-toggle" "collapse" "data-target" ".nav-collapse" "style" "position: static; margin-bottom: 18px;" "role" "navigation" }
-                  [:div.container-fluid
-                   [:div.navbar-header
-                    [:button.navbar-toggle.collapsed {"type" "button" "data-toggle" "collapse" "data-target" "#statuses-navbar-collapse"}
-                     [:span.sr-only "Toggle navigation"]
-                     [:span.icon-bar]
-                     [:span.icon-bar]
-                     [:span.icon-bar]]
-                    [:a.navbar-brand {"href" "https://www.innoq.com/de/timeline/"} "innoQ"]]
-                   [:div.collapse.navbar-collapse {"id" "statuses-navbar-collapse"}
-                    [:ul.nav.navbar-nav
-                     [:li  
-                      [:a  {"href" "/dashboard/"} "Dashboard"]]
-                     [:li.active
-                      [:a {"href" "/statuses/updates"} "Statuses"]]
-                     [:li
-                      [:a {"href" "/blogging/"} "PPP"]]
-                     [:li
-                      [:a {"href" "/blogging/weekly_statuses/"} "Weeklies"]]]]]]
                 [:div.container-fluid
                  [:div.row
                   [:div.col-xs-12.col-md-10 content]
