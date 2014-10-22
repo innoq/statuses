@@ -74,6 +74,6 @@ li.post {
     content: ')';
 }
 
-.input {
-    width: 95%;
+.btn {
+    margin: 0.4em 0;
 }

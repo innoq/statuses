@@ -67,21 +67,25 @@
      ]))
 
 (defn entry-form []
-  (form-to {:class "form-inline" } [:post base]
-           (text-field {:class "input" :autofocus "autofocus" } "text")
-           (submit-button {:class "btn" } "Send update")))
+  (form-to {:class "" } [:post base]
+        [:div.form-group
+         [:div.input-group
+           (text-field {:class "form-control" :autofocus "autofocus" } "text")]
+         (submit-button {:class "btn pull-right" } "Send update")]
+         [:div {"style" "clear: both"}]))
 
 (defn reply-form [id author]
-  (form-to [:post base]
-    (text-field {:class "input"
-                 :autofocus "autofocus"
-                        :value (str "@" author " ") } "text")
+  (form-to {:class "" } [:post base]
+   [:div.form-group
+    [:div.input-group
+      (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ") } "text")]
     (hidden-field "reply-to" id)
-           (submit-button {:class "btn" } "Reply")))
+    (submit-button {:class "btn pull-right" } "Reply")]
+    [:div {"style" "clear: both"}]))
 
 (defn list-page [items next request]
   (common/layout
-    (list [:div (entry-form)]
+    (list [:div.entry-form (entry-form)]
       [:div [:ul.updates (map (fn [item] [:li.post (update request item)]) items)]]
       (if next (link-to next "Next")))
     (nav-links request)))
