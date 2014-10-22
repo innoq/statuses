@@ -20,13 +20,7 @@
 				textArea = $(this),
 				textAreaPosition = textArea.position();
 				
-			countBox.addClass('input-group-addon').html(limit).insertAfter(textArea);
-			countBox
-				//.css({
-				//	'top': textAreaPosition.top - (countBox.outerHeight() / 2.5),
-				//	'left': textAreaPosition.left + textArea.outerWidth() - (countBox.outerWidth() / 1.5)
-				//})
-				.attr('title', 'Number of characters left.');
+			countBox.addClass('input-group-addon').attr('title', 'Number of characters left.').html(limit).insertBefore(textArea);
 			
 			var countChars = function() {
 				var count = limit - textArea.val().length;
