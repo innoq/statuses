@@ -77,6 +77,3 @@ li.post {
 .input {
     width: 95%;
 }
-
-/* fix bootstrap *sigh* */
-.navbar-fixed-top {margin:0;}
