@@ -42,7 +42,7 @@
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
 (defn delete-form [id]
-  (form-to [:delete (str base "/" id)]
+  (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (str base "/" id)]
     (html [:button {:type "submit" :class "btn btn-mini"} (html [:span.glyphicon.glyphicon-trash {"title" "Delete"} ])])
     ))
 
@@ -67,7 +67,7 @@
      ]))
 
 (defn entry-form []
-  (form-to {:class "form" } [:post base]
+  (form-to {:class "entry-form"} [:post base]
          [:div.input.input-group
            (text-field {:class "form-control" :autofocus "autofocus"} "text")
            [:span.input-group-btn
@@ -75,7 +75,7 @@
          [:div {"style" "clear: both"}]))
 
 (defn reply-form [id author]
-  (form-to {:class "" } [:post base]
+  (form-to {:class "reply-form" } [:post base]
     [:div.input-group
       (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "text")
       [:span.input-group-btn
@@ -85,7 +85,7 @@
 
 (defn list-page [items next request]
   (common/layout
-    (list [:div.entry-form (entry-form)]
+    (list [:div (entry-form)]
       [:div [:ul.updates (map (fn [item] [:li.post (update request item)]) items)]]
       (if next (link-to next "Next")))
     (nav-links request)))

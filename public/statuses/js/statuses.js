@@ -5,6 +5,7 @@
 
 "use strict";
 
+
 $("#text").charCount(140);
 
 // quick reply

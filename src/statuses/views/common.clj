@@ -23,7 +23,7 @@
                (list
                 [:div.container-fluid
                  [:div.row
-                  [:div.col-xs-12.col-md-10 content]
+                  [:div.col-xs-12.col-md-8 content]
                   [:div.col-xs-4.col-md-2
                    [:div.well {:style "padding:1em;"}
                     [:ul {:class "nav nav-list"}
