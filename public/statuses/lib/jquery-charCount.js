@@ -20,12 +20,10 @@
 				textArea = $(this),
 				textAreaPosition = textArea.position();
 				
-			countBox.addClass('charCountBox').html(limit).insertAfter(textArea);
+			countBox.addClass('badge').html(limit).insertAfter(textArea);
 			countBox.css({
 				'top': textAreaPosition.top - (countBox.outerHeight() / 2.5),
-				'left': textAreaPosition.left + textArea.outerWidth() - (countBox.outerWidth() / 1.5),
-				'width': countBox.width(),
-				'height': countBox.height()
+				'left': textAreaPosition.left + textArea.outerWidth() - (countBox.outerWidth() / 1.5)
 			}).attr('title', 'Number of characters left.');
 			
 			var countChars = function() {
