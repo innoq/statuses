@@ -9,9 +9,9 @@ fiddling around with stuff.
 ## How to for developers
 
 * Make sure you have a reasonably recent Java runtime. _Statuses_ has
-  been tested with JDK 7, but should work with JDK 6 as well (and
+  been tested with JDK 7 and 8, but should work with JDK 6 as well (and
   possibly even JDK 5).
-* Grab Leiningen (we've just upgraded to the Leiningen 2 preview and
+* Grab [Leiningen](http://leiningen.org/#install) (we're using the Leiningen 2 preview and
   suggest you use this) and install according to its instructions
 * Clone this repository
 * Use `lein run` to start the application, then access it at
@@ -51,7 +51,7 @@ deployment.
 
 ### Persistence
 
-Given its very limited initial requirements at @innoQ (and to support
+Given its very limited initial requirements at [@innoQ](https://www.innoq.com) (and to support
 its usability as a self-contained example), the most significant
 design decision within _Statuses_ is that no database is
 used. Instead, all of the status updates are kept in memory and are
@@ -99,4 +99,4 @@ across the following namespaces and matching files:
 
 ## Author information and license
 
-Copyright 2012 innoQ Deutschland GmbH. Published under the Apache 2.0 license.
+Copyright 2012-2014 innoQ Deutschland GmbH. Published under the Apache 2.0 license.
