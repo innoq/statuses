@@ -67,20 +67,20 @@
      ]))
 
 (defn entry-form []
-  (form-to {:class "" } [:post base]
-        [:div.form-group
-         [:div.input-group
-           (text-field {:class "form-control" :autofocus "autofocus" } "text")]
-         (submit-button {:class "btn pull-right" } "Send update")]
+  (form-to {:class "form" } [:post base]
+         [:div.input.input-group
+           (text-field {:class "form-control" :autofocus "autofocus"} "text")
+           [:span.input-group-btn
+             [:button {:type "submit" :class "btn btn-default"} "Send" ]]]
          [:div {"style" "clear: both"}]))
 
 (defn reply-form [id author]
   (form-to {:class "" } [:post base]
-   [:div.form-group
     [:div.input-group
-      (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ") } "text")]
+      (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "text")
+      [:span.input-group-btn
+        [:button {:type "submit" :class "btn btn-default"} "Reply" ]]]
     (hidden-field "reply-to" id)
-    (submit-button {:class "btn pull-right" } "Reply")]
     [:div {"style" "clear: both"}]))
 
 (defn list-page [items next request]
