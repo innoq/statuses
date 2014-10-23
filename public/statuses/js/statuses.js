@@ -14,11 +14,12 @@ $("#text").charCount(140);
 $(".updates").on("click", ".post-content", function(ev) {
     var post = $(this).closest(".post");
     if(post.find(".new-reply").length) {
-        focusField($(".new-reply input[name=text]", post));
+        var input = $(".new-reply input[name=text]", post);
+        focusField(input);
     } else {
         var postURI = $("a.permalink", post).attr("href");
-        $('<div class="new-reply" />').appendTo(post)
-            .load(postURI + " .update + form", function( response, status, xhr ) {
+        $('<div class="new-reply" />').appendTo(post).
+            load(postURI + " .update + form", function(response, status, xhr) {
                     var input = $(".new-reply input[name=text]", post);
                     input.charCount(140);
                     focusField(input);
@@ -26,11 +27,11 @@ $(".updates").on("click", ".post-content", function(ev) {
     }
 });
 
-$('.post-content').each(function() {
-    var contentField = $(this);
+$(".post-content").each(function(i, node) {
+    var contentField = $(node);
     var currentText = contentField.text();
     currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
-        $('<img />').attr("src", p2).attr("alt", p1).insertAfter(contentField);
+        $("<img />").attr("src", p2).attr("alt", p1).insertAfter(contentField);
     });
 
     currentText.replace(imgRegEx, function(match, p1, offset, string) {
@@ -42,7 +43,7 @@ $('.post-content').each(function() {
 function focusField(field) {
     field.focus(function() {
         var val = this.value;
-        this.value = '';
+        this.value = "";
         this.value = val;
     });
     field.focus();
