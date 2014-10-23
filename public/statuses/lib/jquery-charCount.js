@@ -14,7 +14,7 @@
 * Example: $(textarea).charCount(100);
 */
 (function($) {
-	$.fn.charCount = function(limit) {
+	$.fn.charCount = function(limit, button) {
 		return this.each(function() {
 			var countBox = $('<span></span>'),
 				textArea = $(this),
@@ -24,13 +24,14 @@
 			
 			var countChars = function() {
 				var count = limit - textArea.val().length;
-				
 				if (count < 0) {
-					textArea.val(textArea.val().substr(0, limit));
-					count = 0;
+					//textArea.val(textArea.val().substr(0, limit));
+					//count = 0;
+					button.prop("disabled", true);
 					countBox.addClass('limitReached');
 				}
 				else {
+					button.prop("disabled", false);
 					countBox.removeClass('limitReached');
 				}
 				

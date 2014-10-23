@@ -5,7 +5,7 @@
 
 "use strict";
 
-$("#text").charCount(140);
+$("#text").charCount(140, $(".entry-form button"));
 
 function focusField(fieldName) {
     // set cursor to the end of the inserted content
@@ -26,7 +26,8 @@ $(".updates").on("click", ".post-content", function(ev) {
         $('<div class="new-reply" />').appendTo(post)
             .load(postURI + " .update + form", function( response, status, xhr ) {
                     var input = $(".new-reply input[name=text]", post);
-                    input.charCount(140);
+                    var button = $(".new-reply button", post);
+                    input.charCount(140, button);
                     focusField(input);
             }); // XXX: bad selector? -- XXX: introduces duplicate IDs
     }
