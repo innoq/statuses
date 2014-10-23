@@ -35,23 +35,28 @@ $(".updates").on("click", ".post-content", function(ev) {
 var imgRegEx = /!(http[^\s]+)/gi;
 var markdownImgRegEx = /!\[(.+)\]\((http[^\s]+)\)/gi;
 $('.post-content').each(function() {
-    var contentText = $(this);
-    var result = contentText.text().replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
-        $('<img src="' + p2 + '" alt="' + p1 + '" />').insertAfter(contentText);
-        if (p1 != null) {
+    var contentField = $(this);
+    var currentText = contentField.text();
+    currentText = currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
+        $('<img />').attr("src", p2).attr("alt", p1).insertAfter(contentField);
+        if (p1 !== null) {
             return "";
         }
         return match;
     });
-    if (result != contentText.text()) contentText.text(result);
+    // if (result != currentText) {
+    //     currentText = result;
+    // }
 
-    result = contentText.text().replace(imgRegEx, function(match, p1, offset, string) {
-        $('<img src="' + p1 + '" alt="image" />').insertAfter(contentText);
-        if (p1 != null) {
+    currentText = currentText.replace(imgRegEx, function(match, p1, offset, string) {
+        $('<img alt="image" />').attr("src", p1).insertAfter(contentField);
+        if (p1 !== null) {
             return "";
         }
         return match;
     });
-    if (result != contentText.text()) contentText.text(result);
+    if (currentText != contentField.text()) {
+        contentField.text(currentText);
+    }
 });
 }(jQuery));
