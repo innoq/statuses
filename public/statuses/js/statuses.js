@@ -39,14 +39,17 @@ $(".post-content").each(function(i, node) {
     });
 });
 
-// set cursor to the end of the inserted content
 function focusField(field) {
-    field.focus(function() {
-        var val = this.value;
-        this.value = "";
-        this.value = val;
-    });
+    field.bind("focus", resetCursor); // XXX: no need for separate event handler?
     field.focus();
+    field.undbind(onFocus);
+}
+
+// move cursor to the end -- XXX: crude!?
+function resetCursor() {
+    var val = this.value;
+    this.value = "";
+    this.value = val;
 }
 
 }(jQuery));
