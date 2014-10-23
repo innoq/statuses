@@ -5,17 +5,11 @@
 
 "use strict";
 
+var imgRegEx = /!(http[^\s]+)/gi;
+var markdownImgRegEx = /!\[(.+)\]\((http[^\s]+)\)/gi;
+
 $("#text").charCount(140);
 
-function focusField(fieldName) {
-    // set cursor to the end of the inserted content
-    fieldName.focus(function() {
-        var val = this.value;
-        this.value = '';
-        this.value = val;
-    });
-    fieldName.focus();
-}
 // quick reply
 $(".updates").on("click", ".post-content", function(ev) {
     var post = $(this).closest(".post");
@@ -32,8 +26,6 @@ $(".updates").on("click", ".post-content", function(ev) {
     }
 });
 
-var imgRegEx = /!(http[^\s]+)/gi;
-var markdownImgRegEx = /!\[(.+)\]\((http[^\s]+)\)/gi;
 $('.post-content').each(function() {
     var contentField = $(this);
     var currentText = contentField.text();
@@ -45,4 +37,15 @@ $('.post-content').each(function() {
         $('<img alt="image" />').attr("src", p1).insertAfter(contentField);
     });
 });
+
+// set cursor to the end of the inserted content
+function focusField(field) {
+    field.focus(function() {
+        var val = this.value;
+        this.value = '';
+        this.value = val;
+    });
+    field.focus();
+}
+
 }(jQuery));
