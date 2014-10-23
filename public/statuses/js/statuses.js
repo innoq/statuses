@@ -37,26 +37,12 @@ var markdownImgRegEx = /!\[(.+)\]\((http[^\s]+)\)/gi;
 $('.post-content').each(function() {
     var contentField = $(this);
     var currentText = contentField.text();
-    currentText = currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
+    currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
         $('<img />').attr("src", p2).attr("alt", p1).insertAfter(contentField);
-        if (p1 !== null) {
-            return "";
-        }
-        return match;
     });
-    // if (result != currentText) {
-    //     currentText = result;
-    // }
 
-    currentText = currentText.replace(imgRegEx, function(match, p1, offset, string) {
+    currentText.replace(imgRegEx, function(match, p1, offset, string) {
         $('<img alt="image" />').attr("src", p1).insertAfter(contentField);
-        if (p1 !== null) {
-            return "";
-        }
-        return match;
     });
-    if (currentText != contentField.text()) {
-        contentField.text(currentText);
-    }
 });
 }(jQuery));
