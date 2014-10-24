@@ -13,22 +13,18 @@ $("#text").charCount(140, entryFormButton);
 
 // quick reply
 $(".updates").on("click", ".post-content", function(ev) {
+    $("div.new-reply").remove();
     var post = $(this).closest(".post");
-    if(post.find(".new-reply").length) {
-        var input = $(".new-reply input[name=text]", post);
-        focusField(input);
-    } else {
-        var postURI = $("a.permalink", post).attr("href");
-        $('<div />').addClass("new-reply").appendTo(post).
-            load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
-                function(response, status, xhr) {
-                    var input = $(".new-reply input[name=text]", post);
-                    var button = $(".new-reply button", post);
-                    input.charCount(140, button);
-                    focusField(input);
-                }
-            );
-    }
+    var postURI = $("a.permalink", post).attr("href");
+    $('<div />').addClass("new-reply").appendTo(post).
+        load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
+            function(response, status, xhr) {
+                var input = $(".new-reply input[name=text]", post);
+                var button = $(".new-reply button", post);
+                input.charCount(140, button);
+                focusField(input);
+            }
+        );
 });
 
 $(".post-content").each(function(i, node) {
