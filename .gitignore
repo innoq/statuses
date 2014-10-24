@@ -1,6 +1,9 @@
 pom.xml
 *jar
-/lib/
-/classes/
+/lib
+/classes
 .lein-deps-sum
-/target/
+/target
+.idea
+*.iml
+atlassian-ide-plugin.xml
