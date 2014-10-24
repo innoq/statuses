@@ -19,13 +19,15 @@ $(".updates").on("click", ".post-content", function(ev) {
         focusField(input);
     } else {
         var postURI = $("a.permalink", post).attr("href");
-        $('<div class="new-reply" />').appendTo(post).
-            load(postURI + " .update + form", function(response, status, xhr) {
+        $('<div />').addClass("new-reply").appendTo(post).
+            load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
+                function(response, status, xhr) {
                     var input = $(".new-reply input[name=text]", post);
                     var button = $(".new-reply button", post);
                     input.charCount(140, button);
                     focusField(input);
-            }); // XXX: bad selector? -- XXX: introduces duplicate IDs
+                }
+            );
     }
 });
 
@@ -42,13 +44,13 @@ $(".post-content").each(function(i, node) {
 });
 
 function focusField(field) {
-    field.bind("focus", resetCursor); // XXX: no need for separate event handler?
+    field.bind("focus", moveCursorToEOL); // XXX: no need for separate event handler?
     field.focus();
-    field.undbind(onFocus);
+    field.unbind("focus", moveCursorToEOL);
 }
 
 // move cursor to the end -- XXX: crude!?
-function resetCursor() {
+function moveCursorToEOL() {
     var val = this.value;
     this.value = "";
     this.value = val;
