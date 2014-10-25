@@ -47,8 +47,8 @@
     ))
 
 (defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
-  (list 
-    [:div.avatar 
+  (list
+    [:div.avatar
      (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
     [:div.post-content (common/linkify text)]
     [:div.meta [:span.author (link-to (str base "?author=" author) author)]
@@ -77,7 +77,7 @@
 (defn reply-form [id author]
   (form-to {:class "reply-form" } [:post base]
     [:div.input-group
-      (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "text")
+      (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
       [:span.input-group-btn
         [:button {:type "submit" :class "btn btn-default"} "Reply" ]]]
     (hidden-field "reply-to" id)
