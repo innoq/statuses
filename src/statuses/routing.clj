@@ -68,14 +68,14 @@
                             "text/html;charset=utf-8"
                             (list-page items next request)))))))
 
-(defn first-non-nil [& vals]
-  (first (filter (complement nil?) vals)))
-
-(defn new-update [{:keys [form-params] :as request}]
+(defn new-update
+  "Handles the request to add a new update. Checks whether the post values 'entry-text' or
+  'reply-text' have a valid length and if so, creates the new update."
+  [{:keys [form-params] :as request}]
   (let [{:strs [entry-text reply-text reply-to]} form-params
-        field-value (first-non-nil entry-text reply-text)
+        field-value (or entry-text reply-text "")
         length (.length field-value)]
-    (if (<= length max-length)
+    (if (and (<= length max-length) (> length 0))
       (do (swap! db core/add-update (user request) field-value (parse-num reply-to nil))
           (resp/redirect "/statuses"))
       (resp/redirect (str "/statuses/too-long/" length)))))
