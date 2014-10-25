@@ -19,7 +19,7 @@ $(".updates").on("click", ".post-content", function(ev) {
     $('<div />').addClass("new-reply").appendTo(post).
         load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
             function(response, status, xhr) {
-                var input = $(".new-reply input[name=text]", post);
+                var input = $(".new-reply input[name=reply-text]", post);
                 var button = $(".new-reply button", post);
                 input.charCount(140, button);
                 focusField(input);
