@@ -5,8 +5,8 @@
 
 "use strict";
 
-var imgRegEx = /!(http[^\s]+)/gi;
-var markdownImgRegEx = /!\[(.+)\]\((http[^\s]+)\)/gi;
+var imgRegEx = /!<a href="(http[^\s]+)">.+<\/a>/gi;
+var markdownImgRegEx = /!\[(.+)\]\(<a href="(http[^\s]+)">.+<\/a>\)/gi;
 var entryFormButton = $(".entry-form button");
 
 $("#entry-text").charCount(140, entryFormButton);
@@ -29,14 +29,17 @@ $(".updates").on("click", ".post-content", function(ev) {
 
 $(".post-content").each(function(i, node) {
     var contentField = $(node);
-    var currentText = contentField.text();
-    currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
-        $("<img />").attr("src", p2).attr("alt", p1).insertAfter(contentField);
+    var currentText = contentField.html();
+    currentText = currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
+        return toHtml($('<div><img style="max-width: 100%"/></div>').attr("src", p2).attr("alt", p1));
     });
 
-    currentText.replace(imgRegEx, function(match, p1, offset, string) {
-        $('<img alt="image" />').attr("src", p1).insertAfter(contentField);
+    currentText = currentText.replace(imgRegEx, function(match, p1, offset, string) {
+        return toHtml($('<img alt="image" style="max-width: 100%"/>').attr("src", p1));
     });
+    if (currentText !== contentField.text()) {
+        contentField.html(currentText);
+    }
 });
 
 function focusField(field) {
@@ -50,6 +53,12 @@ function moveCursorToEOL() {
     var val = this.value;
     this.value = "";
     this.value = val;
+}
+
+function toHtml(anyObject) {
+    // workaround: Use a <div> as wrapper because jQuery's html() only returns the inner html. *sigh*
+    // See http://jquery-howto.blogspot.de/2009/02/how-to-get-full-html-string-including.html
+    return $("<div/>").append(anyObject).html();
 }
 
 }(jQuery));
