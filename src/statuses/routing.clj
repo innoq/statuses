@@ -68,14 +68,15 @@
                             "text/html;charset=utf-8"
                             (list-page items next request)))))))
 
-(defn coalesce [& vals]
+(defn first-non-nil [& vals]
   (first (filter (complement nil?) vals)))
 
 (defn new-update [{:keys [form-params] :as request}]
   (let [{:strs [entry-text reply-text reply-to]} form-params
-        length (.length (coalesce entry-text reply-text))]
+        field-value (first-non-nil entry-text reply-text)
+        length (.length field-value)]
     (if (<= length max-length)
-      (do (swap! db core/add-update (user request) (coalesce entry-text reply-text) (parse-num reply-to nil))
+      (do (swap! db core/add-update (user request) field-value (parse-num reply-to nil))
           (resp/redirect "/statuses"))
       (resp/redirect (str "/statuses/too-long/" length)))))
 
