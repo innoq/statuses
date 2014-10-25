@@ -69,7 +69,7 @@
 (defn entry-form []
   (form-to {:class "entry-form"} [:post base]
          [:div.input.input-group
-           (text-field {:class "form-control" :autofocus "autofocus"} "text")
+           (text-field {:class "form-control" :autofocus "autofocus"} "entry-text")
            [:span.input-group-btn
              [:button {:type "submit" :class "btn btn-default"} "Send" ]]]
          [:div {"style" "clear: both"}]))
