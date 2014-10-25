@@ -9,7 +9,7 @@ var imgRegEx = /!(http[^\s]+)/gi;
 var markdownImgRegEx = /!\[(.+)\]\((http[^\s]+)\)/gi;
 var entryFormButton = $(".entry-form button");
 
-$("#text").charCount(140, entryFormButton);
+$("#entry-text").charCount(140, entryFormButton);
 
 // quick reply
 $(".updates").on("click", ".post-content", function(ev) {
