@@ -31,7 +31,7 @@ $(".post-content").each(function(i, node) {
     var contentField = $(node);
     var currentText = contentField.html();
     currentText = currentText.replace(markdownImgRegEx, function(match, p1, p2, offset, string) {
-        return toHtml($('<div><img style="max-width: 100%"/></div>').attr("src", p2).attr("alt", p1));
+        return toHtml($('<img style="max-width: 100%" style="max-width: 100%"/>').attr("src", p2).attr("alt", p1));
     });
 
     currentText = currentText.replace(imgRegEx, function(match, p1, offset, string) {
