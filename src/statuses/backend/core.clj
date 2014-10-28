@@ -39,12 +39,12 @@
 
 (defn get-latest
   "Retrieve the latest n status updates, starting with offset,
-   optionally restricted to author, containing quert, ordered by time"
+   optionally restricted to author, containing query, ordered by time"
   [db limit offset author query]
   (get-filtered-by db limit offset
                    (fn [item]
                      (and
-                      (or (nil? author) (= author (:author item)))
+                      (or (nil? author) (.equalsIgnoreCase author (:author item)))
                       (or (nil? query) (not= (.indexOf (:text item) query) -1))))))
 
 (defn- add-conversation
