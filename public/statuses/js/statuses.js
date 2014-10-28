@@ -12,7 +12,7 @@ var entryFormButton = $(".entry-form button");
 $("#entry-text").charCount(140, entryFormButton);
 
 // quick reply
-$(".updates").on("click", ".post-content", function(ev) {
+$(".btn-reply").on("click", function(ev) {
     $("div.new-reply").remove();
     var post = $(this).closest(".post");
     var postURI = $("a.permalink", post).attr("href");
