@@ -40,6 +40,7 @@ li.post {
     overflow: hidden; /* block formatting context, independent from avatar */
     cursor: pointer;
 }
+.post-content img {display: block;}
 
 .meta {
     font-size: 12px;
