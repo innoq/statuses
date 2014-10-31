@@ -43,7 +43,7 @@
 
 (defn delete-form [id]
   (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (str base "/" id)]
-    (html [:button {:type "submit" :class "btn btn-mini"} (html [:span.glyphicon.glyphicon-trash {"title" "Delete"} ])])
+    (html [:button {:type "submit" :class "btn btn-sm"} (html [:span.glyphicon.glyphicon-trash ][:span.btn-label "Delete"])])
     ))
 
 (defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
@@ -61,6 +61,7 @@
        (list
          [:span.conversation (link-to (str "/statuses/conversations/" conversation)
                                conversation)]))
+     [:button {:type "submit" :class "btn btn-sm btn-reply"} (html [:span.glyphicon.glyphicon-edit ][:span.btn-label "Reply"])]
      (if can-delete?
        (list
          [:span.delete (delete-form id)]))
