@@ -29,14 +29,13 @@
                      [:span.icon-bar]
                      [:span.icon-bar]
                      [:span.icon-bar]]
-                    [:a.navbar-brand {"href" "/statuses/updates"} "innoQ Statuses"]]]]
+                    [:div.collapse.navbar-collapse {"id" "statuses-navbar-collapse"}
+                     [:ul.nav.navbar-nav
+                      navigation
+                     ]]]]]
                 [:div.container-fluid
                  [:div.row
-                  [:div.col-xs-12.col-md-8 content]
-                  [:div.col-xs-6.col-md-3
-                   [:div.well {:style "padding:1em;"}
-                    [:ul {:class "nav nav-list"}
-                     navigation ]]]]])
+                  [:div.col-xs-12.col-md-12 content]]])
                 (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
                 (include-js "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
                 (include-js "/statuses/lib/jquery-charCount.js")

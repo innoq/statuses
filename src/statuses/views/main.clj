@@ -24,9 +24,9 @@
                             :icon "icon-user"},
                            {:url (str base "?author=" (user request)) :title "My posts"
                             :icon "icon-user"}],
-                  "Feeds"    [{:url (str base "?format=atom") :title "Feed for everything"
+                  "Feeds"    [{:url (str base "?format=atom") :title "Everything"
                          :icon "icon-fire"},
-                        {:url (str base "?format=atom&query=@" (user request)) :title "Feed for mentions"
+                        {:url (str base "?format=atom&query=@" (user request)) :title "Mentions"
                          :icon "icon-fire"}],
                   "Support"  [{:url "/statuses/info" :title "Server info"
                            :icon "icon-info-sign"},
