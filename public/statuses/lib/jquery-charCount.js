@@ -16,12 +16,14 @@
 (function($) {
 	$.fn.charCount = function(limit, button) {
 		return this.each(function() {
-			var countBox = $('<span></span>'),
+			var countBox = $("<span />"),
 				textArea = $(this),
 				textAreaPosition = textArea.position();
-				
-			countBox.addClass('input-group-addon').attr('title', 'Number of characters left.').html(limit).insertBefore(textArea);
-			
+
+			countBox.addClass("char-count input-group-addon").
+				attr("title", "Number of characters left.").html(limit).
+				insertBefore(textArea);
+
 			var countChars = function() {
 				var count = limit - textArea.val().length;
 				if (count < 0) {
