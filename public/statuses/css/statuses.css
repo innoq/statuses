@@ -69,7 +69,6 @@ li.post {
     margin-left: 40px;
 }
 
-
 .author:before {
     content: 'written by ';
 }
@@ -80,6 +79,13 @@ li.post {
 
 .delete form {
     display: inline;
+}
+
+.char-count:before { /* ensures constant width */
+    content: "";
+    display: inline-block;
+    float: left;
+    width: 2em; /* XXX: magic number */
 }
 
 .icon-label-holder {
@@ -97,4 +103,3 @@ li.post {
 .conversation:after {
     content: ')';
 }
-
