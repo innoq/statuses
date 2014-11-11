@@ -1,9 +1,15 @@
+### Clojure ###
 pom.xml
 *jar
-/lib
-/classes
+/lib/
+/classes/
+/target/
 .lein-deps-sum
-/target
-.idea
-*.iml
+.lein-repl-history
+.lein-failures
+.nrepl-port
+
+### Intellij ###
+/*.iml
+.idea/
 atlassian-ide-plugin.xml
