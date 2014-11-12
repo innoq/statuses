@@ -20,7 +20,7 @@
   [:i {:class (str "glyphicon glyphicon-" icon)}])
 
 (defn nav-link [{:keys [url title icon]}]
-  [:li (link-to url (glyphicon icon) title)])
+  [:li (link-to url (glyphicon icon) (str " " title))])
 
 (defn nav-links [request]
   (let [links ["Statuses" [{:url base :title "Everything"
