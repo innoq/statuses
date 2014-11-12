@@ -16,11 +16,11 @@
 (defn avatar-uri [username]
   (clojure.string/replace (config :avatar-url) "{username}" username))
 
-(defn icon [icon]
-  [:i {:class (str "icon-" icon)}])
+(defn glyphicon [icon]
+  [:i {:class (str "glyphicon glyphicon-" icon)}])
 
 (defn nav-link [{:keys [url title icon]}]
-  [:li (link-to url (icon icon) title)])
+  [:li (link-to url (glyphicon icon) title)])
 
 (defn nav-links [request]
   (let [links ["Statuses" [{:url base :title "Everything"
