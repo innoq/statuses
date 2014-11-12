@@ -44,12 +44,17 @@
 
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
 
+;; see: http://www.regular-expressions.info/email.html
+(def email #"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)")
+
 (defn linkify [text]
   (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
         hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
-        anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))]
+        anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))
+        mailto  (fn [[m _]] (str "<a href='mailto:" m "'>" m "</a>"))]
     (-> text
         escape-html
-        (clojure.string/replace #"@(\w+)" handle)
+        (clojure.string/replace #" @(\w+)" handle)
         (clojure.string/replace uri anchor)
+        (clojure.string/replace email mailto)
         (clojure.string/replace #"(?:^|(?<=\s))#(\S+)" hashtag))))
