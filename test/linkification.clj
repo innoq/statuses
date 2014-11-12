@@ -42,3 +42,17 @@
   (is (=
       (linkify "hello foo@example.org how are you")
       "hello <a href='mailto:foo@example.org'>foo@example.org</a> how are you")))
+
+(deftest linkify-mentions []
+  (is (=
+      (linkify "@foo")
+      "@<a href='/statuses/updates?author=foo'>foo</a>"))
+  (is (=
+      (linkify "@foo how are you")
+      "@<a href='/statuses/updates?author=foo'>foo</a> how are you"))
+  (is (=
+      (linkify "how are you @foo")
+      "how are you @<a href='/statuses/updates?author=foo'>foo</a>"))
+  (is (=
+      (linkify "nice to see @foo again")
+      "nice to see @<a href='/statuses/updates?author=foo'>foo</a> again")))
