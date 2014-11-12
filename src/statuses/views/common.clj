@@ -48,7 +48,7 @@
 (def email #"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)")
 
 (defn linkify [text]
-  (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
+  (let [handle  (fn [[_ m]] (str " @<a href='/statuses/updates?author=" m "'>" m "</a>"))
         hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
         anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))
         mailto  (fn [[m _]] (str "<a href='mailto:" m "'>" m "</a>"))]
