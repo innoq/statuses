@@ -16,26 +16,31 @@
 (defn avatar-uri [username]
   (clojure.string/replace (config :avatar-url) "{username}" username))
 
+(defn icon [icon]
+  [:i {:class (str "icon-" icon)}])
+
+(defn nav-link [{:keys [url title icon]}]
+  [:li (link-to url (icon icon) title)])
 
 (defn nav-links [request]
   (let [links ["Statuses" [{:url base :title "Everything"
-                            :icon "icon-th-list"},
+                            :icon "th-list"},
                            {:url (str base "?query=@" (user request)) :title "Mentions"
-                            :icon "icon-user"},
+                            :icon "user"},
                            {:url (str base "?author=" (user request)) :title "My posts"
-                            :icon "icon-user"}],
+                            :icon "user"}],
                   "Feeds"    [{:url (str base "?format=atom") :title "Feed for everything"
-                         :icon "icon-fire"},
+                         :icon "fire"},
                         {:url (str base "?format=atom&query=@" (user request)) :title "Feed for mentions"
-                         :icon "icon-fire"}],
+                         :icon "fire"}],
                   "Support"  [{:url "/statuses/info" :title "Server info"
-                           :icon "icon-info-sign"},
+                           :icon "info-sign"},
                           {:url "https://github.com/innoq/statuses/issues" :title "Report issue"
-                           :icon "icon-question-sign"}]]]
+                           :icon "question-sign"}]]]
 
     (map (fn [[header elements]]
            [:li.nav-header header
-            (map (fn [{:keys [url title icon]}] [:li (link-to url [:i {:class icon}] title)]) elements)])
+            (map nav-link elements)])
       (partition 2 links))))
 
 (defn format-time [time]
