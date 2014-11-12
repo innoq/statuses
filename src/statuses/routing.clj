@@ -122,7 +122,7 @@
 
 (defn too-long [length request]
   (common/layout
-   (str "Sorry, the maximum lenght is " max-length " but you tried " length " characters")
+   (str "Sorry, the maximum length is " max-length " but you tried " length " characters")
    (nav-links request)))
 
 
