@@ -1,4 +1,4 @@
-# Statuses
+# Statuses [![Build Status](http://img.shields.io/travis/innoq/statuses.svg)](https://travis-ci.org/innoq/statuses)
 
 _Statuses_ is an experimental, extremely simple-minded microblogging
 infrastructure for internal use, basically created to have a small yet
