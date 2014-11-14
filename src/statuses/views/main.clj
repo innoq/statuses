@@ -4,7 +4,8 @@
             [statuses.backend.time :as time])
   (:use [hiccup.core :only [html]]
         [hiccup.element :only [link-to]]
-        [hiccup.form :only [form-to text-field hidden-field submit-button]]
+        [hiccup.form :only
+          [form-to text-field hidden-field submit-button check-box]]
         [statuses.configuration :only [config]]
         ))
 
@@ -31,6 +32,11 @@
 (defn- nav-link [url title icon]
   [:li (link-to url (glyphicon icon) title)])
 
+(defn- preference [id title icon]
+  [:li [:a
+    (glyphicon icon) title
+    (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
+
 (defn nav-links [request]
   (let [github-issue-uri "https://github.com/innoq/statuses/issues"
         info-uri         "/statuses/info"]
@@ -39,7 +45,8 @@
           (nav-link (updates-uri request :atom) "Feed (all)"      "fire")
           (nav-link (mention-uri request :atom) "Feed (mentions)" "fire")
           (nav-link info-uri                    "Info"            "info-sign")
-          (nav-link github-issue-uri            "Issue"           "question-sign"))))
+          (nav-link github-issue-uri            "Issue"           "question-sign")
+          (preference "inline-images"           "Inline images?"  "wrench"))))
 
 (defn format-time [time]
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])

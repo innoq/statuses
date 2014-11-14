@@ -107,3 +107,8 @@ li.post {
 .navbar-nav .glyphicon {
     margin-right: 2px;
 }
+
+.navbar-nav input.pref {
+    margin-left: 2px;
+}
+

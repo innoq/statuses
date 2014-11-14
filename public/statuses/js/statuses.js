@@ -11,8 +11,6 @@ var entryFormButton = $(".entry-form button");
 var replyFormButton = $(".reply-form button");
 var preferenceInlineImages = "statuses.preferences.inlineImages";
 
-preferences[preferenceInlineImages] = true;
-
 $("#entry-text").charCount(140, entryFormButton);
 $("#reply-text").charCount(140, replyFormButton);
 
@@ -31,6 +29,18 @@ $(".updates").on("click", ".btn-reply", function(ev) {
             }
         );
 });
+
+$("#pref-inline-images").
+    prop("disabled", false).
+    prop("checked", shouldImgify()).
+    on("click", function() {
+        if($(this).is(":checked")) {
+            preferences[preferenceInlineImages] = true;
+            imgify();
+        } else {
+            preferences[preferenceInlineImages] = null;
+        }
+    });
 
 if (shouldImgify()) {
     imgify();
