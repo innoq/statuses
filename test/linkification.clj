@@ -55,4 +55,13 @@
       "how are you @<a href='/statuses/updates?author=foo'>foo</a>"))
   (is (=
       (linkify "nice to see @foo again")
-      "nice to see @<a href='/statuses/updates?author=foo'>foo</a> again")))
+      "nice to see @<a href='/statuses/updates?author=foo'>foo</a> again"))
+  (is (=
+      (linkify "@?")
+      "@?"))
+  (is (=
+      (linkify "@foo: test")
+      "@<a href='/statuses/updates?author=foo'>foo</a>: test"))
+  (is (=
+      (linkify "@foo.bar test")
+      "@<a href='/statuses/updates?author=foo'>foo</a>.bar test")))
