@@ -54,7 +54,7 @@
         mailto  (fn [[m _]] (str "<a href='mailto:" m "'>" m "</a>"))]
     (-> text
         escape-html
-        (clojure.string/replace #"(?:^|(?<=\s))@(\S+)" handle)
+        (clojure.string/replace #"(?:^|(?<=\s))@(\w+)" handle)
         (clojure.string/replace uri anchor)
         (clojure.string/replace email mailto)
         (clojure.string/replace #"(?:^|(?<=\s))#(\S+)" hashtag))))
