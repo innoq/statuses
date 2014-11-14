@@ -8,8 +8,10 @@
 var imgRegEx = /!<a href="(http[^\s]+)">.+<\/a>/gi;
 var markdownImgRegEx = /!\[(.+)\]\(<a href="(http[^\s]+)">.+<\/a>\)/gi;
 var entryFormButton = $(".entry-form button");
+var replyFormButton = $(".reply-form button");
 
 $("#entry-text").charCount(140, entryFormButton);
+$("#reply-text").charCount(140, replyFormButton);
 
 // quick reply
 $(".updates").on("click", ".btn-reply", function(ev) {
