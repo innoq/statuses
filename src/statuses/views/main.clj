@@ -16,16 +16,30 @@
 (defn avatar-uri [username]
   (clojure.string/replace (config :avatar-url) "{username}" username))
 
-(defn glyphicon [icon]
+(defn- updates-uri
+  ([request] (updates-uri request nil))
+  ([request format] (str base (if format (str "?format=" (name format)) ""))))
+
+(defn- mention-uri
+  ([request] (mention-uri request nil))
+  ([request format] (str base "?query=@" (user request)
+    (if format (str "&format=" (name format)) ""))))
+
+(defn- glyphicon [icon]
   [:span {:class (str "glyphicon glyphicon-" icon)}])
 
+(defn- nav-link [url title icon]
+  [:li (link-to url (glyphicon icon) title)])
+
 (defn nav-links [request]
-  (list [:li [:a {:href base} (glyphicon "th-list") "Everything"]]
-        [:li [:a {:href (str base "?query=@" (user request))} (glyphicon "user") "Mentions"]]
-        [:li [:a {:href (str base "?format=atom")} (glyphicon "fire") "Feed (all)"]]
-        [:li [:a {:href (str base "?format=atom&query=@" (user request))} (glyphicon "fire") "Feed (mentions)"]]
-        [:li [:a {:href "/statuses/info"} (glyphicon "info-sign") "Info"]]
-        [:li [:a {:href "https://github.com/innoq/statuses/issues"} (glyphicon "question-sign") "Issue"]]))
+  (let [github-issue-uri "https://github.com/innoq/statuses/issues"
+        info-uri         "/statuses/info"]
+    (list (nav-link (updates-uri request)       "Everything"      "th-list")
+          (nav-link (mention-uri request)       "Mentions"        "user")
+          (nav-link (updates-uri request :atom) "Feed (all)"      "fire")
+          (nav-link (mention-uri request :atom) "Feed (mentions)" "fire")
+          (nav-link info-uri                    "Info"            "info-sign")
+          (nav-link github-issue-uri            "Issue"           "question-sign"))))
 
 (defn format-time [time]
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
