@@ -20,8 +20,7 @@
   [:i {:class (str "glyphicon glyphicon-" icon)}])
 
 (defn nav-links [request]
-  (list [:a {:class "navbar-brand", :href "/statuses/updates"} [:b "Statuses"]]
-        [:li [:a {:href base} [:i {:class "glyphicon glyphicon-th-list"}] "Everything"]]
+  (list [:li [:a {:href base} [:i {:class "glyphicon glyphicon-th-list"}] "Everything"]]
         [:li [:a {:href (str base "?query=@" (user request))} [:i {:class "glyphicon glyphicon-user"}] "Mentions"]]
         [:li [:a {:href (str base "?format=atom")} [:i {:class "glyphicon glyphicon-fire hidden-xs"}] "Feed (all)"]]
         [:li [:a {:href (str base "?format=atom&query=@" (user request))} [:i {:class "glyphicon glyphicon-fire hidden-xs"}] "Feed (mentions)"]]

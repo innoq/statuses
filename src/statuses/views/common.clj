@@ -21,18 +21,19 @@
                [:style "body {  }"]]
               [:body
                (list
-                [:div.navbar.navbar-default.navbar-static-top {"data-toggle" "collapse" "data-target" ".nav-collapse" "style" "position: static; margin-bottom: 18px;" "role" "navigation" }
+                [:div.navbar.navbar-default.navbar-static-top {:role "navigation"}
                   [:div.container-fluid
                    [:div.navbar-header
-                    [:button.navbar-toggle.collapsed {"type" "button" "data-toggle" "collapse" "data-target" "#statuses-navbar-collapse"}
+                    [:button.navbar-toggle.collapsed {:type "button" :data-target ".navbar-collapse" :data-toggle "collapse"}
                      [:span.sr-only "Toggle navigation"]
                      [:span.icon-bar]
                      [:span.icon-bar]
                      [:span.icon-bar]]
-                    [:div.collapse.navbar-collapse {"id" "statuses-navbar-collapse"}
+                    [:a {:class "navbar-brand", :href "/statuses/updates"} "Statuses"]]
+                    [:div.collapse.navbar-collapse
                      [:ul.nav.navbar-nav
                       navigation
-                     ]]]]]
+                     ]]]]
                 [:div.container-fluid
                  [:div.row
                   [:div.col-xs-12.col-md-12 content]]])
