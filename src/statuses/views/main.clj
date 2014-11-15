@@ -19,29 +19,14 @@
 (defn glyphicon [icon]
   [:i {:class (str "glyphicon glyphicon-" icon)}])
 
-(defn nav-link [{:keys [url title icon]}]
-  [:li (link-to url (glyphicon icon) (str " " title))])
-
 (defn nav-links [request]
-  (let [links ["Statuses" [{:url base :title "Everything"
-                            :icon "th-list"},
-                           {:url (str base "?query=@" (user request)) :title "Mentions"
-                            :icon "user"},
-                           {:url (str base "?author=" (user request)) :title "My posts"
-                            :icon "user"}],
-                  "Feeds"    [{:url (str base "?format=atom") :title "Feed for everything"
-                         :icon "fire"},
-                        {:url (str base "?format=atom&query=@" (user request)) :title "Feed for mentions"
-                         :icon "fire"}],
-                  "Support"  [{:url "/statuses/info" :title "Server info"
-                           :icon "info-sign"},
-                          {:url "https://github.com/innoq/statuses/issues" :title "Report issue"
-                           :icon "question-sign"}]]]
-
-    (map (fn [[header elements]]
-           [:li.nav-header header
-            (map nav-link elements)])
-      (partition 2 links))))
+  (list [:a {:class "navbar-brand", :href "/statuses/updates"} [:b "Statuses"]]
+        [:li [:a {:href base} [:i {:class "glyphicon glyphicon-th-list"}] "Everything"]]
+        [:li [:a {:href (str base "?query=@" (user request))} [:i {:class "glyphicon glyphicon-user"}] "Mentions"]]
+        [:li [:a {:href (str base "?format=atom")} [:i {:class "glyphicon glyphicon-fire hidden-xs"}] "Feed (all)"]]
+        [:li [:a {:href (str base "?format=atom&query=@" (user request))} [:i {:class "glyphicon glyphicon-fire hidden-xs"}] "Feed (mentions)"]]
+        [:li [:a {:href "/statuses/info"} [:i {:class "glyphicon glyphicon-info-sign"}] "Info"]]
+        [:li [:a {:href "https://github.com/innoq/statuses/issues"} [:i {:class "glyphicon glyphicon-question-sign"}] " Issue"]]))
 
 (defn format-time [time]
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
