@@ -103,3 +103,7 @@ li.post {
 .conversation:after {
     content: ')';
 }
+
+.navbar-nav .glyphicon {
+    margin-right: 2px;
+}
