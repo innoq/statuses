@@ -40,8 +40,7 @@
 (defn nav-links [request]
   (let [github-issue-uri "https://github.com/innoq/statuses/issues"
         info-uri         "/statuses/info"]
-    (list (nav-link (updates-uri request)       "Everything"      "th-list")
-          (nav-link (mention-uri request)       "Mentions"        "user")
+    (list (nav-link (mention-uri request)       "Mentions"        "user")
           (nav-link (updates-uri request :atom) "Feed (all)"      "fire")
           (nav-link (mention-uri request :atom) "Feed (mentions)" "fire")
           (nav-link info-uri                    "Info"            "info-sign")
