@@ -4,7 +4,8 @@
             [statuses.backend.time :as time])
   (:use [hiccup.core :only [html]]
         [hiccup.element :only [link-to]]
-        [hiccup.form :only [form-to text-field hidden-field submit-button]]
+        [hiccup.form :only
+          [form-to text-field hidden-field submit-button check-box]]
         [statuses.configuration :only [config]]
         ))
 
@@ -16,16 +17,36 @@
 (defn avatar-uri [username]
   (clojure.string/replace (config :avatar-url) "{username}" username))
 
-(defn glyphicon [icon]
-  [:i {:class (str "glyphicon glyphicon-" icon)}])
+(defn- updates-uri
+  ([request] (updates-uri request nil))
+  ([request format] (str base (if format (str "?format=" (name format)) ""))))
+
+(defn- mention-uri
+  ([request] (mention-uri request nil))
+  ([request format] (str base "?query=@" (user request)
+    (if format (str "&format=" (name format)) ""))))
+
+(defn- glyphicon [icon]
+  [:span {:class (str "glyphicon glyphicon-" icon)}])
+
+(defn- nav-link [url title icon]
+  [:li (link-to url (glyphicon icon) title)])
+
+(defn- preference [id title icon]
+  [:li [:a
+    (glyphicon icon) title
+    (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
 
 (defn nav-links [request]
-  (list [:li [:a {:href base} [:span {:class "glyphicon glyphicon-th-list"}] "Everything"]]
-        [:li [:a {:href (str base "?query=@" (user request))} [:span {:class "glyphicon glyphicon-user"}] "Mentions"]]
-        [:li [:a {:href (str base "?format=atom")} [:span {:class "glyphicon glyphicon-fire"}] "Feed (all)"]]
-        [:li [:a {:href (str base "?format=atom&query=@" (user request))} [:span {:class "glyphicon glyphicon-fire"}] "Feed (mentions)"]]
-        [:li [:a {:href "/statuses/info"} [:span {:class "glyphicon glyphicon-info-sign"}] "Info"]]
-        [:li [:a {:href "https://github.com/innoq/statuses/issues"} [:span {:class "glyphicon glyphicon-question-sign"}] "Issue"]]))
+  (let [github-issue-uri "https://github.com/innoq/statuses/issues"
+        info-uri         "/statuses/info"]
+    (list (nav-link (updates-uri request)       "Everything"      "th-list")
+          (nav-link (mention-uri request)       "Mentions"        "user")
+          (nav-link (updates-uri request :atom) "Feed (all)"      "fire")
+          (nav-link (mention-uri request :atom) "Feed (mentions)" "fire")
+          (nav-link info-uri                    "Info"            "info-sign")
+          (nav-link github-issue-uri            "Issue"           "question-sign")
+          (preference "inline-images"           "Inline images?"  "wrench"))))
 
 (defn format-time [time]
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
@@ -85,6 +106,4 @@
     (list [:div.update (update request item)]
       (reply-form (:id item) (:author item)))
     (nav-links request)))
-
-
 

@@ -40,6 +40,7 @@
                 (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
                 (include-js "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
                 (include-js "/statuses/lib/jquery-charCount.js")
+                (include-js "/statuses/lib/modernizr.min.js")
                 (include-js "/statuses/js/statuses.js")]))
 
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
