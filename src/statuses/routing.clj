@@ -77,7 +77,7 @@
         length (.length field-value)]
     (if (and (<= length max-length) (> length 0))
       (do (swap! db core/add-update (user request) field-value (parse-num reply-to nil))
-          (resp/redirect "/statuses"))
+          (resp/redirect "/statuses/updates"))
       (resp/redirect (str "/statuses/too-long/" length)))))
 
 (defn keyworded
@@ -99,7 +99,7 @@
   [id request]
   (if (= (user request) (:author (core/get-update @db (Integer/parseInt id))))
     (do (swap! db core/remove-update (Integer/parseInt id))
-      (resp/redirect "/statuses"))
+      (resp/redirect "/statuses/updates"))
     (resp/response (str "Delete failed as you are not " :author )))
   )
 
