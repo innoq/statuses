@@ -6,7 +6,7 @@ if system('lein uberjar')
   puts "Creating run script for #{mainjar}."
   f = File.new('./run.sh', 'w+')
   f.chmod(0744)
-  f.puts "java -jar #{mainjar} $*"
+  f.puts "export LANG=en_US.utf8\njava -jar #{mainjar} $*"
   f.close
   puts "Creating log file"
   log = `git log -1 --pretty="%H"`
