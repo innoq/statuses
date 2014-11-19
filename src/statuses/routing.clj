@@ -12,7 +12,7 @@
         [compojure.core :only [defroutes GET POST DELETE]]
         [hiccup.core :only [html]]
         [statuses.configuration :only [config]]
-        [statuses.views.main]))
+        [statuses.views.main :only [list-page update-page nav-links user base]]))
 
 
 
