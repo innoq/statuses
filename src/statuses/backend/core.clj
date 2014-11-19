@@ -112,8 +112,9 @@
       (-> db
         (rm-single id)))))
 
-(defn add-testdata [db n]
+(defn add-testdata
   "Create a DB with a set of n test updates"
+  [db n]
   (letfn [
     (random [col] (nth col (rand-int (count col))))
     (text [] (random
