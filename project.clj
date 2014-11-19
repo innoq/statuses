@@ -11,11 +11,9 @@
                  [clj-time "0.8.0"]
                  [org.clojure/data.json "0.2.5"]]
   :pedantic? :abort
-  :plugins [[jonase/eastwood "0.1.5"]
-            [lein-ring "0.8.13"]]
+  :plugins [[jonase/eastwood "0.1.5"]]
   :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}
              :uberjar {:aot [statuses.server]}}
   :main statuses.server
-  :aliases {"lint" "eastwood"}
-  :ring {:handler statuses.views.main/app-routes})
+  :aliases {"lint" "eastwood"})
 
