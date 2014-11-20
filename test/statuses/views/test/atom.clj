@@ -27,9 +27,8 @@
         "feed id is uri of feed")
 
     (is (= (get feed 4)
-           [:updated "2014-11-20T09:39:30Z"])
-           ;[:updated "2014-11-20T09:39:30.001Z"]) ???
-        "feed updated is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss'Z'")
+           [:updated "2014-11-20T09:39:30.001Z"])
+        "feed updated is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss.S'Z'")
 
     (is (= (get feed 5)
            [:link {:rel "self"
@@ -67,14 +66,12 @@
       "id is 'tag:innoq.com,2012:statuses/id'")
 
     (is (= (get (entry (feed-with-entry {:time (date-time 2014 11 20 9 39 30 001)})) 5)
-           [:published "2014-11-20T09:39:30Z"])
-           ;[:published "2014-11-20T09:39:30.001Z"]) ???
-      "published is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss'Z'")
+           [:published "2014-11-20T09:39:30.001Z"])
+      "published is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss.S'Z'")
 
     (is (= (get (entry (feed-with-entry {:time (date-time 2014 11 20 9 39 30 001)})) 6)
-           [:updated "2014-11-20T09:39:30Z"])
-           ;[:updated "2014-11-20T09:39:30.001Z"]) ???
-      "updated is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss'Z'")
+           [:updated "2014-11-20T09:39:30.001Z"])
+      "updated is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss.S'Z'")
 
     (is (= (get (entry (feed-with-entry {:id 1337})) 7)
            [:link {:href "http://localhost:8080/statuses/updates/1337"}])

@@ -4,9 +4,9 @@
             [statuses.views.common :refer [linkify]]))
 
 (defn- as-rfc3339
-  "Converts the given time to rfc3339. E.g.: 1985-04-12T23:20:50Z"
+  "Converts the given time to rfc3339. E.g.: 1985-04-12T23:20:50.52Z"
   [time]
-  (unparse (formatters :date-time-no-ms) time))
+  (unparse (formatters :date-time) time))
 
 (defn- create-feed-entry-content
   "Creates the content for a feed entry."
