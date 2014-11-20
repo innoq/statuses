@@ -33,14 +33,13 @@
 (defn feed
   "Creates an atom feed for the given updates and uri."
   [items base-uri feed-uri]
-  (let [full-uri (str base-uri feed-uri)]
-    (into [:feed {:xmlns "http://www.w3.org/2005/Atom"}
-           [:title "innoQ Status updates"]
-           [:id full-uri]
-           [:updated (as-rfc3339 (:time (first items)))]
-           [:link {:rel "self" :href full-uri :type "application/atom+xml"}]
-           [:author
-            [:name "innoQ"]
-            [:uri base-uri]]]
-          (map (partial create-feed-entry full-uri) items))))
+  (into [:feed {:xmlns "http://www.w3.org/2005/Atom"}
+         [:title "innoQ Status updates"]
+         [:id base-uri]
+         [:updated (as-rfc3339 (:time (first items)))]
+         [:link {:rel "self" :href base-uri :type "application/atom+xml"}]
+         [:author
+          [:name "innoQ"]
+          [:uri base-uri]]]
+        (map (partial create-feed-entry base-uri) items)))
 

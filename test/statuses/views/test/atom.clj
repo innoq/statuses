@@ -6,7 +6,8 @@
 (defn- feed-with
   "Returns a feed with the given entries"
   [entries]
-  (feed entries "http://localhost:8080" "/statuses/updates"))
+  (let [base-uri "http://localhost:8080/statuses/updates"]
+    (feed entries base-uri (str base-uri "?format=atom"))))
 
 (defn- feed-with-entry
   "Creates a new feed with one entry from the given entry template."
@@ -40,8 +41,7 @@
     (is (= (get feed 6)
            [:author
             [:name "innoQ"]
-            [:uri "http://localhost:8080"]])
-            ;[:uri "http://localhost:8080/statuses/updates"]]) ???
+            [:uri "http://localhost:8080/statuses/updates"]])
         "feed author has name and correct uri")))
 
 (deftest test-feed-entry
