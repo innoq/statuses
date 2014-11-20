@@ -37,7 +37,7 @@
          [:title "innoQ Status updates"]
          [:id base-uri]
          [:updated (as-rfc3339 (:time (first items)))]
-         [:link {:rel "self" :href base-uri :type "application/atom+xml"}]
+         [:link {:rel "self" :href feed-uri :type "application/atom+xml"}]
          [:author
           [:name "innoQ"]
           [:uri base-uri]]]

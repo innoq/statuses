@@ -33,8 +33,7 @@
 
     (is (= (get feed 5)
            [:link {:rel "self"
-                   :href "http://localhost:8080/statuses/updates"
-                   ;:href "http://localhost:8080/statuses/updates?format=atom" ???
+                   :href "http://localhost:8080/statuses/updates?format=atom"
                    :type "application/atom+xml"}])
         "feed self link is atom type and points to feed uri")
 
