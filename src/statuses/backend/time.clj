@@ -5,10 +5,6 @@
 (defn time-to-utc [time]
   (local/format-local-time time :rfc822))
 
-(defn time-to-rfc3339 [time]
-  (format/unparse  (format/formatters :date-time-no-ms) time))
-
-
 (defn time-to-human [time]
   (str (local/format-local-time time :date) " "
        (local/format-local-time time :hour-minute-second)))
