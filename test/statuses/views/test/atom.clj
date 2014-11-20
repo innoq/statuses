@@ -6,8 +6,8 @@
 (defn- feed-with
   "Returns a feed with the given entries"
   [entries]
-  (let [base-uri "http://localhost:8080/statuses/updates"]
-    (feed entries base-uri (str base-uri "?format=atom"))))
+  (let [base-uri "http://localhost:8080/statuses"]
+    (feed entries base-uri (str base-uri "/updates?format=atom"))))
 
 (defn- feed-with-entry
   "Creates a new feed with one entry from the given entry template."
@@ -72,6 +72,26 @@
       "updated is in rfc3339 format: yyyy-MM-dd'T'hh:mm:ss.S'Z'")
 
     (is (= (get (entry (feed-with-entry {:id 1337})) 7)
-           [:link {:href "http://localhost:8080/statuses/updates/1337"}])
-      "link points to correct status")))
+           [:link {:rel "alternate"
+                   :type "text/html"
+                   :href "http://localhost:8080/statuses/updates/1337"}])
+      "alternate link is text/html and points to correct status")
+
+    (is (= (get (entry (feed-with-entry {})) 8) nil)
+      "no link to related if entry is not member of a conversation")
+
+    (is (= (get (entry (feed-with-entry {:conversation 1337})) 8)
+           [:link {:rel"related"
+                   :type "text/html"
+                   :href "http://localhost:8080/statuses/conversations/1337"}])
+      "related link is text/html and points to correct conversation")
+
+    (is (= (get (entry (feed-with-entry {})) 9) nil)
+      "no link to prev if entry is no reply-to")
+
+    (is (= (get (entry (feed-with-entry {:in-reply-to 1337})) 9)
+           [:link {:rel "prev"
+                   :type "text/html"
+                   :href "http://localhost:8080/statuses/updates/1337"}])
+      "prev link is text/html and points to correct status")))
 

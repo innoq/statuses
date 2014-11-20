@@ -18,17 +18,27 @@
 
 (defn- create-feed-entry
   "Creates a new feed entry for the given uri and update."
-  [base-uri {:keys [id author text time]}]
+  [base-uri {:keys [id author text time conversation in-reply-to]}]
   [:entry
    [:title (str "Posted by @" author)]
    [:author
     [:name author]
-    [:uri (str base-uri "?author=" author)]]
+    [:uri (str base-uri "/updates?author=" author)]]
    (create-feed-entry-content text)
    [:id (str "tag:innoq.com,2012:statuses/" id)]
    [:published (as-rfc3339 time)]
    [:updated (as-rfc3339 time)]
-   [:link {:href (str base-uri "/" id)}]])
+   [:link {:rel "alternate"
+           :type "text/html"
+           :href (str base-uri "/updates/" id)}]
+   (if conversation
+     [:link {:rel "related"
+             :type "text/html"
+             :href (str base-uri "/conversations/" conversation)}])
+  (if in-reply-to
+    [:link {:rel "prev"
+            :type "text/html"
+            :href (str base-uri "/updates/" in-reply-to)}])])
 
 (defn feed
   "Creates an atom feed for the given updates and uri."
@@ -37,9 +47,11 @@
          [:title "innoQ Status updates"]
          [:id feed-uri]
          [:updated (as-rfc3339 (:time (first items)))]
-         [:link {:rel "self" :href feed-uri :type "application/atom+xml"}]
+         [:link {:rel "self"
+                 :type "application/atom+xml"
+                 :href feed-uri}]
          [:author
           [:name "innoQ"]
-          [:uri base-uri]]]
+          [:uri (str base-uri "/updates")]]]
         (map (partial create-feed-entry base-uri) items)))
 

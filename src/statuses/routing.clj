@@ -64,11 +64,10 @@
          (= format "atom") (content-type
                              "application/atom+xml;charset=utf-8"
                              (html (atom/feed items
+                                              (str (base-uri request) "/statuses")
                                               (str (base-uri request)
-                                                   (:uri request))
-                                              (str (base-uri request)
-                                                   (:uri request)
-                                                   "?" (:query-string request)))))
+                                                   "/statuses/updates?"
+                                                   (:query-string request)))))
          :else             (content-type
                             "text/html;charset=utf-8"
                             (list-page items next request)))))))
