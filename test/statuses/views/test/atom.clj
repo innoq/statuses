@@ -23,8 +23,7 @@
         "feed title is: innoQ Status updates")
 
     (is (= (get feed 3)
-           [:id "http://localhost:8080/statuses/updates"])
-           ;[:id "http://localhost:8080/statuses/updates?format=atom"]) ???
+           [:id "http://localhost:8080/statuses/updates?format=atom"])
         "feed id is uri of feed")
 
     (is (= (get feed 4)

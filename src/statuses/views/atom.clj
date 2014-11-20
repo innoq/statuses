@@ -35,7 +35,7 @@
   [items base-uri feed-uri]
   (into [:feed {:xmlns "http://www.w3.org/2005/Atom"}
          [:title "innoQ Status updates"]
-         [:id base-uri]
+         [:id feed-uri]
          [:updated (as-rfc3339 (:time (first items)))]
          [:link {:rel "self" :href feed-uri :type "application/atom+xml"}]
          [:author
