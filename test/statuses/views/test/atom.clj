@@ -3,11 +3,6 @@
             [clojure.test :refer [deftest is]]
             [statuses.views.atom :refer [feed]]))
 
-(defn- as-uri
-  "Returns a java.net.URI from the given string"
-  [uri]
-  (java.net.URI/create uri))
-
 (defn- feed-with
   "Returns a feed with the given entries"
   [entries]
@@ -59,8 +54,7 @@
     (is (= (get (entry (feed-with-entry {:author "bar"})) 2)
            [:author
             [:name "bar"]
-            [:uri [:a {:href (as-uri "http://localhost:8080?author=bar")} ["bar"]]]])
-            ;[:uri "http://localhost:8080/statuses/updates?author=bar"]]) ???
+            [:uri "http://localhost:8080/statuses/updates?author=bar"]])
       "author contains correct name and uri")
 
     (is (= (get (entry (feed-with-entry {:text "@bar: http://www.test.de"})) 3)

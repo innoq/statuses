@@ -1,6 +1,5 @@
 (ns statuses.views.atom
   (:require [clj-time.format :refer [formatters unparse]]
-            [hiccup.element :as element]
             [hiccup.util :refer [escape-html]]
             [statuses.views.common :refer [linkify]]))
 
@@ -24,12 +23,12 @@
    [:title (str "Posted by @" author)]
    [:author
     [:name author]
-    [:uri (element/link-to (str base-uri "?author=" author) author)]]
+    [:uri (str base-uri "?author=" author)]]
    (create-feed-entry-content text)
    [:id (str "tag:innoq.com,2012:statuses/" id)]
    [:published (as-rfc3339 time)]
    [:updated (as-rfc3339 time)]
-   [:link {:href (str base-uri "/statuses/updates/" id)}]])
+   [:link {:href (str base-uri "/" id)}]])
 
 (defn feed
   "Creates an atom feed for the given updates and uri."
@@ -43,5 +42,5 @@
            [:author
             [:name "innoQ"]
             [:uri base-uri]]]
-          (map (partial create-feed-entry base-uri) items))))
+          (map (partial create-feed-entry full-uri) items))))
 
