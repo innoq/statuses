@@ -16,10 +16,11 @@ $("#reply-text").charCount(140, replyFormButton);
 
 // quick reply
 $(".updates").on("click", ".btn-reply", function(ev) {
-    $("div.new-reply").remove();
+    var oldReplyForm = $("div.new-reply")
+    oldReplyForm.toggle(200, function() {oldReplyForm.remove()});
     var post = $(this).closest(".post");
     var postURI = $("a.permalink", post).attr("href");
-    $('<div />').addClass("new-reply").appendTo(post).
+    $('<div />').addClass("new-reply").
         load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
             function(response, status, xhr) {
                 var input = $(".new-reply input[name=reply-text]", post);
@@ -27,7 +28,10 @@ $(".updates").on("click", ".btn-reply", function(ev) {
                 input.charCount(140, button);
                 focusField(input);
             }
-        );
+    ).
+        hide().
+        appendTo(post).
+        toggle();
 });
 
 $("#pref-inline-images").

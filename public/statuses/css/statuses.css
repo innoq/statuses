@@ -11,14 +11,27 @@ body,
     line-height: 1.33em;
 }
 
+.tweet-wrapper {
+    max-width: 900px;
+    margin: 1em auto;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
+.updates {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background-color: #f9f9fc;
+    margin: 0.6em 0;
+}
+
 li.post {
-    padding: 0.7em 0.7em 1.2em;
+    padding: 0.5em 1.2em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .avatar img {
@@ -28,6 +41,8 @@ li.post {
     max-width: 32px;
     max-height: 32px;
     overflow: hidden;
+    border-radius: 5px;
+    background-color: #369;
 }
 
 .post-content {
@@ -41,22 +56,28 @@ li.post {
 
 .meta {
     font-size: 12px;
-    border-top: 1px solid #eee;
     color: #777;
 }
-
-.meta .btn {
-    margin:0 0 0 1em;
-    background-color:transparent;
-    padding: 0;
+.meta span {
+    margin-right: 0.3em;
 }
 
-.meta .glyphicon {
+.actions .btn {
+    background:transparent;
+    padding:0.1em;
+    margin-right: 1em;
+    color: #999;
+}
+.actions .btn:hover {
+    color: #444;
+}
+.actions .glyphicon {
     font-size: 0.85em;
 }
 
-.meta .btn-label {
-    margin-left: 0.3em;
+.actions .btn-label {
+    position: absolute;
+    left: -5000px;
 }
 
 .new-reply {
@@ -64,17 +85,14 @@ li.post {
 }
 
 .post-content,
-.new-reply,
+.actions,
 .meta {
     margin-left: 40px;
 }
 
-.author:before {
-    content: 'written by ';
-}
-
 .time:before {
-    content: ' on ';
+    content: '·';
+    padding-right: 0.3em;
 }
 
 .delete form {
@@ -88,27 +106,21 @@ li.post {
     width: 2em; /* XXX: magic number */
 }
 
-.icon-label-holder {
-    font-size: 0;
-}
-
 .reply:before {
-    content: ' in reply to ';
+    content: '· in reply to';
+    padding-right: 0.3em;
 }
 
 .conversation:before {
-    content: ' (conversation ';
-}
-
-.conversation:after {
-    content: ')';
+    content: '· conversation:';
+    padding-right: 0.3em;
 }
 
 .navbar-nav .glyphicon {
-    margin-right: 2px;
+    margin-right: 0.3em;
 }
 
 .navbar-nav input.pref {
-    margin-left: 2px;
+    margin-left: 0.3em;
 }
 

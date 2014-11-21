@@ -33,7 +33,7 @@
   [:li (link-to url (glyphicon icon) title)])
 
 (defn- preference [id title icon]
-  [:li [:a
+  [:li [:a {:name id}
     (glyphicon icon) title
     (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
 
@@ -52,15 +52,15 @@
 
 (defn delete-form [id]
   (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (str base "/" id)]
-    (html [:button {:type "submit" :class "btn btn-sm"} (html [:span.glyphicon.glyphicon-trash ][:span.btn-label "Delete"])])
+    (html [:button {:type "submit" :class "btn btn-lg"} (html [:span.glyphicon.glyphicon-trash ][:span.btn-label "Delete"])])
     ))
 
 (defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list
     [:div.avatar
      (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
-    [:div.post-content (common/linkify text)]
-    [:div.meta [:span.author (link-to (str base "?author=" author) author)]
+    [:div.meta
+     [:span.author (link-to (str base "?author=" author) (str "@" author))]
      [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
      (if in-reply-to
        (list
@@ -70,11 +70,15 @@
        (list
          [:span.conversation (link-to (str "/statuses/conversations/" conversation)
                                conversation)]))
-     [:button {:type "submit" :class "btn btn-sm btn-reply"} (html [:span.glyphicon.glyphicon-edit ][:span.btn-label "Reply"])]
+     ]
+    [:div.post-content (common/linkify text)]
+    [:div.actions
+     [:button {:type "submit" :class "btn btn-lg btn-reply"} (html [:span.glyphicon.glyphicon-edit ][:span.btn-label "Reply"])]
      (if can-delete?
        (list
-         [:span.delete (delete-form id)]))
-     ]))
+         [:span.delete (delete-form id)]))]
+  )
+)
 
 (defn entry-form []
   (form-to {:class "entry-form"} [:post base]
@@ -95,8 +99,9 @@
 
 (defn list-page [items next request]
   (common/layout
-    (list [:div (entry-form)]
-      [:div [:ul.updates (map (fn [item] [:li.post (update request item)]) items)]]
+    (list
+      (entry-form)
+      [:ul.updates (map (fn [item] [:li.post (update request item)]) items)]
       (if next (link-to next "Next")))
     (nav-links request)))
 
