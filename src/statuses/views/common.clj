@@ -6,13 +6,14 @@
         ))
 
 
-(defn layout [content navigation]
+(defn layout [content footer navigation]
             (html5
               [:head
                [:meta {:name "viewport"
                        :content "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"}]
                [:title "innoQ Statuses"]
                (include-css "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
+               (include-css "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
                (include-css "/statuses/css/statuses.css")
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
@@ -21,7 +22,7 @@
                [:style "body {  }"]]
               [:body
                (list
-                [:div.navbar.navbar-default.navbar-static-top {:role "navigation"}
+                [:header.navbar.navbar-default.navbar-fixed-top {:role "navigation"}
                   [:div.container-fluid
                    [:div.navbar-header
                     [:button.navbar-toggle.collapsed {:type "button" :data-target ".navbar-collapse" :data-toggle "collapse"}
@@ -34,8 +35,9 @@
                      [:ul.nav.navbar-nav
                       navigation
                      ]]]]
-                [:div.container-fluid
-                 [:div.row.tweet-wrapper content]])
+                 [:main.container-fluid.tweet-wrapper content]
+                 [:footer footer]
+                 )
                 (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
                 (include-js "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
                 (include-js "/statuses/lib/jquery-charCount.js")

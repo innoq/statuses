@@ -34,7 +34,8 @@
 
 (defn- preference [id title icon]
   [:li [:a {:name id}
-    (glyphicon icon) title
+    (glyphicon icon)
+    [:label {:for (str "pref-" id)} title]
     (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
 
 (defn nav-links [request]
@@ -44,7 +45,7 @@
           (nav-link (updates-uri request :atom) "Feed (all)"      "fire")
           (nav-link (mention-uri request :atom) "Feed (mentions)" "fire")
           (nav-link info-uri                    "Info"            "info-sign")
-          (nav-link github-issue-uri            "Issue"           "question-sign")
+          (nav-link github-issue-uri            "Issues"           "question-sign")
           (preference "inline-images"           "Inline images?"  "wrench"))))
 
 (defn format-time [time]
@@ -52,7 +53,7 @@
 
 (defn delete-form [id]
   (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (str base "/" id)]
-    (html [:button {:type "submit" :class "btn btn-lg"} (html [:span.glyphicon.glyphicon-trash ][:span.btn-label "Delete"])])
+    (html [:button {:type "submit" :class "btn btn-delete"} (html [:span.fa.fa-remove ][:span.btn-label "Delete"])])
     ))
 
 (defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
@@ -73,7 +74,7 @@
      ]
     [:div.post-content (common/linkify text)]
     [:div.actions
-     [:button {:type "submit" :class "btn btn-lg btn-reply"} (html [:span.glyphicon.glyphicon-edit ][:span.btn-label "Reply"])]
+     [:button {:type "submit" :class "btn btn-reply"} (html [:span.fa.fa-reply ][:span.btn-label "Reply"])]
      (if can-delete?
        (list
          [:span.delete (delete-form id)]))]
@@ -101,13 +102,16 @@
   (common/layout
     (list
       (entry-form)
-      [:ul.updates (map (fn [item] [:li.post (update request item)]) items)]
-      (if next (link-to next "Next")))
+      [:ul.updates (map (fn [item] [:li.post (update request item)]) items)])
+    (if next
+        (link-to {:rel "next"} next "Next"))
     (nav-links request)))
 
 (defn update-page [item request]
   (common/layout
-    (list [:div.update (update request item)]
+    (list
+      [:div.update (update request item)]
       (reply-form (:id item) (:author item)))
+    nil
     (nav-links request)))
 
