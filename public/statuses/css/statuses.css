@@ -1,5 +1,5 @@
 body {
-    font-family: "Open Sans",Helvetica,Arial,sans-serif;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.45em;
     color: #333;
@@ -36,7 +36,7 @@ ul {
     font-weight: 300;
 }
 
-.navbar label{
+.navbar label {
     font-weight: 300;
     margin: 0;
     display: inline;
@@ -100,14 +100,16 @@ ul {
 }
 
 .actions .btn {
-    background:transparent;
-    padding:0.1em 0;
+    background: transparent;
+    padding: 0.1em 0;
     margin: 0 3em 0.3em 0;
     color: #ccc;
 }
+
 .actions .btn:hover {
     color: #333;
 }
+
 .actions .fa {
     font-size: 1.2em;
 }
@@ -136,7 +138,8 @@ ul {
     display: inline;
 }
 
-.char-count:before { /* ensures constant width */
+.char-count:before {
+    /* ensures constant width */
     content: "";
     display: inline-block;
     float: left;
