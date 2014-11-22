@@ -71,7 +71,6 @@ ul {
     max-height: 48px;
     overflow: hidden;
     border-radius: 5px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .post-content {
@@ -126,7 +125,7 @@ ul {
 .post-content,
 .actions,
 .meta {
-    margin-left: 40px;
+    margin-left: 60px;
 }
 
 .time:before {
