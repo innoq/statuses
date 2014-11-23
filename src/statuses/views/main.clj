@@ -61,7 +61,7 @@
     [:div.avatar
      (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
     [:div.meta
-     [:span.author (link-to (str base "?author=" author) (str "@" author))]
+     [:span.author (link-to (str base "?author=" author) author)]
      [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
      (if in-reply-to
        (list
@@ -71,13 +71,13 @@
        (list
          [:span.conversation (link-to (str "/statuses/conversations/" conversation)
                                conversation)]))
+     [:span.actions
+      [:button {:type "submit" :class "btn btn-reply"} (html [:span.fa.fa-reply ][:span.btn-label "Reply"])]
+      (if can-delete?
+        (list
+          [:span.delete (delete-form id)]))]
      ]
     [:div.post-content (common/linkify text)]
-    [:div.actions
-     [:button {:type "submit" :class "btn btn-reply"} (html [:span.fa.fa-reply ][:span.btn-label "Reply"])]
-     (if can-delete?
-       (list
-         [:span.delete (delete-form id)]))]
   )
 )
 
@@ -90,7 +90,7 @@
          [:div {"style" "clear: both"}]))
 
 (defn reply-form [id author]
-  (form-to {:class "reply-form" } [:post base]
+  (form-to {:class (str "reply-form form" id) } [:post base]
     [:div.input-group
       (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
       [:span.input-group-btn
