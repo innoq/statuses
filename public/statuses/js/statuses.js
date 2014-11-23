@@ -16,11 +16,19 @@
 
 // quick reply
     $(".updates").on("click", ".btn-reply", function (ev) {
-        var oldReplyForm = $("div.new-reply")
+        var post = $(this).closest(".post");
+        var formCount = $("div.new-reply", post);
+        var oldReplyForm = $("div.new-reply");
+        // don't do anything if the form is already present in this post
+        if (formCount[0] && oldReplyForm[0] === formCount[0]) {
+            return;
+        }
+
+        // remove the old form
         oldReplyForm.toggle(200, function () {
             oldReplyForm.remove()
         });
-        var post = $(this).closest(".post");
+
         var postURI = $("a.permalink", post).attr("href");
         $('<div />').addClass("new-reply").
             load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
