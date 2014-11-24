@@ -103,8 +103,9 @@
 
 (defn list-page [items next request current-item-id]
   (common/layout
+    (if (nil? current-item-id) "timeline" (str "Status " current-item-id))
     (list
-      (if (not current-item-id) (entry-form))
+      (if (nil? current-item-id) (entry-form))
       [:ul.updates (map (fn [item]
                           (if (= current-item-id (:id item))
                             [:li.post.current (update request true item)]

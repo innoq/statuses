@@ -6,12 +6,12 @@
         ))
 
 
-(defn layout [content footer navigation]
+(defn layout [title content footer navigation]
             (html5
               [:head
                [:meta {:name "viewport"
                        :content "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"}]
-               [:title "innoQ Statuses"]
+               [:title (str title " - innoQ Statuses")]
                (include-css "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
                (include-css "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
                (include-css "/statuses/css/statuses.css")

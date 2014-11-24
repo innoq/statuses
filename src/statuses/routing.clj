@@ -122,17 +122,21 @@
 (defn info [request]
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
         (common/layout
+          "Server Info"
          [:table.table
           (item "Version" (config :version))
           (item "# of entries" (core/get-count @db))
           (item "Last save at" (get-save-time @db))
           (item "Base URI" (base-uri request))
           (if (= (config :run-mode) :dev) (item "Request" [:pre (with-out-str (pp/pprint request))]))]
+          nil
           (nav-links request))))
 
 (defn too-long [length request]
   (common/layout
+    "text length violation"
    (str "Sorry, the maximum length is " max-length " but you tried " length " characters")
+    nil
    (nav-links request)))
 
 (defn replyform
