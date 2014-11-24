@@ -44,6 +44,11 @@
                 (include-js "/statuses/lib/modernizr.min.js")
                 (include-js "/statuses/js/statuses.js")]))
 
+(defn simple [content]
+  (html5
+    [:body
+       content]))
+
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
 
 ;; see: http://www.regular-expressions.info/email.html
