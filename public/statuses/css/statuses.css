@@ -34,6 +34,7 @@ ul {
     border-bottom-color: rgba(0, 0, 0, 0.2);
     text-transform: uppercase;
     font-weight: 300;
+    font-size: 12px;
 }
 
 .navbar label {
@@ -56,11 +57,11 @@ ul {
     background-color: #fff;
     margin: 1em 0;
     text-align: left;
-    margin-left: 64px;
+    margin-left: 48px;
 }
 
 .post, .update {
-    padding: 1em;
+    padding: 0 10px 1.5em;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     position: relative;
 }
@@ -73,7 +74,7 @@ ul {
     display: block;
     border-style: solid solid outset;
     position: absolute;
-    top: 1.1em;
+    top: 10px;
     left: -16px;
 }
 
@@ -90,23 +91,23 @@ ul {
 }
 
 .avatar {
-    margin-left: -78px;
+    margin-left: -58px;
 }
 .avatar img {
     clear: left;
     float: left;
     margin-right: 0.5em;
-    max-width: 48px;
-    max-height: 48px;
+    max-width: 32px;
+    max-height: 32px;
     overflow: hidden;
     border-radius: 3px;
-    margin-top: -1em;
 }
 
 .post-content {
     overflow: hidden; /* block formatting context, independent from avatar */
-    margin: 0.3em 0 0 0;
     font-size: 15px;
+    clear: both;
+    margin-top: 1em;
 }
 
 .current {
@@ -128,37 +129,52 @@ ul {
 }
 
 .meta {
+    padding-top: 8px;
     font-size: 12px;
     color: #aaa;
-    margin-top: -0.2em;
+    height: 20px;
+    width:100%;
 }
 
 .meta a {
     color: #667;
 }
 
-.meta span {
-    margin-right: 0.3em;
-    line-height: 12px;
+.meta .author,
+.meta .reply,
+.meta .actions {
+    float: left;
+    margin-right: 4px;
 }
 
 .meta .author {
     font-weight: 600;
 }
+.actions {
+    font-size: 14px;
+    line-height: 4px;
+    display: none;
+    position: relative;
+}
+.post:hover .actions {
+    display: inline;
+}
 
 .actions .btn {
+    position: absolute;
+    left: .5em;
     background: transparent;
-    padding: 0.1em 0;
-    margin: 0 0 0em 1em;
+    padding: 0;
+    margin: -4px 0 0 0;
     color: #ccc;
+    font-size: 20px;
+}
+.actions .btn-delete {
+    left: 2.5em;
 }
 
 .actions .btn:hover {
     color: #333;
-}
-
-.actions .fa {
-    font-size: 0.9em;
 }
 
 .actions .btn-label {
@@ -170,9 +186,8 @@ ul {
     margin-top: 1em;
 }
 
-.time:before {
-    content: '·';
-    padding-right: 0.3em;
+.time {
+    float: right;
 }
 
 .delete form {
@@ -199,4 +214,24 @@ ul {
 
 footer {
     font-size: 1.3em;
+}
+
+@media (min-width: 768px) {
+    .updates, .update {
+        border: none;
+        background-color: transparent;
+    }
+
+    .post, .update {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        background-color: #fff;
+        padding: 0 10px 10px;
+        margin-bottom: 1em;
+    }
+
+    .actions .btn {
+        font-size: inherit;
+        margin-top: 0px;
+    }
 }

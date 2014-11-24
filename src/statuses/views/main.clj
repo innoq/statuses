@@ -42,7 +42,8 @@
   (let [github-issue-uri "https://github.com/innoq/statuses/issues"
         info-uri         "/statuses/info"]
     (list (nav-link (mention-uri request)       "Mentions"        "user")
-          (nav-link (updates-uri request :atom) "Feed (all)"      "fire")
+          ; too many navbar items break the navbar layout at ~850px screen width
+          ;(nav-link (updates-uri request :atom) "Feed (all)"      "fire")
           (nav-link (mention-uri request :atom) "Feed (mentions)" "fire")
           (nav-link info-uri                    "Info"            "info-sign")
           (nav-link github-issue-uri            "Issues"           "question-sign")
@@ -79,7 +80,6 @@
      (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
     [:div.meta
      [:span.author (link-to (str base "?author=" author) author)]
-     [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
      (if in-reply-to
        (list
          [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)]))
@@ -88,6 +88,7 @@
       (if can-delete?
         (list
           [:span.delete (delete-form id)]))]
+     [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
      ]
     [:div.post-content (common/linkify text)]
   )
