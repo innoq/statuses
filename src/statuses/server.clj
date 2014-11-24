@@ -1,20 +1,20 @@
 (ns statuses.server
-  (:require [statuses.routing             :as main]
+  (:require [ring.adapter.jetty :refer [run-jetty]]
+            [ring.middleware.content-type :refer [wrap-content-type]]
+            [ring.middleware.not-modified :refer [wrap-not-modified]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.reload :refer [wrap-reload]]
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [statuses.backend.persistence :as persistence]
-            [statuses.configuration       :as cfg :refer [config]]
-            [ring.middleware [params       :refer [wrap-params]]
-                             [file         :refer [wrap-file]]
-                             [content-type :refer [wrap-content-type]]
-                             [not-modified :refer [wrap-not-modified]]
-                             [stacktrace   :refer [wrap-stacktrace]]
-                             [reload       :refer [wrap-reload]]]
-            [ring.adapter.jetty :refer [run-jetty]])
+            [statuses.configuration :as cfg :refer [config]]
+            [statuses.routing :as main])
   (:gen-class))
 
 (def app
   (-> main/app-routes
       wrap-params
-      (wrap-file "public")
+      (wrap-resource "public")
       wrap-content-type
       wrap-not-modified
       wrap-stacktrace))
