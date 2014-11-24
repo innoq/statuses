@@ -1,4 +1,4 @@
-(defproject statuses "0.1.0-SNAPSHOT"
+(defproject statuses "1.0.0-SNAPSHOT"
   :description "Statuses app for innoQ"
   :url "https://github.com/innoq/statuses"
   :license {:name "Apache License, Version 2.0"
