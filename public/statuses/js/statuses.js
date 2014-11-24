@@ -19,8 +19,10 @@
         var post = $(this).closest(".post");
         var formCount = $("div.new-reply", post);
         var oldReplyForm = $("div.new-reply");
+
         // don't do anything if the form is already present in this post
         if (formCount[0] && oldReplyForm[0] === formCount[0]) {
+            $("input", formCount[0]).focus();
             return;
         }
 
