@@ -110,19 +110,6 @@ ul {
     margin-top: 1em;
 }
 
-.current {
-    background-color: #FFD;
-}
-
-.post.current:after {
-    border-right-color: #FFD;
-}
-
-.current .post-content {
-    font-size: 1.4em;
-    line-height: 1.7em;
-}
-
 .post-content img {
     display: block;
     border-radius: 3px;
@@ -235,3 +222,17 @@ footer {
         margin-top: 0px;
     }
 }
+
+.current {
+    background-color: #FFD;
+}
+
+.post.current:after {
+    border-right-color: #FFD;
+}
+
+.current .post-content {
+    font-size: 1.4em;
+    line-height: 1.7em;
+}
+
