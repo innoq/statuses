@@ -1,20 +1,17 @@
 (ns statuses.routing
   (:require [statuses.backend.persistence :as persistence]
-            [clojure.pprint :as pp]
             [compojure.route :as route]
             [ring.util.response :as resp]
             [statuses.views.common :as common]
             [statuses.views.atom :as atom]
+            [statuses.views.info :as info-view]
             [statuses.backend.core :as core]
             [statuses.backend.json :as json]
             [statuses.backend.time :as time])
-  (:use [statuses.backend.persistence :only [db get-save-time]]
+  (:use [statuses.backend.persistence :only [db]]
         [compojure.core :only [defroutes GET POST DELETE]]
         [hiccup.core :only [html]]
-        [statuses.configuration :only [config]]
         [statuses.views.main :only [list-page nav-links user base reply-form]]))
-
-
 
 (defn parse-num [s default]
   (if (nil? s) default (read-string s)))
@@ -120,17 +117,7 @@
   (list-page (core/get-conversation @db (Integer/parseInt id)) nil request nil))
 
 (defn info [request]
-  (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
-        (common/layout
-          "Server Info"
-         [:table.table
-          (item "Version" (config :version))
-          (item "# of entries" (core/get-count @db))
-          (item "Last save at" (get-save-time @db))
-          (item "Base URI" (base-uri request))
-          (if (= (config :run-mode) :dev) (item "Request" [:pre (with-out-str (pp/pprint request))]))]
-          nil
-          (nav-links request))))
+  (info-view/render-html request))
 
 (defn too-long [length request]
   (common/layout
