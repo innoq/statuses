@@ -96,6 +96,22 @@ across the following namespaces and matching files:
 * `statuses.views.atom`: function to provide an Atom 1.0 feed of
   status updates
 
+### API
+
+Name | URL
+-----|----
+JSON containing all updates	| `https://<BASE_URL>/statuses/updates?format=json`
+RSS feed containing all updates	| `https://<BASE_URL>/statuses/updates?format=atom`
+JSON containing mentions of a specific user | `https://<BASE_URL>/statuses/updates?query=@<USERNAME>&format=json`
+RSS feed containing mentions of a specific user	| `https://<BASE_URL>/statuses/updates?query=@<USERNAME>&format=atom`
+HTML form to reply to a certain update | `https://<BASE_URL>/statuses/updates/<ID>/replyform`
+ServerInfo | `https://<BASE_URL>/statuses/info`
+
+### Authentication and Authorization
+
+The application expectes to find `remote_user` header in the HTTP request. If none is found, the username will be set to "guest".
+
+A user can create new update and delete updates created by himself as long as there are no replies to this update.
 
 ## Author information and license
 
