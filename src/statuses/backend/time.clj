@@ -12,3 +12,6 @@
 (defn utc-to-time [s]
   (.toDateTime (format/parse-local (format/formatters :rfc822) s)))
 
+(defn format-time [time]
+  [:time {:datetime (time-to-utc time)} (time-to-human time)])
+
