@@ -6,13 +6,14 @@
         ))
 
 
-(defn layout [content navigation]
+(defn layout [title content footer navigation]
             (html5
               [:head
                [:meta {:name "viewport"
                        :content "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"}]
-               [:title "innoQ Statuses"]
+               [:title (str title " - innoQ Statuses")]
                (include-css "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
+               (include-css "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
                (include-css "/statuses/css/statuses.css")
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
@@ -21,7 +22,7 @@
                [:style "body {  }"]]
               [:body
                (list
-                [:div.navbar.navbar-default.navbar-static-top {:role "navigation"}
+                [:header.navbar.navbar-default.navbar-fixed-top {:role "navigation"}
                   [:div.container-fluid
                    [:div.navbar-header
                     [:button.navbar-toggle.collapsed {:type "button" :data-target ".navbar-collapse" :data-toggle "collapse"}
@@ -34,14 +35,19 @@
                      [:ul.nav.navbar-nav
                       navigation
                      ]]]]
-                [:div.container-fluid
-                 [:div.row
-                  [:div.col-xs-12.col-md-12 content]]])
+                 [:main.container-fluid.tweet-wrapper content]
+                 [:footer footer]
+                 )
                 (include-js "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
                 (include-js "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
                 (include-js "/statuses/lib/jquery-charCount.js")
                 (include-js "/statuses/lib/modernizr.min.js")
                 (include-js "/statuses/js/statuses.js")]))
+
+(defn simple [content]
+  (html5
+    [:body
+       content]))
 
 (def uri #"\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))")
 

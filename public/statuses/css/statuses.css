@@ -1,8 +1,12 @@
 body {
-    font-size: 16px;
-    line-height: 1.78em;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45em;
+    color: #333;
     margin: 0;
     padding: 0;
+    padding-top: 4.5em;
+    background-color: #f6f8fa;
 }
 
 body,
@@ -11,16 +15,84 @@ body,
     line-height: 1.33em;
 }
 
+.tweet-wrapper, footer {
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 0 0.8em;
+    text-align: center;
+}
+
 ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
 }
 
-li.post {
-    padding: 0.7em 0.7em 1.2em;
+.navbar-default {
+    background-color: #fff;
+    color: #666;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: 12px;
 }
 
+.navbar label {
+    font-weight: 300;
+    margin: 0;
+    display: inline;
+}
+
+.navbar-nav .fa {
+    margin-right: 0.3em;
+}
+
+.navbar-nav input.pref {
+    margin-left: 0.3em;
+}
+
+.updates, .update {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    background-color: #fff;
+    margin: 1em 0;
+    text-align: left;
+    margin-left: 48px;
+}
+
+.post, .update {
+    padding: 0 10px 1.5em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+
+.post:before,
+.post:after {
+    content: " ";
+    border-color: transparent;
+    display: block;
+    border-style: solid solid outset;
+    position: absolute;
+    top: 10px;
+    left: -16px;
+}
+
+.post:before {
+    border-width: 8px;
+    border-right-color: rgba(0, 0, 0, 0.1);
+}
+
+.post:after {
+    border-right-color: #fff;
+    border-width: 7px;
+    margin-top: 1px;
+    margin-left: 2px;
+}
+
+.avatar {
+    margin-left: -58px;
+}
 .avatar img {
     clear: left;
     float: left;
@@ -28,87 +100,138 @@ li.post {
     max-width: 32px;
     max-height: 32px;
     overflow: hidden;
+    border-radius: 3px;
 }
 
 .post-content {
     overflow: hidden; /* block formatting context, independent from avatar */
-    margin-bottom: 0.5em
+    font-size: 15px;
+    clear: both;
+    margin-top: 1em;
+}
+
+.current {
+    background-color: #FFD;
+}
+
+.post.current:after {
+    border-right-color: #FFD;
+}
+
+.current .post-content {
+    font-size: 1.4em;
+    line-height: 1.7em;
 }
 
 .post-content img {
     display: block;
+    border-radius: 3px;
 }
 
 .meta {
+    padding-top: 8px;
     font-size: 12px;
-    border-top: 1px solid #eee;
-    color: #777;
+    color: #aaa;
+    height: 20px;
+    width:100%;
 }
 
-.meta .btn {
-    margin:0 0 0 1em;
-    background-color:transparent;
+.meta a {
+    color: #667;
+}
+
+.meta .author,
+.meta .reply,
+.meta .actions {
+    float: left;
+    margin-right: 4px;
+}
+
+.meta .author {
+    font-weight: 600;
+}
+.actions {
+    font-size: 14px;
+    line-height: 4px;
+    display: none;
+    position: relative;
+}
+.post:hover .actions {
+    display: inline;
+}
+
+.actions .btn {
+    position: absolute;
+    left: .5em;
+    background: transparent;
     padding: 0;
+    margin: -4px 0 0 0;
+    color: #ccc;
+    font-size: 20px;
+}
+.actions .btn-delete {
+    left: 2.5em;
 }
 
-.meta .glyphicon {
-    font-size: 0.85em;
+.actions .btn:hover {
+    color: #333;
 }
 
-.meta .btn-label {
-    margin-left: 0.3em;
+.actions .btn-label {
+    position: absolute;
+    left: -5000px;
 }
 
 .new-reply {
-    margin-top: 0.2em;
+    margin-top: 1em;
 }
 
-.post-content,
-.new-reply,
-.meta {
-    margin-left: 40px;
-}
-
-.author:before {
-    content: 'written by ';
-}
-
-.time:before {
-    content: ' on ';
+.time {
+    float: right;
 }
 
 .delete form {
     display: inline;
 }
 
-.char-count:before { /* ensures constant width */
+.char-count:before {
+    /* ensures constant width */
     content: "";
     display: inline-block;
     float: left;
     width: 2em; /* XXX: magic number */
 }
 
-.icon-label-holder {
-    font-size: 0;
+.reply,
+.reply:before {
+    font-style: italic;
 }
 
 .reply:before {
-    content: ' in reply to ';
+    content: '· in reply to';
+    padding-right: 0.3em;
 }
 
-.conversation:before {
-    content: ' (conversation ';
+footer {
+    font-size: 1.3em;
 }
 
-.conversation:after {
-    content: ')';
-}
+@media (min-width: 768px) {
+    .updates, .update {
+        border: none;
+        background-color: transparent;
+    }
 
-.navbar-nav .glyphicon {
-    margin-right: 2px;
-}
+    .post, .update {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+        background-color: #fff;
+        padding: 0 10px 10px;
+        margin-bottom: 1em;
+    }
 
-.navbar-nav input.pref {
-    margin-left: 2px;
+    .actions .btn {
+        font-size: inherit;
+        margin-top: 0px;
+    }
 }
-

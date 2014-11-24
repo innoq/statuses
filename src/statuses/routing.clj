@@ -12,7 +12,7 @@
         [compojure.core :only [defroutes GET POST DELETE]]
         [hiccup.core :only [html]]
         [statuses.configuration :only [config]]
-        [statuses.views.main :only [list-page update-page nav-links user base]]))
+        [statuses.views.main :only [list-page nav-links user base reply-form]]))
 
 
 
@@ -70,7 +70,7 @@
                                                    (:query-string request)))))
          :else             (content-type
                             "text/html;charset=utf-8"
-                            (list-page items next request)))))))
+                            (list-page items next request nil)))))))
 
 (defn new-update
   "Handles the request to add a new update. Checks whether the post values 'entry-text' or
@@ -107,33 +107,50 @@
     (resp/response (str "Delete failed as you are not " :author )))
   )
 
-(defn page [id request]
-  (update-page (core/get-update @db (Integer/parseInt id)) request))
+(defn page
+  "Returns a listing with either the conversation of the specified item or just the item"
+  [id request]
+  (let [item (core/get-update @db (Integer/parseInt id))
+        items (core/get-conversation @db (:conversation item))]
+    (list-page (if (empty? items) (list item) items) nil request (:id item))))
 
-(defn conversation [id request]
-  (list-page (core/get-conversation @db (Integer/parseInt id)) nil request))
+(defn conversation
+  "XXX: Only kept for backwards compatibility to not break existing links to /statuses/conversation/123"
+  [id request]
+  (list-page (core/get-conversation @db (Integer/parseInt id)) nil request nil))
 
 (defn info [request]
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
         (common/layout
+          "Server Info"
          [:table.table
           (item "Version" (config :version))
           (item "# of entries" (core/get-count @db))
           (item "Last save at" (get-save-time @db))
           (item "Base URI" (base-uri request))
           (if (= (config :run-mode) :dev) (item "Request" [:pre (with-out-str (pp/pprint request))]))]
+          nil
           (nav-links request))))
 
 (defn too-long [length request]
   (common/layout
+    "text length violation"
    (str "Sorry, the maximum length is " max-length " but you tried " length " characters")
+    nil
    (nav-links request)))
+
+(defn replyform
+  "Returns a basic HTML form to reply to a certain post."
+  [id request]
+  (let [item (core/get-update @db (Integer/parseInt id))]
+    (reply-form (:id item) (:author item) request)))
 
 
 (defroutes app-routes
   (DELETE (str base "/:id")              [id :as r]     (delete-entry id r))
   (POST base                             []             new-update)
   (GET  base                             []             handle-list-view)
+  (GET  (str base "/:id/replyform")      [id :as r]     (replyform id r))
   (GET  (str base "/:id")                [id :as r]     (page id r))
   (GET  "/statuses/conversations/:id"    [id :as r]     (conversation id r))
   (GET  "/statuses/info"                 []             info)
