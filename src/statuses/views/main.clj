@@ -56,7 +56,24 @@
     (html [:button {:type "submit" :class "btn btn-delete"} (html [:span.fa.fa-remove ][:span.btn-label "Delete"])])
     ))
 
-(defn update [request {:keys [id text author time in-reply-to conversation can-delete?]}]
+(defn entry-form []
+  (form-to {:class "entry-form"} [:post base]
+    [:div.input.input-group
+     (text-field {:class "form-control" :autofocus "autofocus"} "entry-text")
+     [:span.input-group-btn
+      [:button {:type "submit" :class "btn btn-default"} "Send" ]]]
+    [:div {"style" "clear: both"}]))
+
+(defn reply-form [id author request]
+  (common/simple
+    (form-to {:class (str "reply-form form" id)} [:post base]
+      [:div.input-group (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
+       [:span.input-group-btn [:button {:type "submit" :class "btn btn-default"} "Reply"]]]
+      (hidden-field "reply-to" id)
+      [:div {"style" "clear: both"}])))
+
+
+(defn update [request is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list
     [:div.avatar
      (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
@@ -66,11 +83,6 @@
      (if in-reply-to
        (list
          [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)]))
-     ;; conversation link should always be shown if the post is part of a conversation
-     (if conversation
-       (list
-         [:span.conversation (link-to (str "/statuses/conversations/" conversation)
-                               conversation)]))
      [:span.actions
       [:button {:type "submit" :class "btn btn-reply"} (html [:span.fa.fa-reply ][:span.btn-label "Reply"])]
       (if can-delete?
@@ -89,29 +101,16 @@
              [:button {:type "submit" :class "btn btn-default"} "Send" ]]]
          [:div {"style" "clear: both"}]))
 
-(defn reply-form [id author]
-  (form-to {:class (str "reply-form form" id) } [:post base]
-    [:div.input-group
-      (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
-      [:span.input-group-btn
-        [:button {:type "submit" :class "btn btn-default"} "Reply" ]]]
-    (hidden-field "reply-to" id)
-    [:div {"style" "clear: both"}]))
-
-(defn list-page [items next request]
+(defn list-page [items next request current-item-id]
   (common/layout
     (list
-      (entry-form)
-      [:ul.updates (map (fn [item] [:li.post (update request item)]) items)])
+      (if (not current-item-id) (entry-form))
+      [:ul.updates (map (fn [item]
+                          (if (= current-item-id (:id item))
+                            [:li.post.current (update request true item)]
+                            [:li.post (update request false item)]
+                            )) items)]
+      )
     (if next
         (link-to {:rel "next"} next "Next"))
     (nav-links request)))
-
-(defn update-page [item request]
-  (common/layout
-    (list
-      [:div.update (update request item)]
-      (reply-form (:id item) (:author item)))
-    nil
-    (nav-links request)))
-

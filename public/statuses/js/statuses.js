@@ -33,7 +33,7 @@
 
         var postURI = $("a.permalink", post).attr("href");
         $('<div />').addClass("new-reply").
-            load(postURI + " form.reply-form", // XXX: introduces duplicate IDs
+            load(postURI + "/replyform form.reply-form", // XXX: introduces duplicate IDs
             function (response, status, xhr) {
                 var input = $(".new-reply input[name=reply-text]", post);
                 var button = $(".new-reply button", post);

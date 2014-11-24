@@ -79,7 +79,7 @@ ul {
 
 .post:before {
     border-width: 8px;
-    border-right-color: #ddd;
+    border-right-color: rgba(0, 0, 0, 0.1);
 }
 
 .post:after {
@@ -95,6 +95,7 @@ ul {
 .avatar img {
     clear: left;
     float: left;
+    margin-right: 0.5em;
     max-width: 48px;
     max-height: 48px;
     overflow: hidden;
@@ -106,6 +107,19 @@ ul {
     overflow: hidden; /* block formatting context, independent from avatar */
     margin: 0.3em 0 0 0;
     font-size: 15px;
+}
+
+.current {
+    background-color: #FFD;
+}
+
+.post.current:after {
+    border-right-color: #FFD;
+}
+
+.current .post-content {
+    font-size: 1.4em;
+    line-height: 1.7em;
 }
 
 .post-content img {
@@ -174,19 +188,12 @@ ul {
 }
 
 .reply,
-.reply:before,
-.conversation,
-.conversation:before {
+.reply:before {
     font-style: italic;
 }
 
 .reply:before {
     content: '· in reply to';
-    padding-right: 0.3em;
-}
-
-.conversation:before {
-    content: '· conversation:';
     padding-right: 0.3em;
 }
 
