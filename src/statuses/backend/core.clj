@@ -1,6 +1,6 @@
 (ns statuses.backend.core
-  (:require [clojure.data.json :as json]
-            [clj-time.local :as local]))
+  (:require [clj-time.local :refer [local-now]]
+            [statuses.configuration :refer [config]]))
 
 (defn empty-db []
   ;; creates an empty in-memory DB for usage with the functions in this namespace
@@ -10,6 +10,9 @@
    :conversations {} ;; conversations, each as an ordered vector, keyed by id
    })
 
+(defn valid-status-length? [n]
+  (let [entry-config (config :entry)]
+    (<= (:min-length entry-config) n (:max-length entry-config))))
 
 (defn get-update
   "returns update with id"
@@ -67,7 +70,7 @@
      (let [id (:next-id db)]
        (-> db
            (assoc-in [:posts id] {:id id
-                                  :time (local/local-now)
+                                  :time (local-now)
                                   :author author
                                   :text text})
            (assoc :timeline (cons id (:timeline db)))

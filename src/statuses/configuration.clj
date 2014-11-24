@@ -1,13 +1,16 @@
 (ns statuses.configuration)
 
 (def default-config
-  {:title "Status Updates"
-   :database-path "data/db.json"
-   :save-interval 1
-   :http-port     8080
-   :run-mode      :dev
-   :profile-url-prefix   "https://intern.innoq.com/liqid/users/"
-   :avatar-url    "http://assets.github.com/images/gravatars/gravatar-user-420.png"})
+  {:title              "Status Updates"
+   :database-path      "data/db.json"
+   :save-interval      1
+   :http-port          8080
+   :run-mode           :dev
+   :profile-url-prefix "https://intern.innoq.com/liqid/users/"
+   :avatar-url         "http://assets.github.com/images/gravatars/gravatar-user-420.png"
+   :entry {
+           :min-length 1
+           :max-length 140}})
 
 (def config-holder (atom default-config))
 

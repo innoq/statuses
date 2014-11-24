@@ -5,6 +5,7 @@
             [statuses.views.common :as common]
             [statuses.views.atom :as atom]
             [statuses.views.info :as info-view]
+            [statuses.views.too-long :as too-long-view]
             [statuses.backend.core :as core]
             [statuses.backend.json :as json]
             [statuses.backend.time :as time])
@@ -25,8 +26,6 @@
 (defn content-type
   [type body]
   (assoc-in {:body body} [:headers "content-type"] type))
-
-(def max-length 140)
 
 (defn build-query-string
   [m]
@@ -76,7 +75,7 @@
   (let [{:strs [entry-text reply-text reply-to]} form-params
         field-value (or entry-text reply-text "")
         length (.length field-value)]
-    (if (and (<= length max-length) (> length 0))
+    (if (core/valid-status-length? length)
       (do (swap! db core/add-update (user request) field-value (parse-num reply-to nil))
           (resp/redirect "/statuses/updates"))
       (resp/redirect (str "/statuses/too-long/" length)))))
@@ -120,18 +119,13 @@
   (info-view/render-html request))
 
 (defn too-long [length request]
-  (common/layout
-    "text length violation"
-   (str "Sorry, the maximum length is " max-length " but you tried " length " characters")
-    nil
-   (nav-links request)))
+  (too-long-view/render-html length request))
 
 (defn replyform
   "Returns a basic HTML form to reply to a certain post."
   [id request]
   (if-let [item (core/get-update @db (Integer/parseInt id))]
     (reply-form (:id item) (:author item) request)))
-
 
 (defroutes app-routes
   (DELETE [(str base "/:id"), :id #"[0-9]+"]         [id :as r]     (delete-entry id r))
