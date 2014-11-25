@@ -3,7 +3,6 @@
             [compojure.route :as route]
             [ring.util.response :as resp]
             [statuses.routes :refer [base]]
-            [statuses.views.common :as common]
             [statuses.views.atom :as atom]
             [statuses.views.info :as info-view]
             [statuses.views.too-long :as too-long-view]
@@ -12,7 +11,6 @@
             [statuses.backend.time :as time])
   (:use [statuses.backend.persistence :only [db]]
         [compojure.core :only [defroutes GET POST DELETE]]
-        [hiccup.core :only [html]]
         [statuses.views.main :only [list-page reply-form]]))
 
 (defn user [request]
@@ -63,11 +61,11 @@
                             (json/as-json {:items items, :next next}))
          (= format "atom") (content-type
                              "application/atom+xml;charset=utf-8"
-                             (html (atom/feed items
-                                              (str (base-uri request) "/statuses")
-                                              (str (base-uri request)
-                                                   "/statuses/updates?"
-                                                   (:query-string request)))))
+                             (atom/render-atom items
+                                               (str (base-uri request) "/statuses")
+                                               (str (base-uri request)
+                                                    "/statuses/updates?"
+                                                    (:query-string request))))
          :else             (content-type
                             "text/html;charset=utf-8"
                             (list-page items next (user request) nil)))))))

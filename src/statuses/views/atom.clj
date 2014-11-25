@@ -1,5 +1,6 @@
 (ns statuses.views.atom
   (:require [clj-time.format :refer [formatters unparse]]
+            [hiccup.core :refer [html]]
             [hiccup.util :refer [escape-html]]
             [statuses.views.common :refer [linkify]]))
 
@@ -54,4 +55,9 @@
           [:name "innoQ"]
           [:uri (str base-uri "/updates")]]]
         (map (partial create-feed-entry base-uri) items)))
+
+(defn render-atom
+  "Renders the atom feed for the given items with the given URIs."
+  [items base-uri feed-uri]
+  (html (feed items base-uri feed-uri)))
 
