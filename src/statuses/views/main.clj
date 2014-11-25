@@ -54,8 +54,21 @@
           (nav-link github-issue-uri            "Issues"           "github")
           (preference "inline-images"           "Inline images?"  "cogs"))))
 
-(defn format-time [time]
-  [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
+(defn get-ogdata [title item url]
+  (list
+    [:meta {:name "og:site_name" :content "innoQ Statuses"}]
+    [:meta {:name "og:type" :content "article"}]
+    [:meta {:property "article:section" :content "Technology"}]
+    [:meta {:name "og:locale" :content "de"}]
+    [:meta {:name "og:title" :content title}]
+    (if (not (nil? item))
+      (list
+        [:meta {:name "og:image" :content (avatar-uri (:author item))}]
+        [:meta {:name "og:description" :content (:text item)}]
+        [:meta {:property "article:author" :content (:author item)}]
+        [:meta {:property "article:published_time" :content (time/time-to-utc (:time item))}]
+        [:meta {:name "og:url" :content (str url "/" (:id item))}])
+        [:meta {:name "og:url" :content url}])))
 
 (defn delete-form [id]
   (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (str base "/" id)]
@@ -89,23 +102,25 @@
      [:span.actions (button "reply" "Reply" "reply")
       (if can-delete?
         [:span.delete (delete-form id)])]
-     [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
+     [:span.time [:a.permalink {:href (str base "/" id)} (time/format-time time)]]
      ]
     [:div.post-content (common/linkify text)]
   )
 )
 
-(defn list-page [items next request current-item-id]
-  (common/layout
-    (if (nil? current-item-id) "timeline" (str "Status " current-item-id))
-    (list
-      (if (nil? current-item-id) (entry-form))
-      [:ul.updates (map (fn [item]
-                          (if (= current-item-id (:id item))
-                            [:li.post.current (update request true item)]
-                            [:li.post (update request false item)]
-                            )) items)]
-      )
-    (if next
+(defn list-page [items next request current-item]
+  (let [title (if (nil? current-item) "timeline" (str "Status " (:id current-item)))]
+    (common/layout
+      title
+      (get-ogdata title (or current-item nil) base)
+      (list
+        (if (nil? current-item) (entry-form))
+        [:ul.updates (map (fn [item]
+                            (if (= (:id current-item) (:id item))
+                              [:li.post.current (update request true item)]
+                              [:li.post (update request false item)]
+                              )) items)]
+        )
+      (if next
         (link-to {:rel "next"} next "Next"))
-    (nav-links request)))
+      (nav-links request))))

@@ -6,11 +6,14 @@
         ))
 
 
-(defn layout [title content footer navigation]
+(defn parse-num [s default]
+  (if (nil? s) default (read-string s)))
+
+(defn layout [title additional-meta content footer navigation]
             (html5
               [:head
-               [:meta {:name "viewport"
-                       :content "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"}]
+               [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"}]
+               additional-meta
                [:title (str title " - innoQ Statuses")]
                (include-css "https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css")
                (include-css "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
@@ -18,8 +21,7 @@
                [:link {:href "/statuses/updates?format=atom"
                        :rel "alternate"
                        :title (config :title)
-                       :type "application/atom+xml"}]
-               [:style "body {  }"]]
+                       :type "application/atom+xml"}]]
               [:body
                (list
                 [:header.navbar.navbar-default.navbar-fixed-top {:role "navigation"}

@@ -16,9 +16,6 @@
 
 
 
-(defn parse-num [s default]
-  (if (nil? s) default (read-string s)))
-
 (defn base-uri [request]
   (str
    (name (or (get-in request [:headers "x-forwarded-proto"]) (:scheme request)))
@@ -80,7 +77,7 @@
         field-value (or entry-text reply-text "")
         length (.length field-value)]
     (if (and (<= length max-length) (> length 0))
-      (do (swap! db core/add-update (user request) field-value (parse-num reply-to nil))
+      (do (swap! db core/add-update (user request) field-value (common/parse-num reply-to nil))
           (resp/redirect "/statuses/updates"))
       (resp/redirect (str "/statuses/too-long/" length)))))
 
@@ -91,7 +88,7 @@
 
 (defn transform-params [m defaults]
   (reduce (fn [result [key default]]
-            (update-in result [key] #(parse-num % default)))
+            (update-in result [key] #(common/parse-num % default)))
           (keyworded m)
           defaults))
 
@@ -112,7 +109,7 @@
   [id request]
   (let [item (core/get-update @db (Integer/parseInt id))
         items (core/get-conversation @db (:conversation item))]
-    (list-page (if (empty? items) (list item) items) nil request (:id item))))
+    (list-page (if (empty? items) (list item) items) nil request item)))
 
 (defn conversation
   "XXX: Only kept for backwards compatibility to not break existing links to /statuses/conversation/123"
@@ -123,6 +120,7 @@
   (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
         (common/layout
           "Server Info"
+          nil
          [:table.table
           (item "Version" (config :version))
           (item "# of entries" (core/get-count @db))
@@ -135,6 +133,7 @@
 (defn too-long [length request]
   (common/layout
     "text length violation"
+    nil
    (str "Sorry, the maximum length is " max-length " but you tried " length " characters")
     nil
    (nav-links request)))
