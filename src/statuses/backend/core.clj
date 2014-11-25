@@ -112,8 +112,7 @@
       (-> db
         (update-conv id conv-id)
         (rm-single id))
-      (-> db
-        (rm-single id)))))
+      (rm-single db id))))
 
 (defn add-testdata
   "Create a DB with a set of n test updates"

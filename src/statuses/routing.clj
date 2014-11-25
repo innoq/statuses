@@ -32,9 +32,8 @@
   (clojure.string/join "&" (map (fn [[key val]] (str (name key) "=" val)) m)))
 
 (defn next-uri [params request]
-  (if (< (:offset params) (core/get-count @db))
-    (str (base-uri request) (:uri request) "?" (build-query-string params))
-    nil))
+  (when (< (:offset params) (core/get-count @db))
+    (str (base-uri request) (:uri request) "?" (build-query-string params))))
 
 (defmacro with-etag
   "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
@@ -49,14 +48,13 @@
   (let [next (next-uri (update-in params [:offset] (partial + (:limit params))) request)
         {:keys [limit offset author query format]} params]
     (with-etag request (:time (first (core/get-latest @db 1 offset author query)))
-      (let [items (->> (core/get-latest @db limit offset author query)
-                    (core/label-updates
-                      :can-delete?
-                      (partial core/can-delete? @db (user request))))]
+      (let [items (core/label-updates :can-delete?
+                                      (partial core/can-delete? @db (user request))
+                                      (core/get-latest @db limit offset author query))]
         (cond
          (= format "json") (content-type
-                            "application/json"
-                            (json/as-json {:items items, :next next}))
+                             "application/json"
+                             (json/as-json {:items items, :next next}))
          (= format "atom") (content-type
                              "application/atom+xml;charset=utf-8"
                              (atom/render-atom items
@@ -64,9 +62,9 @@
                                                (str (base-uri request)
                                                     "/statuses/updates?"
                                                     (:query-string request))))
-         :else             (content-type
-                            "text/html;charset=utf-8"
-                            (list-page items next (user request) nil)))))))
+         :else (content-type
+                 "text/html;charset=utf-8"
+                 (list-page items next (user request) nil)))))))
 
 (defn new-update
   "Handles the request to add a new update. Checks whether the post values 'entry-text' or
