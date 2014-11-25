@@ -1,4 +1,4 @@
-# Statuses [![Build Status](http://img.shields.io/travis/innoq/statuses.svg)](https://travis-ci.org/innoq/statuses)
+# Statuses [![Build Status](https://travis-ci.org/innoq/statuses.svg?branch=master)](https://travis-ci.org/innoq/statuses) [![Dependencies Status](http://jarkeeper.com/innoq/statuses/status.svg)](http://jarkeeper.com/innoq/statuses)
 
 _Statuses_ is an experimental, extremely simple-minded microblogging
 infrastructure for internal use, basically created to have a small yet
@@ -11,7 +11,7 @@ fiddling around with stuff.
 * Make sure you have a reasonably recent Java runtime. _Statuses_ has
   been tested with JDK 7 and 8, but should work with JDK 6 as well (and
   possibly even JDK 5).
-* Grab [Leiningen](http://leiningen.org/#install) (we're using the Leiningen 2 preview and
+* Grab [Leiningen](http://leiningen.org/#install) (we're using Leiningen 2 and
   suggest you use this) and install according to its instructions
 * Clone this repository
 * Use `lein run` to start the application, then access it at
@@ -22,7 +22,6 @@ fiddling around with stuff.
   create a stand-alone .jar file that you can run with `java -jar
   <name>`
 
-
 If you want to run the application from clojure REPL e.g. in IntelliJ IDEA, you can go like this:
 
 * open a clojure console/ REPL prompt in the "statuses" root folder
@@ -32,7 +31,6 @@ If you want to run the application from clojure REPL e.g. in IntelliJ IDEA, you 
 * type `(-main nil)` <ENTER>
 
 This should start the server.
-
 
 ## Dependencies
 
