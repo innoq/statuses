@@ -1,6 +1,7 @@
 (ns statuses.views.main
   (:require [statuses.views.common :as common :refer [icon]]
             [statuses.views.atom :as atom]
+            [statuses.views.layout :as layout]
             [statuses.backend.time :as time]
             [statuses.routes :refer [base avatar-path]]
             [statuses.views.layout :refer [nav-links]])
@@ -32,7 +33,7 @@
     [:div {"style" "clear: both"}]))
 
 (defn reply-form [id author]
-  (common/simple
+  (layout/simple
     (form-to {:class (str "reply-form form" id)} [:post base]
       [:div.input-group (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
        [:span.input-group-btn (button "default" "Reply")]]
@@ -57,17 +58,16 @@
   )
 )
 
-(defn list-page [items next user current-item-id]
-  (common/layout
-    (if (nil? current-item-id) "timeline" (str "Status " current-item-id))
+(defn list-page [items next username current-item-id]
+  (layout/default
+    (if current-item-id (str "Status " current-item-id) "timeline")
+    username
     (list
-      (if (nil? current-item-id) (entry-form))
+      (when-not current-item-id (entry-form))
       [:ul.updates (map (fn [item]
                           (if (= current-item-id (:id item))
                             [:li.post.current (update true item)]
-                            [:li.post (update false item)]
-                            )) items)]
-      )
-    (if next
-        (link-to {:rel "next"} next "Next"))
-    (nav-links user)))
+                            [:li.post (update false item)]))
+                        items)])
+    (when next (link-to {:rel "next"} next "Next"))))
+

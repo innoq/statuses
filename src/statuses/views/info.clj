@@ -3,8 +3,7 @@
             [statuses.backend.core :refer [get-count]]
             [statuses.backend.persistence :refer [db get-save-time]]
             [statuses.configuration :refer [config]]
-            [statuses.views.common :refer [layout]]
-            [statuses.views.layout :refer [nav-links]]))
+            [statuses.views.layout :as layout]))
 
 (defn- base-uri [request]
   (str
@@ -18,15 +17,14 @@
    [:td content]])
 
 (defn render-html [username request]
-  (layout
+  (layout/default
     "Server Info"
+    username
     [:table.table
      (item "Version" (config :version))
      (item "# of entries" (get-count @db))
      (item "Last save at" (get-save-time @db))
      (item "Base URI" (base-uri request))
      (if (= (config :run-mode) :dev)
-       (item "Request" [:pre (with-out-str (pprint request))]))]
-    nil
-    (nav-links username)))
+       (item "Request" [:pre (with-out-str (pprint request))]))]))
 
