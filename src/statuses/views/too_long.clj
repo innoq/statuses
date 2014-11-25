@@ -1,7 +1,7 @@
 (ns statuses.views.too-long
   (:require [statuses.configuration :refer [config]]
             [statuses.views.common :refer [layout]]
-            [statuses.views.main :refer [nav-links]]))
+            [statuses.views.layout :refer [nav-links]]))
 
 (defn- error-message [length]
   (let [entry-config (config :entry)]
@@ -11,11 +11,11 @@
            " and " (:max-length entry-config) " characters long!"
            " Your status was " length " characters long."))))
 
-(defn render-html [length request]
+(defn render-html [username length]
   (layout
     "text length violation"
     [:div.alert.alert-danger {:role "alert"}
       (error-message length)]
     nil
-    (nav-links request)))
+    (nav-links username)))
 

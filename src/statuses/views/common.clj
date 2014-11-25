@@ -2,9 +2,10 @@
   (:use [hiccup.page :only [include-css include-js html5]]
         [hiccup.element :only [link-to]]
         [hiccup.util :only [escape-html]]
-        [statuses.configuration :only [config]]
-        ))
+        [statuses.configuration :only [config]]))
 
+(defn icon [icon-name]
+  [:span {:class (str "fa fa-" icon-name)}])
 
 (defn layout [title content footer navigation]
             (html5

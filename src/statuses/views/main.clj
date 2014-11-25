@@ -1,7 +1,9 @@
 (ns statuses.views.main
-  (:require [statuses.views.common :as common]
+  (:require [statuses.views.common :as common :refer [icon]]
             [statuses.views.atom :as atom]
-            [statuses.backend.time :as time])
+            [statuses.backend.time :as time]
+            [statuses.routes :refer [base avatar-path]]
+            [statuses.views.layout :refer [nav-links]])
   (:use [hiccup.core :only [html]]
         [hiccup.element :only [link-to]]
         [hiccup.form :only
@@ -9,50 +11,10 @@
         [statuses.configuration :only [config]]
         ))
 
-(def base "/statuses/updates")
-
-(defn user [request]
-  (or (get-in request [:headers "remote_user"]) "guest"))
-
-(defn avatar-uri [username]
-  (clojure.string/replace (config :avatar-url) "{username}" username))
-
-(defn- updates-uri
-  ([request] (updates-uri request nil))
-  ([request format] (str base (if format (str "?format=" (name format)) ""))))
-
-(defn- mention-uri
-  ([request] (mention-uri request nil))
-  ([request format] (str base "?query=@" (user request)
-    (if format (str "&format=" (name format)) ""))))
-
-(defn- glyphicon [icon]
-  [:span {:class (str "fa fa-" icon)}])
-
 (defn- button
   ([class label] (button class label nil))
-  ([class label icon]
-  [:button {:type "submit" :class (str "btn btn-" class)} (html (glyphicon icon) [:span.btn-label label])]))
-
-(defn- nav-link [url title icon]
-  [:li (link-to url (glyphicon icon) title)])
-
-(defn- preference [id title icon]
-  [:li [:a {:name id}
-    (glyphicon icon)
-    [:label {:for (str "pref-" id)} title]
-    (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
-
-(defn nav-links [request]
-  (let [github-issue-uri "https://github.com/innoq/statuses/issues"
-        info-uri         "/statuses/info"]
-    (list (nav-link (mention-uri request)       "Mentions"        "at")
-          ; too many navbar items break the navbar layout at ~850px screen width
-          ;(nav-link (updates-uri request :atom) "Feed (all)"      "fire")
-          (nav-link (mention-uri request :atom) "Feed (mentions)" "rss")
-          (nav-link info-uri                    "Info"            "info")
-          (nav-link github-issue-uri            "Issues"           "github")
-          (preference "inline-images"           "Inline images?"  "cogs"))))
+  ([class label icon-name]
+  [:button {:type "submit" :class (str "btn btn-" class)} (html (icon icon-name) [:span.btn-label label])]))
 
 (defn format-time [time]
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
@@ -69,7 +31,7 @@
       (button "default" "Send")]]
     [:div {"style" "clear: both"}]))
 
-(defn reply-form [id author request]
+(defn reply-form [id author]
   (common/simple
     (form-to {:class (str "reply-form form" id)} [:post base]
       [:div.input-group (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
@@ -78,10 +40,10 @@
       [:div {"style" "clear: both"}])))
 
 
-(defn update [request is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
+(defn update [is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list
     [:div.avatar
-     (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
+     (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-path author) :alt author}])]
     [:div.meta
      [:span.author (link-to (str base "?author=" author) author)]
      (if in-reply-to
@@ -95,17 +57,17 @@
   )
 )
 
-(defn list-page [items next request current-item-id]
+(defn list-page [items next user current-item-id]
   (common/layout
     (if (nil? current-item-id) "timeline" (str "Status " current-item-id))
     (list
       (if (nil? current-item-id) (entry-form))
       [:ul.updates (map (fn [item]
                           (if (= current-item-id (:id item))
-                            [:li.post.current (update request true item)]
-                            [:li.post (update request false item)]
+                            [:li.post.current (update true item)]
+                            [:li.post (update false item)]
                             )) items)]
       )
     (if next
         (link-to {:rel "next"} next "Next"))
-    (nav-links request)))
+    (nav-links user)))

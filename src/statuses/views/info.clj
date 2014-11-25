@@ -4,7 +4,7 @@
             [statuses.backend.persistence :refer [db get-save-time]]
             [statuses.configuration :refer [config]]
             [statuses.views.common :refer [layout]]
-            [statuses.views.main :refer [nav-links]]))
+            [statuses.views.layout :refer [nav-links]]))
 
 (defn- base-uri [request]
   (str
@@ -17,7 +17,7 @@
    [:td header]
    [:td content]])
 
-(defn render-html [request]
+(defn render-html [username request]
   (layout
     "Server Info"
     [:table.table
@@ -28,5 +28,5 @@
      (if (= (config :run-mode) :dev)
        (item "Request" [:pre (with-out-str (pprint request))]))]
     nil
-    (nav-links request)))
+    (nav-links username)))
 

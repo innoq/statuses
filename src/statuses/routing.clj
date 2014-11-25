@@ -2,6 +2,7 @@
   (:require [statuses.backend.persistence :as persistence]
             [compojure.route :as route]
             [ring.util.response :as resp]
+            [statuses.routes :refer [base]]
             [statuses.views.common :as common]
             [statuses.views.atom :as atom]
             [statuses.views.info :as info-view]
@@ -12,7 +13,10 @@
   (:use [statuses.backend.persistence :only [db]]
         [compojure.core :only [defroutes GET POST DELETE]]
         [hiccup.core :only [html]]
-        [statuses.views.main :only [list-page nav-links user base reply-form]]))
+        [statuses.views.main :only [list-page reply-form]]))
+
+(defn user [request]
+  (get-in request [:headers "remote_user"] "guest"))
 
 (defn parse-num [s default]
   (if (nil? s) default (read-string s)))
@@ -66,7 +70,7 @@
                                                    (:query-string request)))))
          :else             (content-type
                             "text/html;charset=utf-8"
-                            (list-page items next request nil)))))))
+                            (list-page items next (user request) nil)))))))
 
 (defn new-update
   "Handles the request to add a new update. Checks whether the post values 'entry-text' or
@@ -108,24 +112,24 @@
   [id request]
   (when-let [item (core/get-update @db (Integer/parseInt id))]
     (let [items (core/get-conversation @db (:conversation item))]
-      (list-page (if (empty? items) (list item) items) nil request (:id item)))))
+      (list-page (if (empty? items) (list item) items) nil (user request) (:id item)))))
 
 (defn conversation
   "XXX: Only kept for backwards compatibility to not break existing links to /statuses/conversation/123"
   [id request]
-  (list-page (core/get-conversation @db (Integer/parseInt id)) nil request nil))
+  (list-page (core/get-conversation @db (Integer/parseInt id)) nil (user request) nil))
 
 (defn info [request]
-  (info-view/render-html request))
+  (info-view/render-html (user request) request))
 
 (defn too-long [length request]
-  (too-long-view/render-html length request))
+  (too-long-view/render-html (user request) length))
 
 (defn replyform
   "Returns a basic HTML form to reply to a certain post."
   [id request]
   (if-let [item (core/get-update @db (Integer/parseInt id))]
-    (reply-form (:id item) (:author item) request)))
+    (reply-form (:id item) (:author item))))
 
 (defroutes app-routes
   (DELETE [(str base "/:id"), :id #"[0-9]+"]         [id :as r]     (delete-entry id r))
