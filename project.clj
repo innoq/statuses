@@ -11,9 +11,10 @@
                  [clj-time "0.8.0"]
                  [org.clojure/data.json "0.2.5"]]
   :pedantic? :abort
-  :plugins [[jonase/eastwood "0.1.5"]]
+  :plugins [[jonase/eastwood "0.2.0"]]
   :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}
              :uberjar {:aot [statuses.server]}}
   :main statuses.server
-  :aliases {"lint" "eastwood"})
+  :aliases {"lint" "eastwood"}
+  :eastwood {:exclude-linters [:constant-test]})
 
