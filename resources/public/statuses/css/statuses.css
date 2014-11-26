@@ -236,3 +236,12 @@ footer {
     line-height: 1.7em;
 }
 
+.tooltip.left .tooltip-inner {
+    background-color: #eee;
+    color: #555;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: #eee;
+}
+

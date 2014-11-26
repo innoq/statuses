@@ -1,8 +1,8 @@
 (ns statuses.views.main
-  (:require [hiccup.core :refer [html]]
+  (:require [clj-time.local :refer [format-local-time]]
+            [hiccup.core :refer [html]]
             [hiccup.element :refer [link-to]]
             [hiccup.form :refer [form-to hidden-field text-field]]
-            [statuses.backend.time :as time]
             [statuses.configuration :refer [config]]
             [statuses.routes :refer [avatar-path update-path
                                      updates-path]]
@@ -15,7 +15,7 @@
   [:button {:type "submit" :class (str "btn btn-" class)} (html (icon icon-name) [:span.btn-label label])]))
 
 (defn format-time [time]
-  [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
+  [:time {:datetime (format-local-time time :date-time)} (format-local-time time :rfc822)])
 
 (defn delete-form [id]
   (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (update-path id)]

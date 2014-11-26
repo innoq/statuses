@@ -54,6 +54,7 @@
       [:footer footer]
       (include-js "//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")
       (include-js "//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js")
+      (include-js "//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js")
       (include-js "/statuses/lib/jquery-charCount.js")
       (include-js "/statuses/lib/modernizr.min.js")
       (include-js "/statuses/js/statuses.js")])))
