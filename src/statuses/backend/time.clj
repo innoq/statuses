@@ -9,6 +9,3 @@
   (str (local/format-local-time time :date) " "
        (local/format-local-time time :hour-minute-second)))
 
-(defn utc-to-time [s]
-  (.toDateTime (format/parse-local (format/formatters :rfc822) s)))
-

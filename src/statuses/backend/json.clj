@@ -1,26 +1,18 @@
 (ns statuses.backend.json
-  (:require [clojure.data.json :as json]
-            [clj-time.format :as format]
-            [statuses.backend.time :as time]
-            [clj-time.local :as local])
+  (:refer-clojure :exclude [read])
+  (:require [clj-time.format :refer [formatters parse-local]]
+            [clj-time.local :refer [format-local-time]]
+            [clojure.data.json :refer [read write write-str]])
   (:use [clojure.java.io :only [reader writer]]))
 
+(defn time-to-json [k v]
+  (if (= :time k)
+    (format-local-time v :date-time)
+    v))
 
-(defn time-to-json [key value]
-  (if (= :time key)
-    (time/time-to-utc value)
-    value))
-
-(defn as-json
-  "Return appropriate JSON rendering for content (db or parts thereof)"
-  [content]
-  (json/write-str content :value-fn time-to-json))
-
-(defn write-db
-  "Writes out db to path"
-  [db path]
+(defn write-db [db path]
   (with-open [file (writer path)]
-    (json/write db file :value-fn time-to-json)
+    (write db file :value-fn time-to-json)
     db))
 
 (defn- keywordify
@@ -31,16 +23,22 @@
       parsed
       (keyword parsed))))
 
-(defn json-to-time [key value]
-  (if (= :time key)
-    (time/utc-to-time value)
-    value))
+(defn json-to-time [k v]
+  (if (= :time k)
+    (letfn [(parse [fmt s] (.toDateTime (parse-local (formatters fmt) s)))]
+      (try (parse :date-time v)
+        (catch Exception _
+          (parse :rfc822 v))))
+    v))
 
-(defn read-db
-  "Reads db from path"
-  [path]
+(defn read-db [path]
   (with-open [file (reader path)]
-    (json/read file
-               :value-fn json-to-time
-               :key-fn keywordify)))
+    (read file
+          :key-fn keywordify
+          :value-fn json-to-time)))
+
+(defn as-json
+  "Return appropriate JSON rendering for content (db or parts thereof)"
+  [content]
+  (write-str content :value-fn time-to-json))
 
