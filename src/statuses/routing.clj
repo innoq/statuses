@@ -147,11 +147,11 @@
 
 
 (defroutes app-routes
-  (DELETE (str base "/:id")              [id :as r]     (delete-entry id r))
+  (DELETE [(str base "/:id"), :id #"[0-9]+"]         [id :as r]     (delete-entry id r))
   (POST base                             []             new-update)
   (GET  base                             []             handle-list-view)
-  (GET  (str base "/:id/replyform")      [id :as r]     (replyform id r))
-  (GET  (str base "/:id")                [id :as r]     (page id r))
+  (GET  [(str base "/:id/replyform"), :id #"[0-9]+"] [id :as r]     (replyform id r))
+  (GET  [(str base "/:id"), :id #"[0-9]+"]           [id :as r]     (page id r))
   (GET  "/statuses/conversations/:id"    [id :as r]     (conversation id r))
   (GET  "/statuses/info"                 []             info)
   (GET  "/statuses/too-long/:length"     [length :as r] (too-long length r))
