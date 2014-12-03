@@ -101,18 +101,18 @@
 (defn delete-entry
   "Deletes an entry if the current user is the author of the entry"
   [id request]
-  (if (= (user request) (:author (core/get-update @db (Integer/parseInt id))))
-    (do (swap! db core/remove-update (Integer/parseInt id))
-      (resp/redirect "/statuses/updates"))
-    (resp/response (str "Delete failed as you are not " :author )))
-  )
+  (if-let [item (core/get-update @db (Integer/parseInt id))]
+    (if-not (= (user request) (:author item))
+      (resp/response (str "Delete failed as you are not " (:author item)))
+      (do (swap! db core/remove-update (Integer/parseInt id))
+          (resp/redirect "/statuses/updates")))))
 
 (defn page
   "Returns a listing with either the conversation of the specified item or just the item"
   [id request]
-  (let [item (core/get-update @db (Integer/parseInt id))
-        items (core/get-conversation @db (:conversation item))]
-    (list-page (if (empty? items) (list item) items) nil request (:id item))))
+  (when-let [item (core/get-update @db (Integer/parseInt id))]
+    (let [items (core/get-conversation @db (:conversation item))]
+      (list-page (if (empty? items) (list item) items) nil request (:id item)))))
 
 (defn conversation
   "XXX: Only kept for backwards compatibility to not break existing links to /statuses/conversation/123"
@@ -142,16 +142,16 @@
 (defn replyform
   "Returns a basic HTML form to reply to a certain post."
   [id request]
-  (let [item (core/get-update @db (Integer/parseInt id))]
+  (if-let [item (core/get-update @db (Integer/parseInt id))]
     (reply-form (:id item) (:author item) request)))
 
 
 (defroutes app-routes
-  (DELETE (str base "/:id")              [id :as r]     (delete-entry id r))
+  (DELETE [(str base "/:id"), :id #"[0-9]+"]         [id :as r]     (delete-entry id r))
   (POST base                             []             new-update)
   (GET  base                             []             handle-list-view)
-  (GET  (str base "/:id/replyform")      [id :as r]     (replyform id r))
-  (GET  (str base "/:id")                [id :as r]     (page id r))
+  (GET  [(str base "/:id/replyform"), :id #"[0-9]+"] [id :as r]     (replyform id r))
+  (GET  [(str base "/:id"), :id #"[0-9]+"]           [id :as r]     (page id r))
   (GET  "/statuses/conversations/:id"    [id :as r]     (conversation id r))
   (GET  "/statuses/info"                 []             info)
   (GET  "/statuses/too-long/:length"     [length :as r] (too-long length r))
