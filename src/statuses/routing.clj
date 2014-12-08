@@ -1,20 +1,18 @@
 (ns statuses.routing
-  (:require [statuses.backend.persistence :as persistence]
-            [clojure.pprint :as pp]
-            [compojure.route :as route]
-            [ring.util.response :as resp]
-            [statuses.views.common :as common]
-            [statuses.views.atom :as atom]
+  (:require [compojure.core :refer [DELETE GET POST defroutes]]
+            [compojure.route :refer [not-found]]
+            [ring.util.response :refer [redirect response]]
             [statuses.backend.core :as core]
             [statuses.backend.json :as json]
-            [statuses.backend.time :as time])
-  (:use [statuses.backend.persistence :only [db get-save-time]]
-        [compojure.core :only [defroutes GET POST DELETE]]
-        [hiccup.core :only [html]]
-        [statuses.configuration :only [config]]
-        [statuses.views.main :only [list-page nav-links user base reply-form]]))
+            [statuses.backend.persistence :refer [db]]
+            [statuses.routes :as route]
+            [statuses.views.atom :as atom]
+            [statuses.views.info :as info-view]
+            [statuses.views.main :refer [list-page reply-form]]
+            [statuses.views.too-long :as too-long-view]))
 
-
+(defn user [request]
+  (get-in request [:headers "remote_user"] "guest"))
 
 (defn parse-num [s default]
   (if (nil? s) default (read-string s)))
@@ -29,16 +27,13 @@
   [type body]
   (assoc-in {:body body} [:headers "content-type"] type))
 
-(def max-length 140)
-
 (defn build-query-string
   [m]
   (clojure.string/join "&" (map (fn [[key val]] (str (name key) "=" val)) m)))
 
 (defn next-uri [params request]
-  (if (< (:offset params) (core/get-count @db))
-    (str (base-uri request) (:uri request) "?" (build-query-string params))
-    nil))
+  (when (< (:offset params) (core/get-count @db))
+    (str (base-uri request) (:uri request) "?" (build-query-string params))))
 
 (defmacro with-etag
   "Ensures body is only evaluated if etag doesn't match. Try to do this in Java, suckers."
@@ -53,24 +48,23 @@
   (let [next (next-uri (update-in params [:offset] (partial + (:limit params))) request)
         {:keys [limit offset author query format]} params]
     (with-etag request (:time (first (core/get-latest @db 1 offset author query)))
-      (let [items (->> (core/get-latest @db limit offset author query)
-                    (core/label-updates
-                      :can-delete?
-                      (partial core/can-delete? @db (user request))))]
+      (let [items (core/label-updates :can-delete?
+                                      (partial core/can-delete? @db (user request))
+                                      (core/get-latest @db limit offset author query))]
         (cond
          (= format "json") (content-type
-                            "application/json"
-                            (json/as-json {:items items, :next next}))
+                             "application/json"
+                             (json/as-json {:items items, :next next}))
          (= format "atom") (content-type
                              "application/atom+xml;charset=utf-8"
-                             (html (atom/feed items
-                                              (str (base-uri request) "/statuses")
-                                              (str (base-uri request)
-                                                   "/statuses/updates?"
-                                                   (:query-string request)))))
-         :else             (content-type
-                            "text/html;charset=utf-8"
-                            (list-page items next request nil)))))))
+                             (atom/render-atom items
+                                               (str (base-uri request) "/statuses")
+                                               (str (base-uri request)
+                                                    "/statuses/updates?"
+                                                    (:query-string request))))
+         :else (content-type
+                 "text/html;charset=utf-8"
+                 (list-page items next (user request) nil)))))))
 
 (defn new-update
   "Handles the request to add a new update. Checks whether the post values 'entry-text' or
@@ -79,10 +73,10 @@
   (let [{:strs [entry-text reply-text reply-to]} form-params
         field-value (or entry-text reply-text "")
         length (.length field-value)]
-    (if (and (<= length max-length) (> length 0))
+    (if (core/valid-status-length? length)
       (do (swap! db core/add-update (user request) field-value (parse-num reply-to nil))
-          (resp/redirect "/statuses/updates"))
-      (resp/redirect (str "/statuses/too-long/" length)))))
+          (redirect (route/updates-path)))
+      (redirect (route/too-long-path length)))))
 
 (defn keyworded
   "Builds a map with keyword keys from one with strings as keys"
@@ -103,59 +97,44 @@
   [id request]
   (if-let [item (core/get-update @db (Integer/parseInt id))]
     (if-not (= (user request) (:author item))
-      (resp/response (str "Delete failed as you are not " (:author item)))
+      (response (str "Delete failed as you are not " (:author item)))
       (do (swap! db core/remove-update (Integer/parseInt id))
-          (resp/redirect "/statuses/updates")))))
+          (redirect (route/updates-path))))))
 
 (defn page
   "Returns a listing with either the conversation of the specified item or just the item"
   [id request]
   (when-let [item (core/get-update @db (Integer/parseInt id))]
     (let [items (core/get-conversation @db (:conversation item))]
-      (list-page (if (empty? items) (list item) items) nil request (:id item)))))
+      (list-page (if (empty? items) (list item) items) nil (user request) (:id item)))))
 
 (defn conversation
   "XXX: Only kept for backwards compatibility to not break existing links to /statuses/conversation/123"
   [id request]
-  (list-page (core/get-conversation @db (Integer/parseInt id)) nil request nil))
+  (list-page (core/get-conversation @db (Integer/parseInt id)) nil (user request) nil))
 
 (defn info [request]
-  (let [item (fn [header content] (list [:tr [:td header] [:td content]]))]
-        (common/layout
-          "Server Info"
-         [:table.table
-          (item "Version" (config :version))
-          (item "# of entries" (core/get-count @db))
-          (item "Last save at" (get-save-time @db))
-          (item "Base URI" (base-uri request))
-          (if (= (config :run-mode) :dev) (item "Request" [:pre (with-out-str (pp/pprint request))]))]
-          nil
-          (nav-links request))))
+  (info-view/render-html (user request) request))
 
 (defn too-long [length request]
-  (common/layout
-    "text length violation"
-   (str "Sorry, the maximum length is " max-length " but you tried " length " characters")
-    nil
-   (nav-links request)))
+  (too-long-view/render-html (user request) length))
 
 (defn replyform
   "Returns a basic HTML form to reply to a certain post."
   [id request]
   (if-let [item (core/get-update @db (Integer/parseInt id))]
-    (reply-form (:id item) (:author item) request)))
-
+    (reply-form (:id item) (:author item))))
 
 (defroutes app-routes
-  (DELETE [(str base "/:id"), :id #"[0-9]+"]         [id :as r]     (delete-entry id r))
-  (POST base                             []             new-update)
-  (GET  base                             []             handle-list-view)
-  (GET  [(str base "/:id/replyform"), :id #"[0-9]+"] [id :as r]     (replyform id r))
-  (GET  [(str base "/:id"), :id #"[0-9]+"]           [id :as r]     (page id r))
-  (GET  "/statuses/conversations/:id"    [id :as r]     (conversation id r))
-  (GET  "/statuses/info"                 []             info)
-  (GET  "/statuses/too-long/:length"     [length :as r] (too-long length r))
-  (GET  "/"                              []             (resp/redirect base))
-  (GET  "/statuses"                      []             (resp/redirect base))
-  (route/not-found "Not Found"))
+  (GET    "/"                                              []             (redirect (route/base-path)))
+  (GET    route/base-template                              []             (redirect (route/updates-path)))
+  (GET    route/updates-template                           []             handle-list-view)
+  (POST   route/updates-template                           []             new-update)
+  (GET    [route/update-template, :id #"[0-9]+"]           [id :as r]     (page id r))
+  (DELETE [route/update-template, :id #"[0-9]+"]           [id :as r]     (delete-entry id r))
+  (GET    [route/update-replyform-template, :id #"[0-9]+"] [id :as r]     (replyform id r))
+  (GET    [route/conversation-template                     [id :as r]     (conversation id r))
+  (GET    route/info-template                              []             info)
+  (GET    route/too-long-template                          [length :as r] (too-long length r))
+  (not-found "Not Found"))
 

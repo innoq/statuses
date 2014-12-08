@@ -27,5 +27,10 @@
            "port" (config :http-port)
            "in mode" (config :run-mode))
   (run-jetty
-   (if (= (config :run-mode) :dev) (wrap-reload app) app)
-   {:port (config :http-port) :join? false :host (config :host)}))
+    (if (= (config :run-mode) :dev)
+      (wrap-reload app)
+      app)
+    {:host (config :host)
+     :port (config :http-port)
+     :join? false}))
+

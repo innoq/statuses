@@ -1,111 +1,70 @@
 (ns statuses.views.main
-  (:require [statuses.views.common :as common]
-            [statuses.views.atom :as atom]
-            [statuses.backend.time :as time])
-  (:use [hiccup.core :only [html]]
-        [hiccup.element :only [link-to]]
-        [hiccup.form :only
-          [form-to text-field hidden-field submit-button check-box]]
-        [statuses.configuration :only [config]]
-        ))
-
-(def base "/statuses/updates")
-
-(defn user [request]
-  (or (get-in request [:headers "remote_user"]) "guest"))
-
-(defn avatar-uri [username]
-  (clojure.string/replace (config :avatar-url) "{username}" username))
-
-(defn- updates-uri
-  ([request] (updates-uri request nil))
-  ([request format] (str base (if format (str "?format=" (name format)) ""))))
-
-(defn- mention-uri
-  ([request] (mention-uri request nil))
-  ([request format] (str base "?query=@" (user request)
-    (if format (str "&format=" (name format)) ""))))
-
-(defn- glyphicon [icon]
-  [:span {:class (str "fa fa-" icon)}])
+  (:require [hiccup.core :refer [html]]
+            [hiccup.element :refer [link-to]]
+            [hiccup.form :refer [form-to hidden-field text-field]]
+            [statuses.backend.time :as time]
+            [statuses.configuration :refer [config]]
+            [statuses.routes :refer [avatar-path update-path
+                                     updates-path]]
+            [statuses.views.common :as common :refer [icon]]
+            [statuses.views.layout :as layout]))
 
 (defn- button
   ([class label] (button class label nil))
-  ([class label icon]
-  [:button {:type "submit" :class (str "btn btn-" class)} (html (glyphicon icon) [:span.btn-label label])]))
-
-(defn- nav-link [url title icon]
-  [:li (link-to url (glyphicon icon) title)])
-
-(defn- preference [id title icon]
-  [:li [:a {:name id}
-    (glyphicon icon)
-    [:label {:for (str "pref-" id)} title]
-    (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
-
-(defn nav-links [request]
-  (let [github-issue-uri "https://github.com/innoq/statuses/issues"
-        info-uri         "/statuses/info"]
-    (list (nav-link (mention-uri request)       "Mentions"        "at")
-          ; too many navbar items break the navbar layout at ~850px screen width
-          ;(nav-link (updates-uri request :atom) "Feed (all)"      "fire")
-          (nav-link (mention-uri request :atom) "Feed (mentions)" "rss")
-          (nav-link info-uri                    "Info"            "info")
-          (nav-link github-issue-uri            "Issues"           "github")
-          (preference "inline-images"           "Inline images?"  "cogs"))))
+  ([class label icon-name]
+  [:button {:type "submit" :class (str "btn btn-" class)} (html (icon icon-name) [:span.btn-label label])]))
 
 (defn format-time [time]
   [:time {:datetime (time/time-to-utc time)} (time/time-to-human time)])
 
 (defn delete-form [id]
-  (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (str base "/" id)]
+  (form-to {:class "delete-form" :onsubmit "return confirm('Delete status?')"} [:delete (update-path id)]
     (button "delete" "Delete" "remove")))
 
 (defn entry-form []
-  (form-to {:class "entry-form"} [:post base]
+  (form-to {:class "entry-form"} [:post (updates-path)]
     [:div.input.input-group
      (text-field {:class "form-control" :autofocus "autofocus"} "entry-text")
      [:span.input-group-btn
       (button "default" "Send")]]
     [:div {"style" "clear: both"}]))
 
-(defn reply-form [id author request]
-  (common/simple
-    (form-to {:class (str "reply-form form" id)} [:post base]
+(defn reply-form [id author]
+  (layout/simple
+    (form-to {:class (str "reply-form form" id)} [:post (updates-path)]
       [:div.input-group (text-field {:class "form-control" :autofocus "autofocus" :value (str "@" author " ")} "reply-text")
        [:span.input-group-btn (button "default" "Reply")]]
       (hidden-field "reply-to" id)
       [:div {"style" "clear: both"}])))
 
 
-(defn update [request is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
+(defn update [is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list
     [:div.avatar
-     (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-uri author) :alt author}])]
+     (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-path author) :alt author}])]
     [:div.meta
-     [:span.author (link-to (str base "?author=" author) author)]
+     [:span.author (link-to (str (updates-path) "?author=" author) author)]
      (if in-reply-to
-       [:span.reply (link-to (str base "/" in-reply-to) in-reply-to)])
+       [:span.reply (link-to (update-path in-reply-to) in-reply-to)])
      [:span.actions (button "reply" "Reply" "reply")
       (if can-delete?
         [:span.delete (delete-form id)])]
-     [:span.time [:a.permalink {:href (str base "/" id)} (format-time time)]]
+     [:span.time [:a.permalink {:href (update-path id)} (format-time time)]]
      ]
     [:div.post-content (common/linkify text)]
   )
 )
 
-(defn list-page [items next request current-item-id]
-  (common/layout
-    (if (nil? current-item-id) "timeline" (str "Status " current-item-id))
+(defn list-page [items next username current-item-id]
+  (layout/default
+    (if current-item-id (str "Status " current-item-id) "timeline")
+    username
     (list
-      (if (nil? current-item-id) (entry-form))
+      (when-not current-item-id (entry-form))
       [:ul.updates (map (fn [item]
                           (if (= current-item-id (:id item))
-                            [:li.post.current (update request true item)]
-                            [:li.post (update request false item)]
-                            )) items)]
-      )
-    (if next
-        (link-to {:rel "next"} next "Next"))
-    (nav-links request)))
+                            [:li.post.current (update true item)]
+                            [:li.post (update false item)]))
+                        items)])
+    (when next (link-to {:rel "next"} next "Next"))))
+
