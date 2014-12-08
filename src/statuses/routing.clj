@@ -133,7 +133,7 @@
   (GET    [route/update-template, :id #"[0-9]+"]           [id :as r]     (page id r))
   (DELETE [route/update-template, :id #"[0-9]+"]           [id :as r]     (delete-entry id r))
   (GET    [route/update-replyform-template, :id #"[0-9]+"] [id :as r]     (replyform id r))
-  (GET    [route/conversation-template                     [id :as r]     (conversation id r))
+  (GET    route/conversation-template                      [id :as r]     (conversation id r))
   (GET    route/info-template                              []             info)
   (GET    route/too-long-template                          [length :as r] (too-long length r))
   (not-found "Not Found"))
