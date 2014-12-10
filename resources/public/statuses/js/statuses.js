@@ -61,6 +61,7 @@
     if (shouldImgify()) {
         imgify();
     }
+    $(".post time").each(momentify);
 
     function focusField(field) {
         field.bind("focus", moveCursorToEOL); // XXX: no need for separate event handler?
@@ -100,6 +101,15 @@
 
     function shouldImgify() {
         return preferences[preferenceInlineImages] === "true";
+    }
+
+    function momentify() {
+        var timeField = $(this);
+        var currentTime = timeField.html();
+        var currentDateTime = timeField.attr("datetime");
+        var timeFromNow = moment(currentDateTime, moment.ISO_8601).fromNow();
+        timeField.html(timeFromNow);
+        timeField.tooltip({placement: "left", title: currentTime});
     }
 
 }(jQuery, preferenceStore()));
