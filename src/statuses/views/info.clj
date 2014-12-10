@@ -1,8 +1,10 @@
 (ns statuses.views.info
   (:require [clojure.pprint :refer [pprint]]
+            [hiccup.element :refer [link-to]]
             [statuses.backend.core :refer [get-count]]
             [statuses.backend.persistence :refer [db get-save-time]]
             [statuses.configuration :refer [config]]
+            [statuses.routes :refer [commit-path]]
             [statuses.views.layout :as layout]))
 
 (defn- base-uri [request]
@@ -16,12 +18,18 @@
    [:td header]
    [:td content]])
 
+(defn- version-item []
+  (let [version (config :version)]
+    (item "Version"
+        (when version
+          (link-to (commit-path version) version)))))
+
 (defn render-html [username request]
   (layout/default
     "Server Info"
     username
     [:table.table
-     (item "Version" (config :version))
+     (version-item)
      (item "# of entries" (get-count @db))
      (item "Last save at" (get-save-time @db))
      (item "Base URI" (base-uri request))
