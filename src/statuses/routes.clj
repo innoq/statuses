@@ -32,7 +32,9 @@
    (str (updates-path) "?query=@" username
         (if response-format (str "&format=" (name response-format)) ""))))
 
-(defn issue-path [] "https://github.com/innoq/statuses/issues"); TODO: read from configuration
+(defn issue-path [] (config :issue-tracker-url))
+
+(defn commit-path [sha-hash] (format (config :git-commit-url) sha-hash))
 
 (defn avatar-path [username]
   (clojure.string/replace (config :avatar-url) "{username}" username))
