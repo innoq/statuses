@@ -8,6 +8,7 @@
    :run-mode           :dev
    :profile-url-prefix "https://intern.innoq.com/liqid/users/"
    :avatar-url         "http://assets.github.com/images/gravatars/gravatar-user-420.png"
+   :issue-tracker-url  "https://github.com/innoq/statuses/issues"
    :entry {
            :min-length 1
            :max-length 140}})
