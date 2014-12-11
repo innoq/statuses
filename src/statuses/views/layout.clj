@@ -7,10 +7,10 @@
             [statuses.views.common :refer [icon]]))
 
 (defn preference [id title iconname]
-  [:li [:a {:name id}
-    (icon iconname)
-    [:label {:for (str "pref-" id)} title]
-    (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
+  [:li [:p.navbar-text
+   (icon iconname)
+   [:label {:for (str "pref-" id)} title]
+   (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
 
 (defn nav-link [url title iconname]
   [:li (link-to url (icon iconname) title)])
