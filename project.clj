@@ -8,7 +8,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [ring "1.3.2"]
                  [compojure "1.3.1"]
-                 [clj-time "0.8.0"]
+                 [clj-time "0.9.0"]
                  [org.clojure/data.json "0.2.5"]]
   :pedantic? :abort
   :plugins [[jonase/eastwood "0.2.0"]]
