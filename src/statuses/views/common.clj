@@ -1,5 +1,7 @@
 (ns statuses.views.common
-  (:require [hiccup.util :refer [escape-html]]))
+  (:require [hiccup.core :refer [html]]
+            [hiccup.element :refer [link-to mail-to]]
+            [hiccup.util :refer [escape-html url]]))
 
 (defn icon [icon-name]
   [:span {:class (str "fa fa-" icon-name)}])
@@ -10,10 +12,10 @@
 (def email #"([a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)")
 
 (defn linkify [text]
-  (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
-        hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
-        anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))
-        mailto  (fn [[m _]] (str "<a href='mailto:" m "'>" m "</a>"))]
+  (letfn [(handle  [[_ m]] (html "@" (link-to (url "/statuses/updates" {:author m}) m)))
+          (hashtag [[_ m]] (html "#" (link-to (url "/statuses/updates" {:query (str "#" m)}) m)))
+          (anchor  [[m _]] (html (link-to m m)))
+          (mailto  [[m _]] (html (mail-to m)))]
     (-> text
         escape-html
         (clojure.string/replace #"(?:^|(?<=\s))@(\w+)" handle)
