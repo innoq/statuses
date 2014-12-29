@@ -1,5 +1,7 @@
 (ns statuses.views.common
-  (:require [hiccup.util :refer [escape-html]]))
+  (:require [hiccup.core :refer [html]]
+            [hiccup.element :refer [link-to]]
+            [hiccup.util :refer [escape-html url]]))
 
 (defn icon [icon-name]
   [:span {:class (str "fa fa-" icon-name)}])
@@ -11,7 +13,7 @@
 
 (defn linkify [text]
   (let [handle  (fn [[_ m]] (str "@<a href='/statuses/updates?author=" m "'>" m "</a>"))
-        hashtag (fn [[_ m]] (str "#<a href='/statuses/updates?query=%23" m "'>" m "</a>"))
+        hashtag (fn [[_ m]] (html "#" (link-to (url "/statuses/updates" {:query (str "#" m)}) m)))
         anchor  (fn [[m _]] (str "<a href='" m "'>" m "</a>"))
         mailto  (fn [[m _]] (str "<a href='mailto:" m "'>" m "</a>"))]
     (-> text
