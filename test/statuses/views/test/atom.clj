@@ -56,7 +56,7 @@
 
     (is (= (get (entry (feed-with-entry {:text "@bar: http://www.test.de"})) 3)
            [:content {:type "html"}
-            "@&lt;a href=&apos;/statuses/updates?author=bar&apos;&gt;bar&lt;/a&gt;: &lt;a href=&apos;http://www.test.de&apos;&gt;http://www.test.de&lt;/a&gt;"])
+            "@&lt;a href=&quot;/statuses/updates?author=bar&quot;&gt;bar&lt;/a&gt;: &lt;a href=&quot;http://www.test.de&quot;&gt;http://www.test.de&lt;/a&gt;"])
       "content is linkified and escaped")
 
     (is (= (get (entry (feed-with-entry {:id 1337})) 4)
