@@ -14,7 +14,10 @@
       "<a href=\"http://example.org\">http://example.org</a> lipsum"))
   (is (=
       (linkify "lipsum http://example.org")
-      "lipsum <a href=\"http://example.org\">http://example.org</a>")))
+      "lipsum <a href=\"http://example.org\">http://example.org</a>"))
+  (is (=
+       (linkify "![http://i.giphy.com/wIhfELB4LvDhe.gif]()")
+       "![http://i.giphy.com/wIhfELB4LvDhe.gif]()")))
 
 (deftest linkify-hashtags
   (is (=

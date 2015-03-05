@@ -16,10 +16,12 @@
           (hashtag [[_ m]] (html "#" (link-to (url "/statuses/updates" {:query (str "#" m)}) m)))
           (anchor  [[m _]] (html (link-to m m)))
           (mailto  [[m _]] (html (mail-to m)))]
-    (-> text
-        escape-html
-        (clojure.string/replace #"(?:^|(?<=\s))@(\w+)" handle)
-        (clojure.string/replace uri anchor)
-        (clojure.string/replace email mailto)
-        (clojure.string/replace #"(?:^|(?<=\s))#(\S+)" hashtag))))
+    (let [escaped-text (escape-html text)]
+      (try
+        (-> escaped-text
+            (clojure.string/replace #"(?:^|(?<=\s))@(\w+)" handle)
+            (clojure.string/replace uri anchor)
+            (clojure.string/replace email mailto)
+            (clojure.string/replace #"(?:^|(?<=\s))#(\S+)" hashtag))
+        (catch Exception e escaped-text)))))
 
