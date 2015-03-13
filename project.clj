@@ -9,7 +9,7 @@
                  [ring "1.3.2"]
                  [compojure "1.3.2"]
                  [clj-time "0.9.0"]
-                 [org.clojure/data.json "0.2.5"]]
+                 [org.clojure/data.json "0.2.6"]]
   :pedantic? :abort
   :plugins [[jonase/eastwood "0.2.0"]]
   :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}
