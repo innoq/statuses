@@ -2,11 +2,12 @@
   (:require [clj-time.local :refer [format-local-time]]
             [hiccup.core :refer [html]]
             [hiccup.element :refer [link-to]]
-            [hiccup.form :refer [form-to hidden-field text-field]]
+            [hiccup.form :refer [hidden-field text-field]]
             [statuses.configuration :refer [config]]
             [statuses.routes :refer [avatar-path update-path
                                      updates-path profile-path]]
             [statuses.views.common :as common :refer [icon]]
+            [statuses.views.form :refer [form-to]]
             [statuses.views.layout :as layout]))
 
 (defn- button
