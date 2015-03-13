@@ -7,7 +7,7 @@
             :comments "A business-friendly OSS license"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [ring "1.3.2"]
-                 [compojure "1.3.1"]
+                 [compojure "1.3.2"]
                  [clj-time "0.9.0"]
                  [org.clojure/data.json "0.2.5"]]
   :pedantic? :abort
