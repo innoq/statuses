@@ -47,9 +47,9 @@
      [:span.author (link-to (str (updates-path) "?author=" author) author)]
      (if in-reply-to
        [:span.reply (link-to (update-path in-reply-to) in-reply-to)])
-     [:span.actions (button "reply" "Reply" "reply")
+     [:div.actions (button "reply" "Reply" "reply")
       (if can-delete?
-        [:span.delete (delete-form id)])]
+        [:div.delete (delete-form id)])]
      [:span.time [:a.permalink {:href (update-path id)} (format-time time)]]
      ]
     [:div.post-content (common/linkify text)]
