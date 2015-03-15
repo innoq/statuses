@@ -41,7 +41,7 @@
 (defn update [is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list
     [:div.avatar
-     (link-to (str (config :profile-url-prefix) author) [:img {:src (avatar-path author) :alt author}])]
+     (link-to (profile-path author) [:img {:src (avatar-path author) :alt author}])]
     [:div.meta
      [:span.author (link-to (str (updates-path) "?author=" author) author)]
      (if in-reply-to
