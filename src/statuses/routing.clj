@@ -7,6 +7,7 @@
             [statuses.backend.persistence :refer [db]]
             [statuses.routes :as route]
             [statuses.views.atom :as atom]
+            [statuses.views.json :as json-decorator]
             [statuses.views.info :as info-view]
             [statuses.views.main :refer [list-page reply-form]]
             [statuses.views.too-long :as too-long-view]))
@@ -54,7 +55,7 @@
         (cond
          (= format "json") (content-type
                              "application/json"
-                             (json/as-json {:items items, :next next}))
+                             (json/as-json {:items (json-decorator/decorate items), :next next}))
          (= format "atom") (content-type
                              "application/atom+xml;charset=utf-8"
                              (atom/render-atom items
