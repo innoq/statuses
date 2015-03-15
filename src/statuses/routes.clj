@@ -39,3 +39,5 @@
 (defn avatar-path [username]
   (clojure.string/replace (config :avatar-url) "{username}" username))
 
+(defn profile-path [username]
+  (str (config :profile-url-prefix) username))
