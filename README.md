@@ -1,4 +1,5 @@
-# Statuses [![Build Status](https://travis-ci.org/innoq/statuses.svg?branch=master)](https://travis-ci.org/innoq/statuses) [![Dependencies Status](http://jarkeeper.com/innoq/statuses/status.svg)](http://jarkeeper.com/innoq/statuses)
+# Statuses [![Build Status](https://travis-ci.org/innoq/statuses.svg?branch=master)](https://travis-ci.org/innoq/statuses) [![Open Issues](http://img.shields.io/github/issues/innoq/statuses.svg)](https://github.com/innoq/statuses/issues) [![Dependencies Status](http://jarkeeper.com/innoq/statuses/status.svg)](http://jarkeeper.com/innoq/statuses)
+
 
 _Statuses_ is an experimental, extremely simple-minded microblogging
 infrastructure for internal use, basically created to have a small yet
