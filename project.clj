@@ -17,5 +17,6 @@
              :uberjar {:aot [statuses.server]}}
   :main statuses.server
   :aliases {"lint" "eastwood"}
+  :uberjar-name "statuses.jar"
   :eastwood {:exclude-linters [:constant-test]})
 
