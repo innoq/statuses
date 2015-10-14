@@ -10,7 +10,8 @@
                  [compojure "1.5.0"]
                  [clj-time "0.11.0"]
                  [org.clojure/data.json "0.2.6"]
-                 [org.clojure/tools.cli "0.3.3"]]
+                 [org.clojure/tools.cli "0.3.3"]
+                 [com.twitter/twitter-text "1.12.1"]]
   :pedantic? :abort
   :plugins [[jonase/eastwood "0.2.3"]]
   :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}
