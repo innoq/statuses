@@ -22,27 +22,36 @@
 (deftest linkify-hashtags
   (is (=
       (linkify "lorem #hashtag ipsum")
-      "lorem #<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a> ipsum"))
+      "lorem <a href=\"/statuses/updates?query=%23hashtag\">#hashtag</a> ipsum"))
   (is (=
       (linkify "#hashtag lipsum")
-      "#<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a> lipsum"))
+      "<a href=\"/statuses/updates?query=%23hashtag\">#hashtag</a> lipsum"))
   (is (=
       (linkify "lipsum #hashtag")
-      "lipsum #<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a>"))
+      "lipsum <a href=\"/statuses/updates?query=%23hashtag\">#hashtag</a>"))
   (is (=
       (linkify "#WTF^2")
-      "#<a href=\"/statuses/updates?query=%23WTF%5E2\">WTF^2</a>")))
+      "<a href=\"/statuses/updates?query=%23WTF\">#WTF</a>^2"))
+  (is (=
+      (linkify "lorem (ipsum #foo)")
+      "lorem (ipsum <a href=\"/statuses/updates?query=%23foo\">#foo</a>)"))
+  (is (=
+      (linkify "got #foo: awesome")
+      "got <a href=\"/statuses/updates?query=%23foo\">#foo</a>: awesome"))
+  (is (=
+      (linkify "got #foo:awesome")
+      "got <a href=\"/statuses/updates?query=%23foo\">#foo</a>:awesome")))
 
 (deftest linkify-uris-with-fragment-identifier
   (is (=
-      (linkify "lorem http://example.org#anchor ipsum")
-      "lorem <a href=\"http://example.org#anchor\">http://example.org#anchor</a> ipsum")))
+      (linkify "lorem http://example.org/#anchor ipsum")
+      "lorem <a href=\"http://example.org/#anchor\">http://example.org/#anchor</a> ipsum"))
   (is (=
-      (linkify "#hashtag lipsum http://example.org#anchor-name")
-      "#<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a> lipsum <a href=\"http://example.org#anchor-name\">http://example.org#anchor-name</a>"))
+      (linkify "#hashtag lipsum http://example.org/#anchor-name")
+      "<a href=\"/statuses/updates?query=%23hashtag\">#hashtag</a> lipsum <a href=\"http://example.org/#anchor-name\">http://example.org/#anchor-name</a>"))
   (is (=
-      (linkify "lipsum http://example.org#anchor-name #hashtag")
-      "lipsum <a href=\"http://example.org#anchor-name\">http://example.org#anchor-name</a> #<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a>"))
+      (linkify "lipsum http://example.org/#anchor-name #hashtag")
+      "lipsum <a href=\"http://example.org/#anchor-name\">http://example.org/#anchor-name</a> <a href=\"/statuses/updates?query=%23hashtag\">#hashtag</a>")))
 
 (deftest linkify-email-addresses
   (is (=
