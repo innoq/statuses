@@ -6,7 +6,7 @@
             :distribution :repo
             :comments "A business-friendly OSS license"}
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [ring "1.3.2"]
+                 [ring "1.4.0"]
                  [compojure "1.3.3"]
                  [clj-time "0.9.0"]
                  [org.clojure/data.json "0.2.6"]
