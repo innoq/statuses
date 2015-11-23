@@ -38,7 +38,7 @@
       [:div {"style" "clear: both"}])))
 
 
-(defn update [is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
+(defn update-item [is-current {:keys [id text author time in-reply-to conversation can-delete?]}]
   (list
     [:div.avatar
      (link-to (profile-path author) [:img {:src (avatar-path author) :alt author}])]
@@ -63,8 +63,8 @@
       (when-not current-item-id (entry-form))
       [:ul.updates (map (fn [item]
                           (if (= current-item-id (:id item))
-                            [:li.post.current (update true item)]
-                            [:li.post (update false item)]))
+                            [:li.post.current (update-item true item)]
+                            [:li.post (update-item false item)]))
                         items)])
     (when next (link-to {:rel "next"} next "Next"))))
 
