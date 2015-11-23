@@ -5,6 +5,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.resource :refer [wrap-resource]]
+            [clojure.tools.cli :refer [parse-opts]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [statuses.backend.persistence :as persistence]
             [statuses.configuration :as cfg :refer [config]]
@@ -19,18 +20,27 @@
       wrap-not-modified
       wrap-stacktrace))
 
-(defn -main [& m]
-  (cfg/init! (or (first m) "config.clj"))
-  (println "Configuration: " (config))
-  (persistence/init! (config :database-path) (config :save-interval))
-  (println "Starting server on host"  (config :host)
-           "port" (config :http-port)
-           "in mode" (config :run-mode))
-  (run-jetty
-    (if (= (config :run-mode) :dev)
-      (wrap-reload app)
-      app)
-    {:host (config :host)
-     :port (config :http-port)
-     :join? false}))
+
+(def cli-options
+  [["-p" "--port PORT" "Port number" :parse-fn #(Integer/parseInt %)]
+   ["-h" "--host HOST" "Hostname"]
+   ["-c" "--conf ConfigurationFile" "The Location of the Configuration File"]])
+
+(defn -main [& args]
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+    (println "CLI Options: " (str options))
+    (cfg/init! (or (:conf options) (first arguments) "config.clj"))
+    (println "Configuration: " (config))
+    (persistence/init! (config :database-path) (config :save-interval))
+    (println "Starting server on host" (or (:host options) (config :host))
+             "port" (or (:port options) (config :http-port))
+             "in mode" (config :run-mode))
+    (run-jetty
+      (if (= (config :run-mode) :dev)
+        (wrap-reload app)
+        app)
+      {:host (or (:host options) (config :host))
+       :port (or (:port options) (config :http-port))
+       :join? false})))
+
 
