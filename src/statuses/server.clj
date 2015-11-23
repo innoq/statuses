@@ -23,16 +23,15 @@
 
 (def cli-options
   [["-p" "--port PORT" "Port number" :parse-fn #(Integer/parseInt %)]
-  ["-h" "--host HOST" "Hostname"]
-  ["-c" "--conf ConfigurationFile" "The Location of the Configuration File"]])
+   ["-h" "--host HOST" "Hostname"]
+   ["-c" "--conf ConfigurationFile" "The Location of the Configuration File"]])
 
 (defn -main [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-    (cfg/init! (or (:conf options) "config.clj"))
-    (println "Configuration: " (config))
     (println "CLI Options: " (str options))
+    (cfg/init! (or (:conf options) (first arguments) "config.clj"))
+    (println "Configuration: " (config))
     (persistence/init! (config :database-path) (config :save-interval))
-    
     (println "Starting server on host" (or (:host options) (config :host))
              "port" (or (:port options) (config :http-port))
              "in mode" (config :run-mode))
@@ -42,7 +41,6 @@
         app)
       {:host (or (:host options) (config :host))
        :port (or (:port options) (config :http-port))
-       :join? false}))
-  )
+       :join? false})))
 
 
