@@ -12,7 +12,7 @@
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/tools.cli "0.3.3"]]
   :pedantic? :abort
-  :plugins [[jonase/eastwood "0.2.2"]]
+  :plugins [[jonase/eastwood "0.2.3"]]
   :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}
              :uberjar {:aot [statuses.server]}}
   :main statuses.server
