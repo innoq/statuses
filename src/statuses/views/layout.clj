@@ -7,10 +7,10 @@
             [statuses.views.common :refer [icon]]))
 
 (defn preference [id title iconname]
-  [:li [:a {:name id}
-    (icon iconname)
-    [:label {:for (str "pref-" id)} title]
-    (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
+  [:li [:p.navbar-text
+   (icon iconname)
+   [:label {:for (str "pref-" id)} title]
+   (check-box {:class "pref" :disabled "disabled"} (str "pref-" id))]])
 
 (defn nav-link [url title iconname]
   [:li (link-to url (icon iconname) title)])
@@ -27,6 +27,7 @@
   ([title username content footer]
    (html5
      [:head
+      [:meta {:charset "utf-8"}]
       [:meta {:name "viewport"
               :content "width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no"}]
       [:title (str title " - innoQ Statuses")]
@@ -39,17 +40,18 @@
               :type "application/atom+xml"}]
       [:style "body {  }"]]
      [:body
-      [:header.navbar.navbar-default.navbar-fixed-top {:role "navigation"}
-       [:div.container-fluid
-        [:div.navbar-header
-         [:button.navbar-toggle.collapsed {:type "button" :data-target ".navbar-collapse" :data-toggle "collapse"}
-          [:span.sr-only "Toggle navigation"]
-          [:span.icon-bar]
-          [:span.icon-bar]
-          [:span.icon-bar]]
-         [:a {:class "navbar-brand", :href "/statuses/updates"} "Statuses"]]
-        [:div.collapse.navbar-collapse
-         [:ul.nav.navbar-nav (nav-links username)]]]]
+      [:header
+       [:nav.navbar.navbar-default.navbar-fixed-top {:role "navigation"}
+        [:div.container-fluid
+         [:div.navbar-header
+          [:button.navbar-toggle.collapsed {:type "button" :data-target ".navbar-collapse" :data-toggle "collapse"}
+           [:span.sr-only "Toggle navigation"]
+           [:span.icon-bar]
+           [:span.icon-bar]
+           [:span.icon-bar]]
+          [:a {:class "navbar-brand", :href "/statuses/updates"} "Statuses"]]
+         [:div.collapse.navbar-collapse
+          [:ul.nav.navbar-nav (nav-links username)]]]]]
       [:main.container-fluid.tweet-wrapper content]
       [:footer footer]
       (include-js "//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js")

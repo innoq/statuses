@@ -2,11 +2,12 @@
   (:require [clj-time.local :refer [format-local-time]]
             [hiccup.core :refer [html]]
             [hiccup.element :refer [link-to]]
-            [hiccup.form :refer [form-to hidden-field text-field]]
+            [hiccup.form :refer [hidden-field text-field]]
             [statuses.configuration :refer [config]]
             [statuses.routes :refer [avatar-path update-path
                                      updates-path profile-path]]
             [statuses.views.common :as common :refer [icon]]
+            [statuses.views.form :refer [form-to]]
             [statuses.views.layout :as layout]))
 
 (defn- button
@@ -46,9 +47,9 @@
      [:span.author (link-to (str (updates-path) "?author=" author) author)]
      (if in-reply-to
        [:span.reply (link-to (update-path in-reply-to) in-reply-to)])
-     [:span.actions (button "reply" "Reply" "reply")
+     [:div.actions (button "reply" "Reply" "reply")
       (if can-delete?
-        [:span.delete (delete-form id)])]
+        [:div.delete (delete-form id)])]
      [:span.time [:a.permalink {:href (update-path id)} (format-time time)]]
      ]
     [:div.post-content (common/linkify text)]
