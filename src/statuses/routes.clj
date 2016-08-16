@@ -1,15 +1,26 @@
 (ns statuses.routes
-  (:require [statuses.configuration :refer [config]]))
+  (:require [clojure.string :as s]
+    [statuses.configuration :refer [config]]))
+
+(defn query-params [params]
+  (let [filtered-params (into {} (remove (comp nil? second)) params)]
+    (if (empty? filtered-params)
+      ""
+      (->> filtered-params
+           (map #(str (name (key %)) "=" (val %)))
+           (s/join "&")
+           (str "?")))))
 
 (def base-template "/statuses")
 (defn base-path [] base-template)
 
 (def updates-template (str base-template "/updates"))
 (defn updates-path
-  ([] (updates-path nil))
-  ([response-format]
+  ([] (updates-path {}))
+  ([params]
    (str updates-template
-        (if response-format (str "?format=" (name response-format)) ""))))
+        (query-params (select-keys params
+                                   [:limit :offset :author :query :format])))))
 
 (def update-template (str updates-template "/:id"))
 (defn update-path [id] (str (updates-path) "/" id))
