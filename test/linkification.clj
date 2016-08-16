@@ -36,13 +36,13 @@
 (deftest linkify-uris-with-fragment-identifier
   (is (=
       (linkify "lorem http://example.org#anchor ipsum")
-      "lorem <a href=\"http://example.org#anchor\">http://example.org#anchor</a> ipsum")))
+      "lorem <a href=\"http://example.org#anchor\">http://example.org#anchor</a> ipsum"))
   (is (=
       (linkify "#hashtag lipsum http://example.org#anchor-name")
       "#<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a> lipsum <a href=\"http://example.org#anchor-name\">http://example.org#anchor-name</a>"))
   (is (=
       (linkify "lipsum http://example.org#anchor-name #hashtag")
-      "lipsum <a href=\"http://example.org#anchor-name\">http://example.org#anchor-name</a> #<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a>"))
+      "lipsum <a href=\"http://example.org#anchor-name\">http://example.org#anchor-name</a> #<a href=\"/statuses/updates?query=%23hashtag\">hashtag</a>")))
 
 (deftest linkify-email-addresses
   (is (=
