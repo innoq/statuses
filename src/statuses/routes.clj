@@ -40,8 +40,8 @@
 (defn mention-path
   ([username] (mention-path username nil))
   ([username response-format]
-   (str (updates-path) "?query=@" username
-        (if response-format (str "&format=" (name response-format)) ""))))
+   (updates-path {:query (str "@" username)
+                  :format response-format})))
 
 (defn issue-path [] (config :issue-tracker-url))
 

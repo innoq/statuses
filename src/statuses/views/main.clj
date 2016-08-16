@@ -43,7 +43,7 @@
     [:div.avatar
      (link-to (profile-path author) [:img {:src (avatar-path author) :alt author}])]
     [:div.meta
-     [:span.author (link-to (str (updates-path) "?author=" author) author)]
+     [:span.author (link-to (updates-path {:author author}) author)]
      (if in-reply-to
        [:span.reply (link-to (update-path in-reply-to) in-reply-to)])
      [:span.actions (button "reply" "Reply" "reply")
