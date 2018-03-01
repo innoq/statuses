@@ -1,15 +1,6 @@
-### Clojure ###
-pom.xml
-*jar
-/lib/
-/classes/
-/target/
-.lein-deps-sum
-.lein-repl-history
+# Leiningen
 .lein-failures
+.lein-repl-history
 .nrepl-port
+target/
 
-### Intellij ###
-/*.iml
-.idea/
-atlassian-ide-plugin.xml

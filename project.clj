@@ -1,22 +1,13 @@
-(defproject statuses "1.0.0-SNAPSHOT"
-  :description "Statuses app for innoQ"
+(defproject statuses "2.0.0-SNAPSHOT"
   :url "https://github.com/innoq/statuses"
+  :description "An experimental, extremely simple-minded microblogging
+                infrastructure for internal use."
   :license {:name "Apache License, Version 2.0"
             :url "http://www.apache.org/licenses/LICENSE-2.0"
             :distribution :repo
             :comments "A business-friendly OSS license"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [ring "1.4.0"]
-                 [compojure "1.5.0"]
-                 [clj-time "0.11.0"]
-                 [org.clojure/data.json "0.2.6"]
-                 [org.clojure/tools.cli "0.3.3"]]
-  :pedantic? :abort
-  :plugins [[jonase/eastwood "0.2.3"]]
-  :profiles {:dev {:dependencies [[ring-mock "0.1.5"]]}
-             :uberjar {:aot [statuses.server]}}
-  :main statuses.server
-  :aliases {"lint" "eastwood"}
+  :min-lein-version "2.8.1"
+  :dependencies [[org.clojure/clojure "1.9.0"]]
+  :main statuses.main
   :uberjar-name "statuses.jar"
-  :eastwood {:exclude-linters [:constant-test]})
-
+  :profiles {:uberjar {:aot [statuses.main]}})
